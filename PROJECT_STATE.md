@@ -12,7 +12,7 @@ Update this file at the end of every coding session before committing.
 ## PROJECT
 
 **Name:** Trustworthy Computer Vision Integrity Assurance — SIH 2026 PS 26228  
-**Current stage:** Fixture implementation — TASK-009 Part A tested; Part B ready
+**Current stage:** Fixture implementation — TASK-009 Part A tested; Part B blocked on Torch staging
 **Repository created:** [DATE TO BE FILLED ON REPO INIT]  
 **Five-day window start:** [DATE — begins after P1 conditions resolved]
 
@@ -43,7 +43,7 @@ Status codes: `NOT STARTED` | `IN PROGRESS` | `IMPLEMENTED` | `TESTED` | `VALIDA
 | Audit chain writer | TASK-006 | `IMPLEMENTED` | Fail-closed atomic hash chain, corruption diagnostics, sequence-gap detection, and no reset path committed at `0f671ca` |
 | Worker base (IPC, resource limits) | TASK-007 | `TESTED` | Worker-side named-file IPC, fail-closed output builder, path containment, crash handling, and timeout test harness committed at `793950a`; Windows RLIMIT limitations remain explicit |
 | Schema validator + JSON schemas | TASK-008 | `TESTED` | Custom fail-closed validator and six `v1.0` schema documents committed at `a78e5c4`; SEC-011 and SEC-012 confirmed |
-| Hostile fixture suite (P0) | TASK-009 | `IN PROGRESS` | Part A non-torch families implemented and tested at `5af987f`; Part B torch and YOLO segmentation fixtures pending; ONNX runtime verification blocked because `onnx` is not installed |
+| Hostile fixture suite (P0) | TASK-009 | `BLOCKED` | Part A non-torch families implemented and tested at `5af987f`; Part B activation gate failed because no Torch wheel is staged and Torch is not importable; ONNX runtime verification is also blocked because `onnx` is not installed |
 | COMP-W-C2A (all-box structural) | TASK-010 | `NOT STARTED` | PRE-05 resolved; `pycocotools` remains conditional on Windows AMD64 / Python 3.13.12 wheel or native-extension verification |
 | COMP-W-C2B (exact hash) | TASK-011 | `NOT STARTED` | |
 | COMP-W-C2C (concentration) | TASK-012 | `NOT STARTED` | |
@@ -72,7 +72,9 @@ TASK: TASK-009 Part B — Torch-Dependent and YOLO Segmentation Fixtures
 Owner: Codex
 Branch: feature/task-009-fixtures
 Started: 2026-09-27
-Status: READY — Part A tested; Part B prompt received
+Status: BLOCKED — Part B requires a target-compatible Torch wheel staged in
+        `wheelhouse/`; only `wheelhouse/README.md` is present, and Torch is not
+        importable in either Python 3.13.12 or the Python 3.12.14 test runtime.
 
 Satisfied conditions:
   PRE-01: RESOLVED — Windows 10 Pro build 22631 / AMD64 /
@@ -82,6 +84,7 @@ Satisfied conditions:
   TASK-009 Part A: TESTED — 8 targeted tests passed and the ONNX test was
                    conditionally skipped because `onnx` is not installed;
                    full suite passed 180 with 12 expected skips.
+  PART-B TORCH GATE: NOT SATISFIED — target-compatible wheel not staged.
 ```
 
 ---
@@ -111,6 +114,7 @@ Satisfied conditions:
 | HOST-CAP-002 | Python `resource.setrlimit` and Unix RLIMIT controls are unavailable; no replacement isolation mechanism is authorized by PRE-01 | Resource-limit enforcement claims; later isolation hardening if required | Architecture / deployment owner |
 | OFFLINE-001 | Wheelhouse installation, imports, and zero-egress behavior have not been validated for Windows AMD64 / Python 3.13.12 | TASK-027 and every offline deployment claim | Deployment owner |
 | HOST-CAP-003 | `onnx` is not installed in the current test runtime; FIX-004/005/006/016 generation code is present but runtime verification is conditionally skipped | TASK-009 ONNX fixture verification and later TASK-016 | Dependency / deployment owner |
+| HOST-CAP-004 | No Torch wheel is staged in `wheelhouse/`, and Torch is not importable in either target Python 3.13.12 or the Python 3.12.14 test runtime | TASK-009 Part B FIX-001/002/003/015 and later TASK-017 | Dependency / deployment owner |
 
 ---
 
@@ -162,7 +166,7 @@ Integration gates:
 
 ## NEXT TASK
 
-**Next task:** TASK-009 Part B (Torch-Dependent and YOLO Segmentation Fixtures). Torch-dependent verification remains subject to the Part B dependency pre-check; YOLO pose and OBB remain outside the frozen MVP scope.
+**Next task:** Stage and verify a Windows AMD64 / Python 3.13-compatible Torch CPU wheel in `wheelhouse/`, then resume TASK-009 Part B. Do not implement Part B until that activation gate passes. YOLO pose and OBB remain outside the frozen MVP scope.
 
 Critical path reminder:
 ```
@@ -210,7 +214,7 @@ PRE-04 resolved
 
 *(To be filled by the agent ending a session — for the agent starting the next session)*
 
-**Current session:** TASK-009 Part A completed and tested on `feature/task-009-fixtures`; Part B prompt is queued.
+**Current session:** TASK-009 Part A completed and tested on `feature/task-009-fixtures`; Part B pre-check failed on the mandatory Torch-wheel staging condition, so no Part B implementation files were changed.
 
 **What the next agent needs to know:**
 - TASK-006 unit tests passed 5/5 and SEC-010 passed; the full current suite passed 154 with 11 expected skips.
@@ -230,6 +234,7 @@ PRE-04 resolved
 - TASK-009 Part A implemented all non-torch families. FIX-004/005/006/016 use lazy `onnx` imports and their verification is skipped with the explicit dependency blocker because `onnx` is absent.
 - PRE-05 is resolved: YOLO detection and segmentation are in MVP; pose and OBB are outside the frozen MVP scope. Part A implemented detection; Part B owns segmentation.
 - The fixture test suite passed 8 tests with 1 expected ONNX skip; the full suite passed 180 tests with 12 expected skips. Every exercised CLI manifest was synthetic-labelled, and literal security guards returned zero matches.
+- TASK-009 Part B must not start yet: `wheelhouse/` contains only `README.md`, and Torch import probes failed under both Python 3.13.12 and the Python 3.12.14 test runtime.
 - The weights_only=False grep check (SEC-007) must be set up in CI from Day 1 and must never pass with a match.
 - Signing (TASK-019) will ship as SIGNING_UNAVAILABLE shell until the remaining PRE-08 provisioning condition is resolved. This is expected and does not block non-signing pipeline work.
 - Antigravity begins AFTER GATE-2 passes — not before.
