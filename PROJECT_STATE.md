@@ -12,7 +12,7 @@ Update this file at the end of every coding session before committing.
 ## PROJECT
 
 **Name:** Trustworthy Computer Vision Integrity Assurance — SIH 2026 PS 26228  
-**Current stage:** Foundation implementation — TASK-005 implemented; TASK-006 ready
+**Current stage:** Foundation implementation — TASK-006 implemented; TASK-007 ready
 **Repository created:** [DATE TO BE FILLED ON REPO INIT]  
 **Five-day window start:** [DATE — begins after P1 conditions resolved]
 
@@ -40,7 +40,7 @@ Status codes: `NOT STARTED` | `IN PROGRESS` | `IMPLEMENTED` | `TESTED` | `VALIDA
 | exceptions.py + constants.py | TASK-003 | `TESTED` | Full hierarchy and PRE-04-aligned vocabulary committed at `699a74b` |
 | Config system | TASK-004 | `TESTED` | Fail-closed loader and populated YAML configuration committed at `03bc988` |
 | Evidence store (SQLite, WAL) | TASK-005 | `IMPLEMENTED` | Seven-table §3.15 schema, WAL, supervisor-only connection, guarded writes, and read/export API committed at `eb49e18` |
-| Audit chain writer | TASK-006 | `NOT STARTED` | |
+| Audit chain writer | TASK-006 | `IMPLEMENTED` | Fail-closed atomic hash chain, corruption diagnostics, sequence-gap detection, and no reset path committed at `0f671ca` |
 | Worker base (IPC, resource limits) | TASK-007 | `NOT STARTED` | |
 | Schema validator + JSON schemas | TASK-008 | `NOT STARTED` | PRE-04 resolved; awaits foundation tasks |
 | Hostile fixture suite (P0) | TASK-009 | `NOT STARTED` | Must build before any security test |
@@ -68,15 +68,16 @@ Status codes: `NOT STARTED` | `IN PROGRESS` | `IMPLEMENTED` | `TESTED` | `VALIDA
 ## CURRENT TASK
 
 ```
-TASK: TASK-006 — Audit Chain Writer
+TASK: TASK-007 — Worker Base
 Owner: Codex
-Branch: feature/persistence
-Started: 2026-09-27
-Status: READY — TASK-005 implemented and tested
+Branch: feature/worker-base (not yet created)
+Started: Not started
+Status: READY — TASK-006 implemented and tested
 
 Satisfied conditions:
   PRE-04: RESOLVED — schema contract frozen.
-  TASK-005: IMPLEMENTED — 6/6 targeted tests passed; full suite passed 148
+  TASK-006: IMPLEMENTED — 5/5 targeted unit tests and SEC-010 passed;
+            full suite passed 154
             with 11 expected skips.
 ```
 
@@ -91,6 +92,7 @@ Satisfied conditions:
 | TASK-003 | Implemented the exception hierarchy, PRE-04-aligned state groups, audit event types, fixed constants, and exact PF-002 non-claim | Targeted: 11 passed; full suite: 134 passed, 14 skipped; security greps passed | `699a74b` |
 | TASK-004 | Implemented fail-closed YAML loading, type/key validation, resource-limit access, and PRE-04/PRE-05/PRE-02-aligned configuration | Targeted: 8 passed; full suite: 142 passed, 11 skipped; PyYAML-unavailable path and security greps passed | `03bc988` |
 | TASK-005 | Implemented the authoritative seven-table SQLite schema, WAL and foreign-key setup, supervisor-owned parameterised write paths, read/query API, ZIP export, schema guards, and REUSE-018 attribution | UT-STORE-001..006: 6 passed; full suite: 148 passed, 11 skipped; schema inspection and security greps passed | `eb49e18` |
+| TASK-006 | Implemented the fail-closed supervisor audit writer, canonical SHA-256 event links, atomic audit-event/chain-state persistence, corruption and sequence-gap diagnostics, and no destructive recovery path | UT-AUD-001..005: 5 passed; SEC-010 passed; full suite: 154 passed, 11 skipped; import, method, and security guards passed | `0f671ca` |
 
 ---
 
@@ -120,10 +122,10 @@ Satisfied conditions:
 ## LATEST VALIDATED COMMIT
 
 ```
-Commit: eb49e18
+Commit: 0f671ca
 Branch: feature/persistence
 Date: 2026-09-27
-Tests: TASK-005 targeted 6 passed; full suite 148 passed, 11 expected skips; schema inspection, WAL, import, and security greps passed
+Tests: TASK-006 targeted 5 passed; SEC-010 passed; full suite 154 passed, 11 expected skips; import, prohibited-method, atomic-chain, and security guards passed
 ```
 
 ---
@@ -132,7 +134,7 @@ Tests: TASK-005 targeted 6 passed; full suite 148 passed, 11 expected skips; sch
 
 ```
 Date: 2026-09-27
-Tests passed: 148
+Tests passed: 154
 Tests skipped: 11 expected task-gated tests
 Test tooling: pytest 9.1.1 and PyYAML 6.0.3 installed in a temporary non-repository directory only
 Security grep checks: `weights_only=False` 0 matches; literal `risk_score` in `assurance_system/` 0 matches; no positive CLEAN/SAFE/HEALTHY assurance constants found
@@ -149,7 +151,7 @@ Integration gates:
 
 ## NEXT TASK
 
-**Next task:** TASK-006 (Audit Chain Writer) on `feature/persistence`.
+**Next task:** TASK-007 (Worker Base) on `feature/worker-base`.
 
 Critical path reminder:
 ```
@@ -197,13 +199,14 @@ PRE-04 resolved
 
 *(To be filled by the agent ending a session — for the agent starting the next session)*
 
-**Current session:** TASK-005 evidence store completed and tested on `feature/persistence`.
+**Current session:** TASK-006 audit chain completed and tested on `feature/persistence`.
 
 **What the next agent needs to know:**
-- TASK-005 targeted tests passed 6/6; the full current suite passed 148 with 11 expected skips.
-- The authoritative §3.15 DDL contains four indexes despite TASK-005 prompt prose saying three; all four authoritative indexes are implemented.
-- PRE-04 is fully resolved; schema version `1.0.0` is used by tests and no `v1-pending` placeholder is present.
-- TASK-006 is released because TASK-005 is implemented and tested.
+- TASK-006 unit tests passed 5/5 and SEC-010 passed; the full current suite passed 154 with 11 expected skips.
+- TASK-006 made the permitted minimal amendment to `EvidenceStore.write_audit_event()`: audit insert and `chain_state` update now commit atomically in one transaction.
+- The authoritative §3.15 DDL has no separate audit-event sequence column. TASK-006 preserves that DDL, uses `event_id` as the persisted sequence, and cross-checks it against `chain_state.last_sequence_number` during verification.
+- Corruption diagnostics append `CHAIN_CORRUPT`; sequence gaps also append `SEQUENCE_GAP_DETECTED`. Neither path deletes, resets, repairs, or truncates prior events.
+- GATE-1 still requires TASK-007 and TASK-008 before the foundation gate can be attempted.
 - PRE-01 still blocks target-dependent wheel, isolation, and offline claims.
 - PRE-08 remains partially unresolved; COMP-C4 must retain `SIGNING_UNAVAILABLE` behavior until the target key path and ACL are verified.
 - Continue with TASK-005 through TASK-009 in dependency order (Tier 1 and Tier 2 in §11 Section 8).
