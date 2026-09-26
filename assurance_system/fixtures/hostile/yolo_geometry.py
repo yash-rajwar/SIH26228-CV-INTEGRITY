@@ -4,8 +4,10 @@ import pathlib
 import random
 
 
-# Part A boundary: segmentation is scheduled for Part B; pose/OBB are not in MVP.
+# The aggregate remains true because pose/OBB are outside the frozen MVP scope.
 YOLO_SEG_POSE_OBB_BLOCKED = True
+YOLO_SEGMENTATION_IMPLEMENTED = True
+YOLO_POSE_OBB_UNSUPPORTED = True
 
 EXPECTED_VIOLATIONS = {
     "INVALID_CLASS_ID": 1,
@@ -14,6 +16,14 @@ EXPECTED_VIOLATIONS = {
     "INVALID_NUMERIC_VALUE": 1,
     "OUT_OF_RANGE_COORDINATE": 1,
     "NON_POSITIVE_DIMENSION": 1,
+}
+
+SEGMENTATION_EXPECTED_VIOLATIONS = {
+    "INVALID_CLASS_ID": 1,
+    "NEGATIVE_CLASS_ID": 1,
+    "INVALID_POLYGON_FORMAT": 2,
+    "INVALID_NUMERIC_VALUE": 1,
+    "OUT_OF_RANGE_COORDINATE": 1,
 }
 
 
@@ -43,7 +53,30 @@ def generate(output_dir: str, seed: int) -> dict:
 
 
 def generate_segmentation(output_dir: str, seed: int) -> dict:
-    raise NotImplementedError("PART B: YOLO_SEG fixture not implemented")
+    random.seed(seed)
+    output = pathlib.Path(output_dir)
+    output.mkdir(parents=True, exist_ok=True)
+    lines = [
+        f"# synthetic seed {seed}",
+        "class-x 0.1 0.1 0.2 0.1 0.2 0.2",
+        "-1 0.1 0.1 0.2 0.1 0.2 0.2",
+        "0 0.1 0.1 0.2 0.1",
+        "0 0.1 0.1 0.2 0.1 0.2 0.2 0.3",
+        "0 NaN 0.1 0.2 0.1 0.2 0.2",
+        "0 1.5 0.1 0.2 0.1 0.2 0.2",
+        "0 0.1 0.1 0.8 0.1 0.5 0.8",
+    ]
+    path = output / "yolo_segmentation_violations.txt"
+    path.write_text("\n".join(lines) + "\n", encoding="utf-8")
+    return {
+        "fixture_id": "FIX-009-S",
+        "seed": seed,
+        "is_synthetic": True,
+        "path": str(path),
+        "expected_result": {
+            "violations_by_type": dict(SEGMENTATION_EXPECTED_VIOLATIONS)
+        },
+    }
 
 
 def generate_pose(output_dir: str, seed: int) -> dict:

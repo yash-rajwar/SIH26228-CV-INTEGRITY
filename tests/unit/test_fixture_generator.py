@@ -2,8 +2,10 @@ import importlib.util
 import json
 import os
 import pathlib
+import pickle
 import subprocess
 import sys
+import zipfile
 
 import pytest
 
@@ -12,9 +14,14 @@ from assurance_system.fixtures.hostile import (
     coco_geometry,
     exact_duplicate,
     onnx_path_traversal,
+    pickle_payload,
     schema_violation,
     sybil_corpus,
+    yolo_geometry,
 )
+
+
+TORCH_AVAILABLE = importlib.util.find_spec("torch") is not None
 
 
 def _tree_bytes(root: pathlib.Path) -> dict[str, bytes]:
@@ -110,6 +117,114 @@ def test_fixture_generator_cli_smoke(tmp_path):
     assert completed.returncode == 0, completed.stderr
     manifest = json.loads((tmp_path / "manifest.json").read_text(encoding="utf-8"))
     assert manifest["is_synthetic"] is True
+
+
+@pytest.mark.skipif(not TORCH_AVAILABLE, reason="BLOCKED: torch not installed")
+def test_fix_001_hostile_pickle_triggers_unpickling_error(tmp_path):
+    import torch
+
+    fixture = pickle_payload.generate_hostile_pickle(str(tmp_path / "first"), seed=42)
+    repeated = pickle_payload.generate_hostile_pickle(
+        str(tmp_path / "second"), seed=42
+    )
+    payload = pathlib.Path(fixture["path"]).read_bytes()
+    assert payload == pathlib.Path(repeated["path"]).read_bytes()
+    assert payload
+    assert pickle_payload.HOSTILE_FIXTURE_WARNING.encode("utf-8") in payload
+    assert fixture["is_synthetic"] is True
+    with pytest.raises((RuntimeError, pickle.UnpicklingError)):
+        torch.load(fixture["path"], weights_only=True, map_location="cpu")
+
+
+@pytest.mark.skipif(not TORCH_AVAILABLE, reason="BLOCKED: torch not installed")
+def test_fix_002_scaled_archive_is_weights_only_loadable(tmp_path):
+    import torch
+
+    fixture = pickle_payload.generate_oom_trigger(
+        str(tmp_path / "first"), seed=42, memory_limit_mb=8
+    )
+    repeated = pickle_payload.generate_oom_trigger(
+        str(tmp_path / "second"), seed=42, memory_limit_mb=8
+    )
+    path = pathlib.Path(fixture["path"])
+    assert path.read_bytes() == pathlib.Path(repeated["path"]).read_bytes()
+    declared_bytes = fixture["expected_result"]["declared_storage_bytes"]
+    with zipfile.ZipFile(path, "r") as archive:
+        storage = next(
+            info for info in archive.infolist() if info.filename.endswith("/data/0")
+        )
+    assert storage.file_size == declared_bytes
+    assert declared_bytes > 8 * 1024 * 1024
+    loaded = torch.load(path, weights_only=True, map_location="cpu")
+    assert loaded.numel() == fixture["expected_result"]["declared_shape"][0]
+
+
+def test_fix_003_hang_trigger_times_out_under_control(tmp_path):
+    fixture = pickle_payload.generate_hang_trigger(str(tmp_path / "first"), seed=42)
+    repeated = pickle_payload.generate_hang_trigger(
+        str(tmp_path / "second"), seed=42
+    )
+    assert pathlib.Path(fixture["path"]).read_bytes() == pathlib.Path(
+        repeated["path"]
+    ).read_bytes()
+    process = subprocess.Popen(
+        [sys.executable, fixture["path"]],
+        stdout=subprocess.DEVNULL,
+        stderr=subprocess.DEVNULL,
+    )
+    timed_out = False
+    try:
+        process.wait(timeout=0.25)
+    except subprocess.TimeoutExpired:
+        timed_out = True
+        process.terminate()
+        process.wait(timeout=5)
+    finally:
+        if process.poll() is None:
+            process.kill()
+            process.wait(timeout=5)
+    assert timed_out is True
+    assert fixture["expected_result"]["assessment_status"] == "ASSESSMENT_ERROR"
+
+
+@pytest.mark.skipif(not TORCH_AVAILABLE, reason="BLOCKED: torch not installed")
+def test_fix_015_benign_pytorch_loads_with_weights_only(tmp_path):
+    import torch
+
+    fixture = pickle_payload.generate_benign_pytorch(str(tmp_path / "first"), seed=42)
+    repeated = pickle_payload.generate_benign_pytorch(
+        str(tmp_path / "second"), seed=42
+    )
+    assert pathlib.Path(fixture["path"]).read_bytes() == pathlib.Path(
+        repeated["path"]
+    ).read_bytes()
+    loaded = torch.load(fixture["path"], weights_only=True, map_location="cpu")
+    assert tuple(loaded["weight"].shape) == (3, 3)
+    assert bool(torch.count_nonzero(loaded["weight"])) is False
+    assert fixture["expected_result"]["expected_fallback_attempted"] is False
+
+
+def test_fix_009_s_is_reproducible_and_lists_segmentation_violations(tmp_path):
+    first = tmp_path / "first"
+    second = tmp_path / "second"
+    first_manifest = yolo_geometry.generate_segmentation(str(first), seed=42)
+    second_manifest = yolo_geometry.generate_segmentation(str(second), seed=42)
+    assert _tree_bytes(first) == _tree_bytes(second)
+    assert first_manifest == {
+        **second_manifest,
+        "path": str(first / "yolo_segmentation_violations.txt"),
+    }
+    assert first_manifest["is_synthetic"] is True
+    assert first_manifest["expected_result"]["violations_by_type"] == (
+        yolo_geometry.SEGMENTATION_EXPECTED_VIOLATIONS
+    )
+
+
+def test_yolo_pose_and_obb_remain_outside_frozen_scope(tmp_path):
+    with pytest.raises(NotImplementedError, match="UNSUPPORTED"):
+        yolo_geometry.generate_pose(str(tmp_path), seed=42)
+    with pytest.raises(NotImplementedError, match="UNSUPPORTED"):
+        yolo_geometry.generate_obb(str(tmp_path), seed=42)
 
 
 @pytest.mark.skipif(

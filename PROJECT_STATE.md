@@ -12,7 +12,7 @@ Update this file at the end of every coding session before committing.
 ## PROJECT
 
 **Name:** Trustworthy Computer Vision Integrity Assurance — SIH 2026 PS 26228  
-**Current stage:** Fixture implementation — TASK-009 Part A tested; Part B blocked on Torch staging
+**Current stage:** Fixture implementation complete — TASK-009 Parts A and B tested; Stage 4 prerequisites available
 **Repository created:** [DATE TO BE FILLED ON REPO INIT]  
 **Five-day window start:** [DATE — begins after P1 conditions resolved]
 
@@ -43,7 +43,7 @@ Status codes: `NOT STARTED` | `IN PROGRESS` | `IMPLEMENTED` | `TESTED` | `VALIDA
 | Audit chain writer | TASK-006 | `IMPLEMENTED` | Fail-closed atomic hash chain, corruption diagnostics, sequence-gap detection, and no reset path committed at `0f671ca` |
 | Worker base (IPC, resource limits) | TASK-007 | `TESTED` | Worker-side named-file IPC, fail-closed output builder, path containment, crash handling, and timeout test harness committed at `793950a`; Windows RLIMIT limitations remain explicit |
 | Schema validator + JSON schemas | TASK-008 | `TESTED` | Custom fail-closed validator and six `v1.0` schema documents committed at `a78e5c4`; SEC-011 and SEC-012 confirmed |
-| Hostile fixture suite (P0) | TASK-009 | `BLOCKED` | Part A non-torch families implemented and tested at `5af987f`; Part B activation gate failed because no Torch wheel is staged and Torch is not importable; ONNX runtime verification is also blocked because `onnx` is not installed |
+| Hostile fixture suite (P0) | TASK-009 | `TESTED` | Part A non-torch families implemented at `5af987f`; Part B FIX-001/002/003/015 and FIX-009-S implemented and tested in the current completion commit with repository-local Torch 2.10.0+cpu; YOLO pose/OBB remain outside PRE-05 scope; ONNX runtime verification remains conditionally skipped because `onnx` is not installed |
 | COMP-W-C2A (all-box structural) | TASK-010 | `NOT STARTED` | PRE-05 resolved; `pycocotools` remains conditional on Windows AMD64 / Python 3.13.12 wheel or native-extension verification |
 | COMP-W-C2B (exact hash) | TASK-011 | `NOT STARTED` | |
 | COMP-W-C2C (concentration) | TASK-012 | `NOT STARTED` | |
@@ -51,7 +51,7 @@ Status codes: `NOT STARTED` | `IN PROGRESS` | `IMPLEMENTED` | `TESTED` | `VALIDA
 | COMP-W-C3A (artifact-unit resolver) | TASK-014 | `NOT STARTED` | PRE-03 resolved; awaits foundation and worker-base tasks |
 | COMP-W-C3B (model hasher) | TASK-015 | `NOT STARTED` | Depends on TASK-014 |
 | COMP-W-C3C (ONNX structural) | TASK-016 | `NOT STARTED` | |
-| COMP-W-C3D (PyTorch safe-load gate) | TASK-017 | `NOT STARTED` | PRE-05 resolved; target-compatible torch CPU wheel remains unverified |
+| COMP-W-C3D (PyTorch safe-load gate) | TASK-017 | `NOT STARTED` | PRE-05 resolved; repository-local Windows AMD64 / Python 3.13.12 Torch 2.10.0+cpu environment is verified; worker implementation remains future scope |
 | COMP-REF (reference manager) | TASK-018 | `NOT STARTED` | All references UNAVAILABLE at MVP start |
 | COMP-C4 (provenance + signing) | TASK-019 | `NOT STARTED` | PRE-02, PRE-04, and PRE-09 resolved; operational signing remains BLOCKED on PRE-08 target-specific key-path provisioning |
 | COMP-CAP (capability declaration) | TASK-020 | `NOT STARTED` | |
@@ -72,9 +72,8 @@ TASK: TASK-009 Part B — Torch-Dependent and YOLO Segmentation Fixtures
 Owner: Codex
 Branch: feature/task-009-fixtures
 Started: 2026-09-27
-Status: BLOCKED — Part B requires a target-compatible Torch wheel staged in
-        `wheelhouse/`; only `wheelhouse/README.md` is present, and Torch is not
-        importable in either Python 3.13.12 or the Python 3.12.14 test runtime.
+Status: TESTED — mandatory Part B fixtures are implemented and validated with
+        the repository-local Python 3.13.12 / Torch 2.10.0+cpu environment.
 
 Satisfied conditions:
   PRE-01: RESOLVED — Windows 10 Pro build 22631 / AMD64 /
@@ -84,7 +83,13 @@ Satisfied conditions:
   TASK-009 Part A: TESTED — 8 targeted tests passed and the ONNX test was
                    conditionally skipped because `onnx` is not installed;
                    full suite passed 180 with 12 expected skips.
-  PART-B TORCH GATE: NOT SATISFIED — target-compatible wheel not staged.
+  PART-B TORCH GATE: SATISFIED — the Windows AMD64 / Python 3.13.12 CPU wheel
+                       is staged and the repository-local interpreter imports
+                       Torch 2.10.0+cpu with weights-only loading support.
+  TASK-009 Part B: TESTED — FIX-001 rejects unsafe globals, FIX-002 is a valid
+                   compact over-limit tensor archive, FIX-003 times out under
+                   controlled execution, FIX-015 loads safely, and FIX-009-S
+                   is deterministic. YOLO pose/OBB remain outside PRE-05 scope.
 ```
 
 ---
@@ -102,6 +107,7 @@ Satisfied conditions:
 | TASK-007 | Implemented the worker-side named-file IPC entry point, complete fail-closed output builder, recursive prohibited-field checks, canonical path containment, crash result writing, and timeout termination test harness | UT-BASE-001..008: 8 passed; full suite: 162 passed, 11 skipped; import and universal security guards passed | `793950a` |
 | TASK-008 | Implemented the pure-Python fail-closed worker/finding/provenance validator and six machine-readable `v1.0` schema documents; prohibited nested fields, exact boolean coverage labels, C3 access mode, timestamps, and frozen vocabulary enforced | UT-SCHEMA-001..008: 8 passed; SEC-011 and SEC-012 passed; full suite: 172 passed, 11 skipped; all schema JSON and security guards passed | `a78e5c4` |
 | TASK-009 Part A | Implemented the seed-pinned fixture CLI and FIX-007/008/009-D/010/011/012/013/017/018/019 plus benign COCO control; implemented lazy ONNX FIX-004/005/006/016 generators; retained explicit Part B and unsupported-format boundaries | Fixture tests: 8 passed, 1 ONNX skip; full suite: 180 passed, 12 skipped; all non-ONNX CLI families and security guards passed | `5af987f` |
+| TASK-009 Part B | Implemented seed-pinned FIX-001 hostile pickle, FIX-002 compact over-limit PyTorch archive, FIX-003 hang trigger, FIX-015 benign PyTorch control, and FIX-009-S segmentation violations; preserved PRE-05 exclusions for YOLO pose/OBB | Fixture tests: 14 passed, 1 expected ONNX skip; full suite: 186 passed, 12 expected skips; deterministic byte checks and security guards passed | This TASK-009 Part B completion commit |
 
 ---
 
@@ -113,8 +119,7 @@ Satisfied conditions:
 | HOST-CAP-001 | No C compiler detected; `pycocotools` and other native-extension support require separate Windows AMD64 / Python 3.13.12 verification | TASK-010 and any native-extension dependency claim | Dependency / deployment owner |
 | HOST-CAP-002 | Python `resource.setrlimit` and Unix RLIMIT controls are unavailable; no replacement isolation mechanism is authorized by PRE-01 | Resource-limit enforcement claims; later isolation hardening if required | Architecture / deployment owner |
 | OFFLINE-001 | Wheelhouse installation, imports, and zero-egress behavior have not been validated for Windows AMD64 / Python 3.13.12 | TASK-027 and every offline deployment claim | Deployment owner |
-| HOST-CAP-003 | `onnx` is not installed in the current test runtime; FIX-004/005/006/016 generation code is present but runtime verification is conditionally skipped | TASK-009 ONNX fixture verification and later TASK-016 | Dependency / deployment owner |
-| HOST-CAP-004 | No Torch wheel is staged in `wheelhouse/`, and Torch is not importable in either target Python 3.13.12 or the Python 3.12.14 test runtime | TASK-009 Part B FIX-001/002/003/015 and later TASK-017 | Dependency / deployment owner |
+| HOST-CAP-003 | `onnx` is not installed in the current test runtime; FIX-004/005/006/016 generation code is present but runtime verification is conditionally skipped | Conditional ONNX fixture verification and later TASK-016 | Dependency / deployment owner |
 
 ---
 
@@ -122,7 +127,7 @@ Satisfied conditions:
 
 *(At repository creation — to be updated as implementation progresses)*
 
-- Foundation components through TASK-008 and TASK-009 Part A fixtures are implemented; assessment workers remain `NOT STARTED`.
+- Foundation components through TASK-008 and the complete mandatory TASK-009 fixture suite are implemented; assessment workers remain `NOT STARTED`.
 - Offline capability claim is not permissible until TASK-027 passes on the confirmed Windows AMD64 / Python 3.13.12 target host.
 - The target has no detected C compiler; native-extension dependencies remain unverified.
 - Python `resource.setrlimit` and Unix `RLIMIT_AS`, `RLIMIT_NOFILE`, and `RLIMIT_NPROC` are unavailable. `subprocess.Popen(..., close_fds=True)` is verified working.
@@ -137,10 +142,10 @@ Satisfied conditions:
 ## LATEST VALIDATED COMMIT
 
 ```
-Commit: 5af987f
+Commit: This TASK-009 Part B completion commit
 Branch: feature/task-009-fixtures
 Date: 2026-09-27
-Tests: TASK-009 Part A targeted 8 passed, 1 expected ONNX skip; full suite 180 passed, 12 expected skips; all non-ONNX CLI families, REPRO-006, import boundaries, and security guards passed
+Tests: TASK-009 fixture suite 14 passed, 1 expected ONNX skip; full suite 186 passed, 12 expected skips; FIX-001/002/003/015 and FIX-009-S behavior, reproducibility, safe-load requirements, and security guards passed
 ```
 
 ---
@@ -149,9 +154,9 @@ Tests: TASK-009 Part A targeted 8 passed, 1 expected ONNX skip; full suite 180 p
 
 ```
 Date: 2026-09-27
-Tests passed: 180
+Tests passed: 186
 Tests skipped: 12 expected task/dependency-gated tests
-Test tooling: pytest 9.1.1 and PyYAML 6.0.3 installed in a temporary non-repository directory only
+Test tooling: repository-local Python 3.13.12 with Torch 2.10.0+cpu; pytest 9.1.1 and PyYAML 6.0.3 loaded from a temporary non-repository directory
 Security grep checks: `weights_only=False` 0 matches; literal `risk_score` in `assurance_system/` 0 matches; no positive CLEAN/SAFE/HEALTHY assurance constants found
 
 Integration gates:
@@ -166,7 +171,7 @@ Integration gates:
 
 ## NEXT TASK
 
-**Next task:** Stage and verify a Windows AMD64 / Python 3.13-compatible Torch CPU wheel in `wheelhouse/`, then resume TASK-009 Part B. Do not implement Part B until that activation gate passes. YOLO pose and OBB remain outside the frozen MVP scope.
+**Next task:** Re-run the applicable Stage 4 task-specific entry gate, then begin TASK-010 or TASK-011 on its designated task branch. YOLO pose and OBB remain outside the frozen MVP scope. No Stage 4 worker was started during TASK-009 Part B.
 
 Critical path reminder:
 ```
@@ -214,7 +219,7 @@ PRE-04 resolved
 
 *(To be filled by the agent ending a session — for the agent starting the next session)*
 
-**Current session:** TASK-009 Part A completed and tested on `feature/task-009-fixtures`; Part B pre-check failed on the mandatory Torch-wheel staging condition, so no Part B implementation files were changed.
+**Current session:** TASK-009 Part B completed and tested on `feature/task-009-fixtures` with the verified repository-local Python 3.13.12 / Torch 2.10.0+cpu environment. No TASK-010 or TASK-011 implementation was started.
 
 **What the next agent needs to know:**
 - TASK-006 unit tests passed 5/5 and SEC-010 passed; the full current suite passed 154 with 11 expected skips.
@@ -230,11 +235,12 @@ PRE-04 resolved
 - TASK-007 does not claim Unix RLIMIT enforcement on Windows. The verified `close_fds=True` subprocess behavior is used by tests; supervisor dispatch remains TASK-022 scope.
 - TASK-008 targeted tests passed 8/8 and SEC-011/SEC-012 passed; full suite passed 172 with 11 expected skips.
 - The six JSON schema documents use frozen schema version `v1.0`; recursive prohibited-name metadata is documentation only and the custom validator remains the runtime gatekeeper.
-- TASK-009 (hostile fixture suite) is a P0 task and must not be deferred to make room for feature work.
-- TASK-009 Part A implemented all non-torch families. FIX-004/005/006/016 use lazy `onnx` imports and their verification is skipped with the explicit dependency blocker because `onnx` is absent.
-- PRE-05 is resolved: YOLO detection and segmentation are in MVP; pose and OBB are outside the frozen MVP scope. Part A implemented detection; Part B owns segmentation.
-- The fixture test suite passed 8 tests with 1 expected ONNX skip; the full suite passed 180 tests with 12 expected skips. Every exercised CLI manifest was synthetic-labelled, and literal security guards returned zero matches.
-- TASK-009 Part B must not start yet: `wheelhouse/` contains only `README.md`, and Torch import probes failed under both Python 3.13.12 and the Python 3.12.14 test runtime.
+- TASK-009 (hostile fixture suite) is complete and `TESTED`; it remains a P0 regression suite for later worker tasks.
+- TASK-009 Part A implemented all non-torch families. FIX-004/005/006/016 use lazy `onnx` imports and their verification remains conditionally skipped because `onnx` is absent.
+- PRE-05 is resolved: YOLO detection and segmentation are in MVP; pose and OBB are outside the frozen MVP scope. Part A implemented detection and Part B implemented deterministic FIX-009-S segmentation coverage.
+- Part B implemented FIX-001/002/003/015. FIX-001 is rejected by safe Torch loading, FIX-002 declares storage above the configured C3D memory cap without an uncontrolled production-size load test, FIX-003 is terminated by a controlled timeout, and FIX-015 loads safely.
+- The fixture suite passed 14 tests with 1 expected ONNX skip; the full suite passed 186 tests with 12 expected skips. Reproducibility checks and literal security guards passed.
+- The obsolete Torch staging blocker is closed: the repository-local `.venv-torch-test` uses Python 3.13.12 and Torch 2.10.0+cpu installed from the staged local wheelhouse.
 - The weights_only=False grep check (SEC-007) must be set up in CI from Day 1 and must never pass with a match.
 - Signing (TASK-019) will ship as SIGNING_UNAVAILABLE shell until the remaining PRE-08 provisioning condition is resolved. This is expected and does not block non-signing pipeline work.
 - Antigravity begins AFTER GATE-2 passes — not before.
