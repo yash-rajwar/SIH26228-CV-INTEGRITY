@@ -419,10 +419,23 @@ class EvidenceStore:
                 "chain_link_hash",
                 "timestamp",
                 "supervisor_version_id",
+                "sequence_number",
             ),
         )
         try:
             with self._conn:
+                state = self._conn.execute(
+                    """SELECT last_chain_link_hash, last_sequence_number
+                       FROM chain_state WHERE id = ?""",
+                    (1,),
+                ).fetchone()
+                if state is None:
+                    raise AuditWriteError("Audit chain state is missing")
+                expected_sequence = state["last_sequence_number"] + 1
+                if payload["sequence_number"] != expected_sequence:
+                    raise AuditWriteError("Audit sequence is not monotonic")
+                if payload["previous_event_digest"] != state["last_chain_link_hash"]:
+                    raise AuditWriteError("Audit predecessor does not match chain state")
                 cursor = self._conn.execute(
                     """INSERT INTO audit_events
                        (event_type, payload_digest, previous_event_digest,
@@ -435,6 +448,19 @@ class EvidenceStore:
                         payload["chain_link_hash"],
                         payload["timestamp"],
                         payload["supervisor_version_id"],
+                    ),
+                )
+                self._conn.execute(
+                    """UPDATE chain_state
+                       SET last_event_id = ?, last_chain_link_hash = ?,
+                           last_sequence_number = ?,
+                           updated_at = strftime('%Y-%m-%dT%H:%M:%SZ','now')
+                       WHERE id = ?""",
+                    (
+                        cursor.lastrowid,
+                        payload["chain_link_hash"],
+                        payload["sequence_number"],
+                        1,
                     ),
                 )
         except sqlite3.Error as exc:
