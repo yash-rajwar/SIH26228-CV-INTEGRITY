@@ -1,13 +1,17 @@
 # NOTICES — Third-Party Attribution
 
-**Status:** STUB — attribution will be completed as reuse decisions are implemented.
+**Status:** ACTIVE — updated as reuse decisions are implemented.
 
 ## Required attributions (per Reuse Matrix 07_REUSE_AND_ARCHITECTURE_DECISION_MATRIX_SIH26228_UPDATED.md)
 
 ### R17 — Storage patterns (REUSE-018)
 License: MIT
 Attribution: Required in source files where R17 patterns are used.
-Status: PENDING — TASK-005 (evidence store) will add attribution comment.
+Source: https://github.com/clay-good/origin
+Adaptation: SHA-256 streaming and SQLite/WAL setup patterns only; project schema,
+supervisor-only write isolation, hash-chain integration, and CHECK constraints are
+project-specific.
+Status: IMPLEMENTED — TASK-005 source header carries the required attribution.
 
 ### R27 — COCO parsing via pycocotools (REUSE-020)
 License: BSD
