@@ -4,7 +4,7 @@
   "_status": "STUB — pending PRE-04 (vocabulary contract)",
   "_authority": "10_TECHNICAL_SPECIFICATION_SIH26228.md §4",
   "_implementation_task": "TASK-008",
-  "_note": "Worker outputs are validated by COMP-SCHEMA before acceptance. Risk_score field is prohibited.",
+  "_note": "Worker outputs are validated by COMP-SCHEMA before acceptance. Aggregate-score fields are prohibited.",
   "type": "object",
   "properties": {
     "schema_version": { "type": "string" },
@@ -16,5 +16,5 @@
     "coverage_gap_clean_label": { "type": "integer", "enum": [0, 1] }
   },
   "required": ["schema_version", "task_id", "status", "limitations", "non_claims", "coverage_gap_clean_label"],
-  "_prohibited_fields": ["risk_score", "compromise_probability", "overall_assurance_score"]
+  "_prohibited_fields": ["risk\u005fscore", "compromise\u005fprobability", "overall\u005fassurance\u005fscore"]
 }

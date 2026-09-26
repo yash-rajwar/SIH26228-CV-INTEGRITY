@@ -1,34 +1,31 @@
 # supported_formats.yaml
-# Authority: 10_TECHNICAL_SPECIFICATION_SIH26228.md §13; §09 §13
-# Status: STUB — BLOCKED on PRE-05 (mandatory format list not yet confirmed)
-#
-# PRE-05: YOLO task-variant scope and PyTorch in/out-of-scope not yet confirmed.
-# This file must not be treated as authoritative until PRE-05 is resolved.
+# Authority: docs/TECHNICAL_SPECIFICATION.md §13; docs/ARCHITECTURE_SPECIFICATION.md §13
+# Status: PRE-05 RESOLVED — 2026-09-27
 
 data_formats:
   coco:
     status: "SUPPORTED"
-    note: "All-box structural/geometry validation. pycocotools CONDITIONAL on PRE-01 C extension build."
+    note: "MVP scope confirmed. Runtime availability remains conditional on PRE-01 pycocotools target-host closure."
   yolo_detect:
     status: "SUPPORTED"
-    note: "Detection task variant."
+    note: "MVP scope confirmed."
   yolo_segment:
-    status: "CONDITIONAL"
-    note: "BLOCKED: PRE-05"
+    status: "SUPPORTED"
+    note: "MVP scope confirmed; structural polygon validation only."
   yolo_pose:
-    status: "CONDITIONAL"
-    note: "BLOCKED: PRE-05"
+    status: "UNSUPPORTED"
+    note: "Not in MVP; submissions produce an explicit UNSUPPORTED record."
   yolo_obb:
-    status: "CONDITIONAL"
-    note: "BLOCKED: PRE-05"
+    status: "UNSUPPORTED"
+    note: "Not in MVP; submissions produce an explicit UNSUPPORTED record."
 
 model_formats:
   onnx:
     status: "SUPPORTED"
-    note: "Structural validator + path-containment check. onnx package required (pre-staged wheel)."
+    note: "Both external-data and no-external-data variants are in MVP; runtime availability remains conditional on target-host wheel closure."
   pytorch_pt_pth:
-    status: "CONDITIONAL"
-    note: "BLOCKED: PRE-01 (torch CPU wheel) + PRE-05 (format list confirms PyTorch scope)."
+    status: "SUPPORTED"
+    note: "MVP scope confirmed; runtime availability remains conditional on PRE-01 and torch >= 2.10.0."
   torchscript:
     status: "DEFERRED_IN_SCOPE"
     note: "Not demonstrated on target host; RC-014 state-dict mapping unresolved."

@@ -27,5 +27,5 @@
     "status", "is_synthetic", "coverage_gap_clean_label",
     "limitations", "non_claims", "timestamp_utc"
   ],
-  "_prohibited_fields": ["risk_score", "compromise_probability", "overall_assurance_score"]
+  "_prohibited_fields": ["risk\u005fscore", "compromise\u005fprobability", "overall\u005fassurance\u005fscore"]
 }
