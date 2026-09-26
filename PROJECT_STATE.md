@@ -12,7 +12,7 @@ Update this file at the end of every coding session before committing.
 ## PROJECT
 
 **Name:** Trustworthy Computer Vision Integrity Assurance — SIH 2026 PS 26228  
-**Current stage:** Fixture implementation complete — TASK-009 Parts A and B tested; Stage 4 prerequisites available
+**Current stage:** Stage 4 data-integrity workers — TASK-010 implemented; pycocotools runtime remains conditional
 **Repository created:** [DATE TO BE FILLED ON REPO INIT]  
 **Five-day window start:** [DATE — begins after P1 conditions resolved]
 
@@ -44,7 +44,7 @@ Status codes: `NOT STARTED` | `IN PROGRESS` | `IMPLEMENTED` | `TESTED` | `VALIDA
 | Worker base (IPC, resource limits) | TASK-007 | `TESTED` | Worker-side named-file IPC, fail-closed output builder, path containment, crash handling, and timeout test harness committed at `793950a`; Windows RLIMIT limitations remain explicit |
 | Schema validator + JSON schemas | TASK-008 | `TESTED` | Custom fail-closed validator and six `v1.0` schema documents committed at `a78e5c4`; SEC-011 and SEC-012 confirmed |
 | Hostile fixture suite (P0) | TASK-009 | `TESTED` | Part A non-torch families implemented at `5af987f`; Part B FIX-001/002/003/015 and FIX-009-S implemented and tested in the current completion commit with repository-local Torch 2.10.0+cpu; YOLO pose/OBB remain outside PRE-05 scope; ONNX runtime verification remains conditionally skipped because `onnx` is not installed |
-| COMP-W-C2A (all-box structural) | TASK-010 | `NOT STARTED` | PRE-05 resolved; `pycocotools` remains conditional on Windows AMD64 / Python 3.13.12 wheel or native-extension verification |
+| COMP-W-C2A (all-box structural) | TASK-010 | `IMPLEMENTED` | All-box COCO geometry layer and PRE-05-authorized YOLO detection/segmentation parser implemented in the current TASK-010 commit; 14 targeted tests and full regression pass; real `pycocotools` runtime remains conditional under HOST-CAP-001 and fails closed when unavailable |
 | COMP-W-C2B (exact hash) | TASK-011 | `NOT STARTED` | |
 | COMP-W-C2C (concentration) | TASK-012 | `NOT STARTED` | |
 | COMP-W-C2D (image hash) | TASK-013 | `NOT STARTED` | |
@@ -68,28 +68,23 @@ Status codes: `NOT STARTED` | `IN PROGRESS` | `IMPLEMENTED` | `TESTED` | `VALIDA
 ## CURRENT TASK
 
 ```
-TASK: TASK-009 Part B — Torch-Dependent and YOLO Segmentation Fixtures
+TASK: TASK-010 — COMP-W-C2A All-Box Structural / Geometry Validator
 Owner: Codex
-Branch: feature/task-009-fixtures
+Branch: feature/task-010-c2a-structural
 Started: 2026-09-27
-Status: TESTED — mandatory Part B fixtures are implemented and validated with
-        the repository-local Python 3.13.12 / Torch 2.10.0+cpu environment.
+Status: IMPLEMENTED — all task logic and tests pass; target-host pycocotools
+        execution remains conditional on HOST-CAP-001.
 
 Satisfied conditions:
-  PRE-01: RESOLVED — Windows 10 Pro build 22631 / AMD64 /
-          Python 3.13.12 / 16 GB RAM.
-  PRE-04: RESOLVED — schema contract frozen.
-  PRE-05: RESOLVED — mandatory MVP format list frozen.
-  TASK-009 Part A: TESTED — 8 targeted tests passed and the ONNX test was
-                   conditionally skipped because `onnx` is not installed;
-                   full suite passed 180 with 12 expected skips.
-  PART-B TORCH GATE: SATISFIED — the Windows AMD64 / Python 3.13.12 CPU wheel
-                       is staged and the repository-local interpreter imports
-                       Torch 2.10.0+cpu with weights-only loading support.
-  TASK-009 Part B: TESTED — FIX-001 rejects unsafe globals, FIX-002 is a valid
-                   compact over-limit tensor archive, FIX-003 times out under
-                   controlled execution, FIX-015 loads safely, and FIX-009-S
-                   is deterministic. YOLO pose/OBB remain outside PRE-05 scope.
+  TASK-007: TESTED — worker output and containment utilities available.
+  TASK-009: TESTED — FIX-008 and YOLO fixtures available.
+  PRE-05: RESOLVED — YOLO_DETECTION and YOLO_SEG are authorized;
+          YOLO_POSE and YOLO_OBB remain unsupported.
+  TASK-010 TESTS: 14 targeted unit/security tests passed; full suite passed
+                  200 with 12 expected conditional skips.
+  COCO RUNTIME: CONDITIONAL — pycocotools is not installed or staged on the
+                verified host; COCO requests return ASSESSMENT_ERROR rather
+                than using a positive-result parser fallback.
 ```
 
 ---
@@ -108,6 +103,7 @@ Satisfied conditions:
 | TASK-008 | Implemented the pure-Python fail-closed worker/finding/provenance validator and six machine-readable `v1.0` schema documents; prohibited nested fields, exact boolean coverage labels, C3 access mode, timestamps, and frozen vocabulary enforced | UT-SCHEMA-001..008: 8 passed; SEC-011 and SEC-012 passed; full suite: 172 passed, 11 skipped; all schema JSON and security guards passed | `a78e5c4` |
 | TASK-009 Part A | Implemented the seed-pinned fixture CLI and FIX-007/008/009-D/010/011/012/013/017/018/019 plus benign COCO control; implemented lazy ONNX FIX-004/005/006/016 generators; retained explicit Part B and unsupported-format boundaries | Fixture tests: 8 passed, 1 ONNX skip; full suite: 180 passed, 12 skipped; all non-ONNX CLI families and security guards passed | `5af987f` |
 | TASK-009 Part B | Implemented seed-pinned FIX-001 hostile pickle, FIX-002 compact over-limit PyTorch archive, FIX-003 hang trigger, FIX-015 benign PyTorch control, and FIX-009-S segmentation violations; preserved PRE-05 exclusions for YOLO pose/OBB | Fixture tests: 14 passed, 1 expected ONNX skip; full suite: 186 passed, 12 expected skips; deterministic byte checks and security guards passed | This TASK-009 Part B completion commit |
+| TASK-010 | Implemented COMP-W-C2A all-annotation COCO geometry validation on conditional pycocotools data, pure-stdlib YOLO detection/segmentation validation, fail-closed input/path/size/dependency handling, permanent T05d non-claims, and explicit unsupported pose/OBB behavior | UT-C2A-001..009 plus segmentation/dependency/size checks and SEC-C2A-001..002: 14 passed; full suite: 200 passed, 12 expected skips; all-box AST review and universal security guards passed | This TASK-010 completion commit |
 
 ---
 
@@ -127,7 +123,7 @@ Satisfied conditions:
 
 *(At repository creation — to be updated as implementation progresses)*
 
-- Foundation components through TASK-008 and the complete mandatory TASK-009 fixture suite are implemented; assessment workers remain `NOT STARTED`.
+- Foundation components through TASK-009 are implemented; TASK-010 is the first implemented assessment worker, while the remaining assessment workers are `NOT STARTED`.
 - Offline capability claim is not permissible until TASK-027 passes on the confirmed Windows AMD64 / Python 3.13.12 target host.
 - The target has no detected C compiler; native-extension dependencies remain unverified.
 - Python `resource.setrlimit` and Unix `RLIMIT_AS`, `RLIMIT_NOFILE`, and `RLIMIT_NPROC` are unavailable. `subprocess.Popen(..., close_fds=True)` is verified working.
@@ -142,10 +138,10 @@ Satisfied conditions:
 ## LATEST VALIDATED COMMIT
 
 ```
-Commit: This TASK-009 Part B completion commit
-Branch: feature/task-009-fixtures
+Commit: This TASK-010 completion commit
+Branch: feature/task-010-c2a-structural
 Date: 2026-09-27
-Tests: TASK-009 fixture suite 14 passed, 1 expected ONNX skip; full suite 186 passed, 12 expected skips; FIX-001/002/003/015 and FIX-009-S behavior, reproducibility, safe-load requirements, and security guards passed
+Tests: TASK-010 targeted unit/security suite 14 passed; full suite 200 passed, 12 expected skips; all-box loop review, conditional pycocotools boundary, authorized YOLO variants, input rejection, and security guards passed
 ```
 
 ---
@@ -154,10 +150,10 @@ Tests: TASK-009 fixture suite 14 passed, 1 expected ONNX skip; full suite 186 pa
 
 ```
 Date: 2026-09-27
-Tests passed: 186
+Tests passed: 200
 Tests skipped: 12 expected task/dependency-gated tests
 Test tooling: repository-local Python 3.13.12 with Torch 2.10.0+cpu; pytest 9.1.1 and PyYAML 6.0.3 loaded from a temporary non-repository directory
-Security grep checks: `weights_only=False` 0 matches; literal `risk_score` in `assurance_system/` 0 matches; no positive CLEAN/SAFE/HEALTHY assurance constants found
+Security grep checks: `weights_only=False` 0 matches; literal `risk_score` in Python output paths 0 matches; no supervisor or network imports in COMP-W-C2A; no `break` or `return` in the COCO annotation loop
 
 Integration gates:
   GATE-1 (Foundation):       NOT PASSED
@@ -171,7 +167,7 @@ Integration gates:
 
 ## NEXT TASK
 
-**Next task:** Re-run the applicable Stage 4 task-specific entry gate, then begin TASK-010 or TASK-011 on its designated task branch. YOLO pose and OBB remain outside the frozen MVP scope. No Stage 4 worker was started during TASK-009 Part B.
+**Next task:** TASK-011 — implement COMP-W-C2B SHA-256 exact duplicate detection on its designated branch. TASK-010's pycocotools runtime dependency remains tracked under HOST-CAP-001 and does not authorize a positive-result fallback.
 
 Critical path reminder:
 ```
@@ -219,7 +215,7 @@ PRE-04 resolved
 
 *(To be filled by the agent ending a session — for the agent starting the next session)*
 
-**Current session:** TASK-009 Part B completed and tested on `feature/task-009-fixtures` with the verified repository-local Python 3.13.12 / Torch 2.10.0+cpu environment. No TASK-010 or TASK-011 implementation was started.
+**Current session:** TASK-010 implemented on `feature/task-010-c2a-structural`. The all-box geometry loop, authorized YOLO parsers, fail-closed pycocotools boundary, and security rejection paths pass their targeted tests. TASK-011 is next and has not been implemented on this branch.
 
 **What the next agent needs to know:**
 - TASK-006 unit tests passed 5/5 and SEC-010 passed; the full current suite passed 154 with 11 expected skips.
@@ -241,6 +237,9 @@ PRE-04 resolved
 - Part B implemented FIX-001/002/003/015. FIX-001 is rejected by safe Torch loading, FIX-002 declares storage above the configured C3D memory cap without an uncontrolled production-size load test, FIX-003 is terminated by a controlled timeout, and FIX-015 loads safely.
 - The fixture suite passed 14 tests with 1 expected ONNX skip; the full suite passed 186 tests with 12 expected skips. Reproducibility checks and literal security guards passed.
 - The obsolete Torch staging blocker is closed: the repository-local `.venv-torch-test` uses Python 3.13.12 and Torch 2.10.0+cpu installed from the staged local wheelhouse.
+- TASK-010 targeted tests passed 14/14 and the full suite passed 200 with 12 expected skips. Static AST review found zero `break` or `return` nodes in the `coco.anns.values()` loop.
+- `pycocotools` is not installed and no compatible wheel is staged. Production COCO assessment therefore returns `PYCOCOTOOLS_UNAVAILABLE_PRE01_BLOCKED`; no manual parser fallback can return COMPLETED. The geometry layer is unit-tested using a test-only adapter and must not be represented as target-host pycocotools validation.
+- PRE-05-authorized YOLO_DETECTION and YOLO_SEG paths are implemented. YOLO_POSE and YOLO_OBB return UNSUPPORTED and remain outside MVP scope.
 - The weights_only=False grep check (SEC-007) must be set up in CI from Day 1 and must never pass with a match.
 - Signing (TASK-019) will ship as SIGNING_UNAVAILABLE shell until the remaining PRE-08 provisioning condition is resolved. This is expected and does not block non-signing pipeline work.
 - Antigravity begins AFTER GATE-2 passes — not before.
