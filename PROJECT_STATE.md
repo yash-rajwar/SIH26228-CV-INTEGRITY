@@ -12,7 +12,7 @@ Update this file at the end of every coding session before committing.
 ## PROJECT
 
 **Name:** Trustworthy Computer Vision Integrity Assurance — SIH 2026 PS 26228  
-**Current stage:** Stage 4 data-integrity workers — TASK-010 implemented; pycocotools runtime remains conditional
+**Current stage:** Stage 4 data-integrity workers — TASK-010 and TASK-011 implemented
 **Repository created:** [DATE TO BE FILLED ON REPO INIT]  
 **Five-day window start:** [DATE — begins after P1 conditions resolved]
 
@@ -44,8 +44,8 @@ Status codes: `NOT STARTED` | `IN PROGRESS` | `IMPLEMENTED` | `TESTED` | `VALIDA
 | Worker base (IPC, resource limits) | TASK-007 | `TESTED` | Worker-side named-file IPC, fail-closed output builder, path containment, crash handling, and timeout test harness committed at `793950a`; Windows RLIMIT limitations remain explicit |
 | Schema validator + JSON schemas | TASK-008 | `TESTED` | Custom fail-closed validator and six `v1.0` schema documents committed at `a78e5c4`; SEC-011 and SEC-012 confirmed |
 | Hostile fixture suite (P0) | TASK-009 | `TESTED` | Part A non-torch families implemented at `5af987f`; Part B FIX-001/002/003/015 and FIX-009-S implemented and tested in the current completion commit with repository-local Torch 2.10.0+cpu; YOLO pose/OBB remain outside PRE-05 scope; ONNX runtime verification remains conditionally skipped because `onnx` is not installed |
-| COMP-W-C2A (all-box structural) | TASK-010 | `IMPLEMENTED` | All-box COCO geometry layer and PRE-05-authorized YOLO detection/segmentation parser implemented in the current TASK-010 commit; 14 targeted tests and full regression pass; real `pycocotools` runtime remains conditional under HOST-CAP-001 and fails closed when unavailable |
-| COMP-W-C2B (exact hash) | TASK-011 | `NOT STARTED` | |
+| COMP-W-C2A (all-box structural) | TASK-010 | `IMPLEMENTED` | All-box COCO geometry layer and PRE-05-authorized YOLO detection/segmentation parser implemented at `65fef55`; 14 targeted tests and full regression pass; real `pycocotools` runtime remains conditional under HOST-CAP-001 and fails closed when unavailable |
+| COMP-W-C2B (exact hash) | TASK-011 | `IMPLEMENTED` | Stdlib-only streaming SHA-256 duplicate grouping, per-file error handling, fail-closed all-failed state, and mandatory deferred PDQ disclosure implemented in the current TASK-011 commit; 10 targeted tests and full regression pass |
 | COMP-W-C2C (concentration) | TASK-012 | `NOT STARTED` | |
 | COMP-W-C2D (image hash) | TASK-013 | `NOT STARTED` | |
 | COMP-W-C3A (artifact-unit resolver) | TASK-014 | `NOT STARTED` | PRE-03 resolved; awaits foundation and worker-base tasks |
@@ -68,23 +68,19 @@ Status codes: `NOT STARTED` | `IN PROGRESS` | `IMPLEMENTED` | `TESTED` | `VALIDA
 ## CURRENT TASK
 
 ```
-TASK: TASK-010 — COMP-W-C2A All-Box Structural / Geometry Validator
+TASK: TASK-011 — COMP-W-C2B SHA-256 Exact Duplicate Detector
 Owner: Codex
-Branch: feature/task-010-c2a-structural
+Branch: feature/task-011-c2b-exact-hash
 Started: 2026-09-27
-Status: IMPLEMENTED — all task logic and tests pass; target-host pycocotools
-        execution remains conditional on HOST-CAP-001.
+Status: IMPLEMENTED — all required exact-hash logic and tests pass.
 
 Satisfied conditions:
   TASK-007: TESTED — worker output and containment utilities available.
-  TASK-009: TESTED — FIX-008 and YOLO fixtures available.
-  PRE-05: RESOLVED — YOLO_DETECTION and YOLO_SEG are authorized;
-          YOLO_POSE and YOLO_OBB remain unsupported.
-  TASK-010 TESTS: 14 targeted unit/security tests passed; full suite passed
-                  200 with 12 expected conditional skips.
-  COCO RUNTIME: CONDITIONAL — pycocotools is not installed or staged on the
-                verified host; COCO requests return ASSESSMENT_ERROR rather
-                than using a positive-result parser fallback.
+  TASK-009: TESTED — FIX-010 and FIX-011 fixtures available.
+  TASK-011 TESTS: 10 targeted unit/security tests passed; full suite passed
+                  210 with 12 expected conditional skips.
+  REPRO-002: PASSED — identical bytes produce identical SHA-256 digests.
+  PDQ: DEFERRED_IN_SCOPE on every output; no near-duplicate logic added.
 ```
 
 ---
@@ -103,7 +99,8 @@ Satisfied conditions:
 | TASK-008 | Implemented the pure-Python fail-closed worker/finding/provenance validator and six machine-readable `v1.0` schema documents; prohibited nested fields, exact boolean coverage labels, C3 access mode, timestamps, and frozen vocabulary enforced | UT-SCHEMA-001..008: 8 passed; SEC-011 and SEC-012 passed; full suite: 172 passed, 11 skipped; all schema JSON and security guards passed | `a78e5c4` |
 | TASK-009 Part A | Implemented the seed-pinned fixture CLI and FIX-007/008/009-D/010/011/012/013/017/018/019 plus benign COCO control; implemented lazy ONNX FIX-004/005/006/016 generators; retained explicit Part B and unsupported-format boundaries | Fixture tests: 8 passed, 1 ONNX skip; full suite: 180 passed, 12 skipped; all non-ONNX CLI families and security guards passed | `5af987f` |
 | TASK-009 Part B | Implemented seed-pinned FIX-001 hostile pickle, FIX-002 compact over-limit PyTorch archive, FIX-003 hang trigger, FIX-015 benign PyTorch control, and FIX-009-S segmentation violations; preserved PRE-05 exclusions for YOLO pose/OBB | Fixture tests: 14 passed, 1 expected ONNX skip; full suite: 186 passed, 12 expected skips; deterministic byte checks and security guards passed | This TASK-009 Part B completion commit |
-| TASK-010 | Implemented COMP-W-C2A all-annotation COCO geometry validation on conditional pycocotools data, pure-stdlib YOLO detection/segmentation validation, fail-closed input/path/size/dependency handling, permanent T05d non-claims, and explicit unsupported pose/OBB behavior | UT-C2A-001..009 plus segmentation/dependency/size checks and SEC-C2A-001..002: 14 passed; full suite: 200 passed, 12 expected skips; all-box AST review and universal security guards passed | This TASK-010 completion commit |
+| TASK-010 | Implemented COMP-W-C2A all-annotation COCO geometry validation on conditional pycocotools data, pure-stdlib YOLO detection/segmentation validation, fail-closed input/path/size/dependency handling, permanent T05d non-claims, and explicit unsupported pose/OBB behavior | UT-C2A-001..009 plus segmentation/dependency/size checks and SEC-C2A-001..002: 14 passed; full suite: 200 passed, 12 expected skips; all-box AST review and universal security guards passed | `65fef55` |
+| TASK-011 | Implemented COMP-W-C2B deterministic SHA-256 streaming, exact-duplicate grouping, path containment and read-error isolation, all-failed ASSESSMENT_ERROR handling, and non-suppressible DEFERRED_IN_SCOPE PDQ disclosure | UT-C2B-001..006, REPRO-002, empty-corpus boundary, and SEC-C2B-001..002: 10 passed; full suite: 210 passed, 12 expected skips; stdlib-only import and universal security guards passed | This TASK-011 completion commit |
 
 ---
 
@@ -123,7 +120,7 @@ Satisfied conditions:
 
 *(At repository creation — to be updated as implementation progresses)*
 
-- Foundation components through TASK-009 are implemented; TASK-010 is the first implemented assessment worker, while the remaining assessment workers are `NOT STARTED`.
+- Foundation components through TASK-009 and data workers TASK-010/TASK-011 are implemented; remaining assessment workers are `NOT STARTED`.
 - Offline capability claim is not permissible until TASK-027 passes on the confirmed Windows AMD64 / Python 3.13.12 target host.
 - The target has no detected C compiler; native-extension dependencies remain unverified.
 - Python `resource.setrlimit` and Unix `RLIMIT_AS`, `RLIMIT_NOFILE`, and `RLIMIT_NPROC` are unavailable. `subprocess.Popen(..., close_fds=True)` is verified working.
@@ -138,10 +135,10 @@ Satisfied conditions:
 ## LATEST VALIDATED COMMIT
 
 ```
-Commit: This TASK-010 completion commit
-Branch: feature/task-010-c2a-structural
+Commit: This TASK-011 completion commit
+Branch: feature/task-011-c2b-exact-hash
 Date: 2026-09-27
-Tests: TASK-010 targeted unit/security suite 14 passed; full suite 200 passed, 12 expected skips; all-box loop review, conditional pycocotools boundary, authorized YOLO variants, input rejection, and security guards passed
+Tests: TASK-011 targeted unit/security suite 10 passed; full suite 210 passed, 12 expected skips; FIX-010/FIX-011 behavior, REPRO-002, partial/all-failed handling, PDQ deferral, import audit, and security guards passed
 ```
 
 ---
@@ -150,10 +147,10 @@ Tests: TASK-010 targeted unit/security suite 14 passed; full suite 200 passed, 1
 
 ```
 Date: 2026-09-27
-Tests passed: 200
+Tests passed: 210
 Tests skipped: 12 expected task/dependency-gated tests
 Test tooling: repository-local Python 3.13.12 with Torch 2.10.0+cpu; pytest 9.1.1 and PyYAML 6.0.3 loaded from a temporary non-repository directory
-Security grep checks: `weights_only=False` 0 matches; literal `risk_score` in Python output paths 0 matches; no supervisor or network imports in COMP-W-C2A; no `break` or `return` in the COCO annotation loop
+Security grep checks: `weights_only=False` 0 matches; literal `risk_score` in Python output paths 0 matches; no supervisor, network, image-processing, or near-duplicate library imports in COMP-W-C2B
 
 Integration gates:
   GATE-1 (Foundation):       NOT PASSED
@@ -167,7 +164,7 @@ Integration gates:
 
 ## NEXT TASK
 
-**Next task:** TASK-011 — implement COMP-W-C2B SHA-256 exact duplicate detection on its designated branch. TASK-010's pycocotools runtime dependency remains tracked under HOST-CAP-001 and does not authorize a positive-result fallback.
+**Next task:** TASK-012 — implement COMP-W-C2C source concentration statistics, or TASK-013 in parallel per the dependency graph. TASK-010's pycocotools runtime dependency remains tracked under HOST-CAP-001 and does not authorize a positive-result fallback.
 
 Critical path reminder:
 ```
@@ -215,7 +212,7 @@ PRE-04 resolved
 
 *(To be filled by the agent ending a session — for the agent starting the next session)*
 
-**Current session:** TASK-010 implemented on `feature/task-010-c2a-structural`. The all-box geometry loop, authorized YOLO parsers, fail-closed pycocotools boundary, and security rejection paths pass their targeted tests. TASK-011 is next and has not been implemented on this branch.
+**Current session:** TASK-011 implemented on `feature/task-011-c2b-exact-hash`, stacked on the validated TASK-010 commit. Deterministic exact hashing, fixture behavior, partial/all-failed handling, PDQ deferral, and security rejection paths pass their targeted tests.
 
 **What the next agent needs to know:**
 - TASK-006 unit tests passed 5/5 and SEC-010 passed; the full current suite passed 154 with 11 expected skips.
@@ -240,6 +237,8 @@ PRE-04 resolved
 - TASK-010 targeted tests passed 14/14 and the full suite passed 200 with 12 expected skips. Static AST review found zero `break` or `return` nodes in the `coco.anns.values()` loop.
 - `pycocotools` is not installed and no compatible wheel is staged. Production COCO assessment therefore returns `PYCOCOTOOLS_UNAVAILABLE_PRE01_BLOCKED`; no manual parser fallback can return COMPLETED. The geometry layer is unit-tested using a test-only adapter and must not be represented as target-host pycocotools validation.
 - PRE-05-authorized YOLO_DETECTION and YOLO_SEG paths are implemented. YOLO_POSE and YOLO_OBB return UNSUPPORTED and remain outside MVP scope.
+- TASK-011 targeted tests passed 10/10 and the full suite passed 210 with 12 expected skips. FIX-010 produces the expected exact group, FIX-011 produces zero groups, and REPRO-002 confirms deterministic SHA-256 output.
+- COMP-W-C2B uses stdlib `hashlib` only for hashing. PDQ remains DEFERRED_IN_SCOPE on every output; no image-processing or near-duplicate dependency was introduced.
 - The weights_only=False grep check (SEC-007) must be set up in CI from Day 1 and must never pass with a match.
 - Signing (TASK-019) will ship as SIGNING_UNAVAILABLE shell until the remaining PRE-08 provisioning condition is resolved. This is expected and does not block non-signing pipeline work.
 - Antigravity begins AFTER GATE-2 passes — not before.
