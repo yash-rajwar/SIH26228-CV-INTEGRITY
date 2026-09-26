@@ -1,19 +1,58 @@
-"""
-test_exceptions.py
-Authority: 11_MVP_IMPLEMENTATION_PLAN_SIH26228.md TASK-003 acceptance criteria
+from assurance_system.exceptions import (
+    ArtifactUnitAmbiguousError,
+    AssuranceSystemError,
+    AuditWriteError,
+    CapabilityDeclarationError,
+    ChainCorruptError,
+    ConfigError,
+    IngestError,
+    PathContainmentError,
+    PipelineError,
+    ReferenceHealthError,
+    ReplayAttemptError,
+    SchemaViolationError,
+    SequenceGapError,
+    SigningKeyUnavailableError,
+    StorageWriteError,
+    WorkerCrashError,
+    WorkerTimeoutError,
+)
 
-STUB — tests will be implemented as part of TASK-003.
-"""
-import pytest
+
+def test_all_exceptions_importable():
+    assert AssuranceSystemError.__name__ == "AssuranceSystemError"
 
 
-@pytest.mark.skip(reason="TASK-003 not yet implemented")
-def test_exception_hierarchy_imports():
-    """All exceptions import correctly and form correct inheritance tree."""
-    pass
+def test_exception_hierarchy():
+    subclasses = [
+        PipelineError,
+        SchemaViolationError,
+        StorageWriteError,
+        AuditWriteError,
+        SigningKeyUnavailableError,
+        WorkerTimeoutError,
+        WorkerCrashError,
+        PathContainmentError,
+        ArtifactUnitAmbiguousError,
+        ChainCorruptError,
+        ReferenceHealthError,
+        ReplayAttemptError,
+        SequenceGapError,
+        CapabilityDeclarationError,
+        ConfigError,
+        IngestError,
+    ]
+    for cls in subclasses:
+        assert issubclass(cls, AssuranceSystemError), (
+            f"{cls.__name__} must inherit from AssuranceSystemError"
+        )
 
 
-@pytest.mark.skip(reason="TASK-003 not yet implemented")
-def test_audit_write_error_is_not_suppressed():
-    """AuditWriteError must not be caught silently anywhere (fail-closed audit chain)."""
-    pass
+def test_audit_write_error_is_distinct():
+    assert not issubclass(AuditWriteError, StorageWriteError)
+    assert not issubclass(StorageWriteError, AuditWriteError)
+
+
+def test_exceptions_are_exceptions():
+    for cls in [AssuranceSystemError, PipelineError, AuditWriteError]:
+        assert isinstance(cls("test"), Exception)
