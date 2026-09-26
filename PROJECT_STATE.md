@@ -12,7 +12,7 @@ Update this file at the end of every coding session before committing.
 ## PROJECT
 
 **Name:** Trustworthy Computer Vision Integrity Assurance — SIH 2026 PS 26228  
-**Current stage:** Foundation implementation — TASK-006 implemented; TASK-007 ready
+**Current stage:** Foundation implementation — PRE-01 resolved; Stage 3 entry-state re-check pending
 **Repository created:** [DATE TO BE FILLED ON REPO INIT]  
 **Five-day window start:** [DATE — begins after P1 conditions resolved]
 
@@ -35,23 +35,23 @@ Status codes: `NOT STARTED` | `IN PROGRESS` | `IMPLEMENTED` | `TESTED` | `VALIDA
 
 | Component | Module | Status | Notes |
 |---|---|---|---|
-| P1 condition resolution | TASK-001 | `TESTED` | Decision record committed at `431b92f`; PRE-01 and PRE-08 path provisioning remain explicitly unresolved |
+| P1 condition resolution | TASK-001 | `TESTED` | PRE-01 target host is resolved as Windows 10 Pro build 22631 / AMD64 / Python 3.13.12 / 16 GB RAM; PRE-08 key-path provisioning remains unresolved |
 | Repository skeleton | TASK-002 | `TESTED` | Full §2.2 skeleton committed at `1d5225c`; structure and import tests pass |
 | exceptions.py + constants.py | TASK-003 | `TESTED` | Full hierarchy and PRE-04-aligned vocabulary committed at `699a74b` |
 | Config system | TASK-004 | `TESTED` | Fail-closed loader and populated YAML configuration committed at `03bc988` |
 | Evidence store (SQLite, WAL) | TASK-005 | `IMPLEMENTED` | Seven-table §3.15 schema, WAL, supervisor-only connection, guarded writes, and read/export API committed at `eb49e18` |
 | Audit chain writer | TASK-006 | `IMPLEMENTED` | Fail-closed atomic hash chain, corruption diagnostics, sequence-gap detection, and no reset path committed at `0f671ca` |
-| Worker base (IPC, resource limits) | TASK-007 | `NOT STARTED` | |
+| Worker base (IPC, resource limits) | TASK-007 | `NOT STARTED` | Awaiting Stage 3 entry-state re-check; Windows target has `close_fds=True` support but no `resource.setrlimit` or Unix RLIMIT controls |
 | Schema validator + JSON schemas | TASK-008 | `NOT STARTED` | PRE-04 resolved; awaits foundation tasks |
 | Hostile fixture suite (P0) | TASK-009 | `NOT STARTED` | Must build before any security test |
-| COMP-W-C2A (all-box structural) | TASK-010 | `NOT STARTED` | PRE-05 resolved; COCO dependency remains conditional on PRE-01 |
+| COMP-W-C2A (all-box structural) | TASK-010 | `NOT STARTED` | PRE-05 resolved; `pycocotools` remains conditional on Windows AMD64 / Python 3.13.12 wheel or native-extension verification |
 | COMP-W-C2B (exact hash) | TASK-011 | `NOT STARTED` | |
 | COMP-W-C2C (concentration) | TASK-012 | `NOT STARTED` | |
 | COMP-W-C2D (image hash) | TASK-013 | `NOT STARTED` | |
 | COMP-W-C3A (artifact-unit resolver) | TASK-014 | `NOT STARTED` | PRE-03 resolved; awaits foundation and worker-base tasks |
 | COMP-W-C3B (model hasher) | TASK-015 | `NOT STARTED` | Depends on TASK-014 |
 | COMP-W-C3C (ONNX structural) | TASK-016 | `NOT STARTED` | |
-| COMP-W-C3D (PyTorch safe-load gate) | TASK-017 | `NOT STARTED` | PRE-05 resolved; BLOCKED on PRE-01 target torch wheel |
+| COMP-W-C3D (PyTorch safe-load gate) | TASK-017 | `NOT STARTED` | PRE-05 resolved; target-compatible torch CPU wheel remains unverified |
 | COMP-REF (reference manager) | TASK-018 | `NOT STARTED` | All references UNAVAILABLE at MVP start |
 | COMP-C4 (provenance + signing) | TASK-019 | `NOT STARTED` | PRE-02, PRE-04, and PRE-09 resolved; operational signing remains BLOCKED on PRE-08 target-specific key-path provisioning |
 | COMP-CAP (capability declaration) | TASK-020 | `NOT STARTED` | |
@@ -61,7 +61,7 @@ Status codes: `NOT STARTED` | `IN PROGRESS` | `IMPLEMENTED` | `TESTED` | `VALIDA
 | Dashboard (SHOULD BUILD) | TASK-024 | `NOT STARTED` | Antigravity — begins after GATE-2 |
 | Evidence bundle exporter | TASK-025 | `NOT STARTED` | |
 | End-to-end integration test | TASK-026 | `NOT STARTED` | Gate task |
-| Offline validation (target host) | TASK-027 | `BLOCKED` | Hard-blocked on PRE-01 |
+| Offline validation (target host) | TASK-027 | `NOT STARTED` | Target identified; still awaits completed system, Windows AMD64 / Python 3.13.12 wheelhouse verification, and zero-egress validation |
 
 ---
 
@@ -72,10 +72,13 @@ TASK: TASK-007 — Worker Base
 Owner: Codex
 Branch: feature/worker-base (not yet created)
 Started: Not started
-Status: READY — TASK-006 implemented and tested
+Status: NOT STARTED — Stage 3 entry-state re-check is the next allowed action
 
 Satisfied conditions:
+  PRE-01: RESOLVED — Windows 10 Pro build 22631 / AMD64 /
+          Python 3.13.12 / 16 GB RAM.
   PRE-04: RESOLVED — schema contract frozen.
+  PRE-05: RESOLVED — mandatory MVP format list frozen.
   TASK-006: IMPLEMENTED — 5/5 targeted unit tests and SEC-010 passed;
             full suite passed 154
             with 11 expected skips.
@@ -87,7 +90,7 @@ Satisfied conditions:
 
 | Task | What was done | Tests | Commit |
 |---|---|---|---|
-| TASK-001 | Recorded PRE-01–PRE-09 dispositions; froze PRE-03/04/05/06/07/09; selected HMAC-SHA256; preserved explicit PRE-01 and PRE-08 path blockers | JSON parse for touched schemas; security literal guards; documentation/config review | `431b92f` |
+| TASK-001 | Recorded PRE-01–PRE-09 dispositions; froze PRE-03/04/05/06/07/09; selected HMAC-SHA256; initially preserved PRE-01 and PRE-08 blockers. PRE-01 was subsequently resolved by verified target-host measurements; PRE-08 remains partial. | JSON parse for touched schemas; security literal guards; documentation/config review | `431b92f` plus current PRE-01 resolution commit |
 | TASK-002 | Replaced premature scaffold content with task-scoped stubs; added the authoritative structure test, placeholder tests, package metadata, and wheelhouse README | Structure: 59 passed; full suite: 123 passed, 19 skipped; imports and security greps passed | `1d5225c` |
 | TASK-003 | Implemented the exception hierarchy, PRE-04-aligned state groups, audit event types, fixed constants, and exact PF-002 non-claim | Targeted: 11 passed; full suite: 134 passed, 14 skipped; security greps passed | `699a74b` |
 | TASK-004 | Implemented fail-closed YAML loading, type/key validation, resource-limit access, and PRE-04/PRE-05/PRE-02-aligned configuration | Targeted: 8 passed; full suite: 142 passed, 11 skipped; PyYAML-unavailable path and security greps passed | `03bc988` |
@@ -100,8 +103,10 @@ Satisfied conditions:
 
 | Blocker ID | Description | Affects | Resolution owner |
 |---|---|---|---|
-| PRE-01 | Target host not confirmed — no offline claim permissible; wheel staging impossible; subprocess isolation mechanism TBD | TASK-027; TASK-017; TASK-010 (pycocotools); all offline claims | Project owner / organizer |
-| PRE-08 | HMAC-SHA256 parameters are frozen, but the target-host absolute key path and OS ACL verification cannot be completed until PRE-01 identifies the host | TASK-019 operational signing | Project owner / deployment owner |
+| PRE-08 | HMAC-SHA256 parameters are frozen, but a Windows target-host absolute key path and supervisor-only ACL verification are not yet provisioned | TASK-019 operational signing | Project owner / deployment owner |
+| HOST-CAP-001 | No C compiler detected; `pycocotools` and other native-extension support require separate Windows AMD64 / Python 3.13.12 verification | TASK-010 and any native-extension dependency claim | Dependency / deployment owner |
+| HOST-CAP-002 | Python `resource.setrlimit` and Unix RLIMIT controls are unavailable; no replacement isolation mechanism is authorized by PRE-01 | Resource-limit enforcement claims; later isolation hardening if required | Architecture / deployment owner |
+| OFFLINE-001 | Wheelhouse installation, imports, and zero-egress behavior have not been validated for Windows AMD64 / Python 3.13.12 | TASK-027 and every offline deployment claim | Deployment owner |
 
 ---
 
@@ -110,7 +115,9 @@ Satisfied conditions:
 *(At repository creation — to be updated as implementation progresses)*
 
 - No capabilities are implemented yet. All assessment states are `NOT STARTED`.
-- Offline capability claim is not permissible until PRE-01 is resolved and TASK-027 passes on the actual target host.
+- Offline capability claim is not permissible until TASK-027 passes on the confirmed Windows AMD64 / Python 3.13.12 target host.
+- The target has no detected C compiler; native-extension dependencies remain unverified.
+- Python `resource.setrlimit` and Unix `RLIMIT_AS`, `RLIMIT_NOFILE`, and `RLIMIT_NPROC` are unavailable. `subprocess.Popen(..., close_fds=True)` is verified working.
 - T05d clean-label poisoning coverage gap is a **permanent** non-claim. This will never change under the current baseline.
 - All references are UNAVAILABLE at MVP start. No reference-relative assessments are possible.
 - TorchScript loading is DEFERRED_IN_SCOPE — isolated worker not yet demonstrated on any target.
@@ -151,7 +158,7 @@ Integration gates:
 
 ## NEXT TASK
 
-**Next task:** TASK-007 (Worker Base) on `feature/worker-base`.
+**Next allowed action:** Stage 3 entry-state re-check before TASK-007. Do not start TASK-007 until that check passes.
 
 Critical path reminder:
 ```
@@ -179,14 +186,14 @@ PRE-04 resolved
 
 | Decision | Description | Owner | Priority |
 |---|---|---|---|
-| PRE-01 | **UNRESOLVED:** target host specification | Project owner / organizer | P0 — hard gate for target-dependent work |
+| PRE-01 | **RESOLVED 2026-09-27:** primary development/SIH demonstration target is Windows 10 Pro version 2009, build 22631, 64-bit; AMD64; Python 3.13.12; 16 GB RAM. `close_fds=True` verified; no C compiler or Python `resource` module detected. | Project owner / organizer | Closed as host-identification decision; capability validation remains separate |
 | PRE-02 / XREG-002 | **RESOLVED 2026-09-27:** HMAC-SHA256 selected | Project owner | Closed |
 | PRE-03 / SP-002 | **RESOLVED 2026-09-27:** `pytorch-single-file-v1` | Project team | Closed |
 | PRE-04 / SP-003 | **RESOLVED 2026-09-27:** vocabulary, schema version, active ID, and canonicalization frozen | Project team | Closed |
 | PRE-05 / GAP-013 | **RESOLVED 2026-09-27:** mandatory MVP format list frozen | Project owner / organizer | Closed |
 | PRE-06 / SP-001 | **RESOLVED 2026-09-27:** R0–R7 procedure recorded | Project team | Closed |
 | PRE-07 / GAP-011 | **RESOLVED 2026-09-27:** ingestion excluded from MVP because no organizer source is established | Organizer | Closed for MVP |
-| PRE-08 / SP-004 | **PARTIAL 2026-09-27:** algorithm/key/encoding frozen; target-host absolute path and ACL verification pending PRE-01 | Project team / deployment owner | P1 blocker for operational signing |
+| PRE-08 / SP-004 | **PARTIAL 2026-09-27:** algorithm/key/encoding frozen; Windows target-host absolute path and supervisor-only ACL provisioning remain pending | Project team / deployment owner | P1 blocker for operational signing |
 | PRE-09 / SP-006 | **RESOLVED 2026-09-27:** C3→C4 field mapping frozen | Project team | Closed |
 | OQ-017 | Analyst authentication and authority hierarchy | Project owner | Post-MVP |
 | OQ-018 | Evidence retention policy | Project owner | Post-MVP |
@@ -207,9 +214,11 @@ PRE-04 resolved
 - The authoritative §3.15 DDL has no separate audit-event sequence column. TASK-006 preserves that DDL, uses `event_id` as the persisted sequence, and cross-checks it against `chain_state.last_sequence_number` during verification.
 - Corruption diagnostics append `CHAIN_CORRUPT`; sequence gaps also append `SEQUENCE_GAP_DETECTED`. Neither path deletes, resets, repairs, or truncates prior events.
 - GATE-1 still requires TASK-007 and TASK-008 before the foundation gate can be attempted.
-- PRE-01 still blocks target-dependent wheel, isolation, and offline claims.
+- PRE-01 is resolved as host identification only. Target tuple: Windows 10 Pro build 22631 / AMD64 / Python 3.13.12 / 16 GB RAM.
+- `subprocess.Popen(..., close_fds=True)` is verified working. Python `resource.setrlimit` and Unix RLIMIT controls are unavailable, and no C compiler is detected.
+- Native-extension/wheel compatibility and offline operation remain unclaimed until separately verified on the confirmed target.
 - PRE-08 remains partially unresolved; COMP-C4 must retain `SIGNING_UNAVAILABLE` behavior until the target key path and ACL are verified.
-- Continue with TASK-005 through TASK-009 in dependency order (Tier 1 and Tier 2 in §11 Section 8).
+- Re-run the Stage 3 entry-state check before beginning TASK-007; no Stage 3 implementation was started by the PRE-01 documentation task.
 - TASK-009 (hostile fixture suite) is a P0 task and must not be deferred to make room for feature work.
 - The weights_only=False grep check (SEC-007) must be set up in CI from Day 1 and must never pass with a match.
 - Signing (TASK-019) will ship as SIGNING_UNAVAILABLE shell until the remaining PRE-08 provisioning condition is resolved. This is expected and does not block non-signing pipeline work.
