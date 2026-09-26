@@ -164,6 +164,53 @@ Integration gates:
 
 ---
 
+## Stage 6 Preflight
+
+**Date:** 2026-09-27
+**Status:** `BLOCKED`
+**Scope:** Entry-state evidence only. No TASK-014, TASK-015, or TASK-016 implementation was performed, and no worker, fixture, schema, or constants file was modified.
+
+### Findings
+
+| ID | Result | Evidence and impact |
+|---|---|---|
+| E-1 | `CLEAR` | TASK-010 through TASK-013 acceptance evidence is recorded. The latest full regression is 224 passed with 12 expected skips, and the universal unsafe-load/risk-score guards are recorded clean. The Stage 5 exit evidence required for preflight is present. |
+| E-2 | `BLOCKED — PENDING DECISION` | No frozen ONNX `artifact_unit_definition_id` was located in the repository, configuration, or TASK-001 decision records. `pytorch-single-file-v1` applies only to one submitted regular `.pt`/`.pth` file and cannot be reused for ONNX. Pending Decision E-2: ONNX artifact-unit definition ID unresolved. |
+| E-3 | `BLOCKED — DEPENDENCY UNAVAILABLE` | The repository-local `.venv-torch-test\Scripts\python.exe` is Python 3.13.12, but `import onnx` fails with `ModuleNotFoundError`. TASK-014 ONNX assessment, TASK-016, and executable ONNX fixture validation cannot currently run. |
+| E-4 | `BLOCKED — OFFLINE ARTIFACTS ABSENT` | `wheelhouse/` contains neither an ONNX wheel nor a protobuf wheel. No package was downloaded or installed. The dependency gap cannot be closed under the offline installation rule with the currently staged wheelhouse. |
+| E-5 | `SPEC DISCREPANCY — AUTHORITY RESOLVED` | UT-C3C-004 in the MVP plan expects `ASSESSMENT_ERROR` for malformed ONNX protobuf, while the architecture and technical specification require `STRUCTURAL_INVALID`. Implementation and tests must follow the higher-ranked architecture and use `STRUCTURAL_INVALID`; this is not authorization to change TASK-016 during preflight. |
+| E-6 | `CONTRACT GAP / IMPLEMENTATION CONSTRAINT` | `build_worker_output()` accepts `**extra_fields` but does not inject PF-002 fields automatically. `PF_002_NON_CLAIM` and `FIELD_PF_002_NON_CLAIM` exist; no dedicated constants exist for the C3 hash-match non-claims. Stage 6 workers must explicitly emit the required PF-002/non-claim fields through the established output contract unless a separately authorized base-contract task changes that behavior. |
+
+### Verified contracts and capability state
+
+- `build_worker_output(worker_id, assessment_status, raw_signal, limitations, non_claims, access_mode='UNAVAILABLE', artifact_unit_id='UNAVAILABLE', dependency_declaration=None, error_detail=None, **extra_fields)` requires non-empty limitations/non-claims and always emits `coverage_gap_clean_label: true`.
+- `is_within_directory(path_str, base_dir_str)` compares normalized `realpath` values, permits the base directory itself or a descendant, and returns `False` on `OSError`.
+- Worker IPC uses `base.main(run_assessment_fn)`: JSON task/result files, `worker-input-v1` validation, recursive prohibited-field rejection, deterministic compact output, and nonzero exit after an `ASSESSMENT_ERROR` result on failure.
+- Required constants are present: `ARTIFACT_UNIT_AMBIGUOUS`, `ONNX_PATH_CONTAINMENT_VIOLATION`, `STRUCTURAL_VALID`, `STRUCTURAL_INVALID`, `DEFERRED_IN_SCOPE`, `UNAVAILABLE`, and `ASSESSMENT_ERROR`.
+- PRE-03 is resolved at `artifact_unit_defs/pytorch_artifact_unit_spec.md` as `pytorch-single-file-v1`: exactly one submitted regular file with a case-insensitive `.pt` or `.pth` extension; companion files are excluded and TorchScript remains `DEFERRED_IN_SCOPE`.
+- REUSE-008 and REUSE-009 were verified in the binding architecture decision matrix in `docs/ARCHITECTURE_SPECIFICATION.md`; the separately named historical matrix file is not present in this checkout.
+
+### Fixture and test state
+
+- FIX-004, FIX-005, and FIX-006 generators exist in `assurance_system/fixtures/hostile/onnx_path_traversal.py` for absolute-path, traversal-pattern, and symlink-escape external-data cases.
+- FIX-016 exists in `assurance_system/fixtures/hostile/benign.py` as a minimal structurally valid ONNX Identity graph.
+- The ONNX fixture test is currently skipped with `BLOCKED: onnx package not installed`; the focused check produced one expected skip.
+- TASK-009's ONNX generators are implemented, but runtime verification remains conditional on ONNX availability. No TASK-014/C3A test module is present yet.
+
+### Blockers
+
+- E-2 blocks a final ONNX artifact identity contract and therefore blocks final C3A/C3B ONNX artifact-unit behavior.
+- E-3 and E-4 block local execution of ONNX-dependent TASK-014/TASK-016 paths and their fixture tests.
+- No Stage 6 task may be marked implemented or tested from this preflight.
+
+### Pending decisions
+
+- **Pending Decision E-2:** Freeze the ONNX artifact-unit definition and its `artifact_unit_definition_id`; do not invent or infer an ID from the PyTorch definition.
+- E-5 does not require a new semantic decision: source-of-truth precedence already selects `STRUCTURAL_INVALID`. The lower-ranked MVP test wording must be reconciled when TASK-016 is authorized.
+- E-6 is recorded as an implementation constraint, not a silent architecture change. Any proposal to move PF-002 injection into the shared base requires separately scoped authorization.
+
+---
+
 ## NEXT TASK
 
 **Next task:** Run the Stage 5 exit gate across TASK-010 through TASK-013. Do not begin TASK-014 until that gate authorizes Stage 6. TASK-010's pycocotools runtime dependency remains tracked under HOST-CAP-001 and does not authorize a positive-result fallback.
