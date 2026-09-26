@@ -12,7 +12,7 @@ Update this file at the end of every coding session before committing.
 ## PROJECT
 
 **Name:** Trustworthy Computer Vision Integrity Assurance — SIH 2026 PS 26228  
-**Current stage:** Foundation implementation — TASK-002 tested; TASK-003 ready
+**Current stage:** Foundation implementation — TASK-003 tested; TASK-004 ready
 **Repository created:** [DATE TO BE FILLED ON REPO INIT]  
 **Five-day window start:** [DATE — begins after P1 conditions resolved]
 
@@ -37,8 +37,8 @@ Status codes: `NOT STARTED` | `IN PROGRESS` | `IMPLEMENTED` | `TESTED` | `VALIDA
 |---|---|---|---|
 | P1 condition resolution | TASK-001 | `TESTED` | Decision record committed at `431b92f`; PRE-01 and PRE-08 path provisioning remain explicitly unresolved |
 | Repository skeleton | TASK-002 | `TESTED` | Full §2.2 skeleton committed at `1d5225c`; structure and import tests pass |
-| exceptions.py + constants.py | TASK-003 | `NOT STARTED` | Ready; TASK-002 tested and PRE-04 resolved |
-| Config system | TASK-004 | `NOT STARTED` | |
+| exceptions.py + constants.py | TASK-003 | `TESTED` | Full hierarchy and PRE-04-aligned vocabulary committed at `699a74b` |
+| Config system | TASK-004 | `NOT STARTED` | Ready; TASK-003 tested |
 | Evidence store (SQLite, WAL) | TASK-005 | `NOT STARTED` | PRE-04 resolved; awaits TASK-002–004 |
 | Audit chain writer | TASK-006 | `NOT STARTED` | |
 | Worker base (IPC, resource limits) | TASK-007 | `NOT STARTED` | |
@@ -68,17 +68,16 @@ Status codes: `NOT STARTED` | `IN PROGRESS` | `IMPLEMENTED` | `TESTED` | `VALIDA
 ## CURRENT TASK
 
 ```
-TASK: TASK-003 — Core Type Foundation
+TASK: TASK-004 — Configuration System
 Owner: Codex
-Branch: Not created (starts after TASK-002 branch is pushed)
+Branch: Not created (starts after TASK-003 branch is pushed)
 Started: Not started
-Status: READY — TASK-002 tested and PRE-04 resolved
+Status: READY — TASK-003 tested
 
 Satisfied conditions:
-  PRE-04: RESOLVED — schema version v1.0, worker-output-v1, vocabulary,
-          and json-canonical-utf8-sort-keys-v1 are frozen.
-  TASK-002: TESTED — structure suite passed 59/59; full suite passed 123
-            with 19 expected skips.
+  TASK-002: TESTED — repository skeleton complete.
+  TASK-003: TESTED — 11/11 targeted tests passed; full suite passed 134
+            with 14 expected skips.
 ```
 
 ---
@@ -89,6 +88,7 @@ Satisfied conditions:
 |---|---|---|---|
 | TASK-001 | Recorded PRE-01–PRE-09 dispositions; froze PRE-03/04/05/06/07/09; selected HMAC-SHA256; preserved explicit PRE-01 and PRE-08 path blockers | JSON parse for touched schemas; security literal guards; documentation/config review | `431b92f` |
 | TASK-002 | Replaced premature scaffold content with task-scoped stubs; added the authoritative structure test, placeholder tests, package metadata, and wheelhouse README | Structure: 59 passed; full suite: 123 passed, 19 skipped; imports and security greps passed | `1d5225c` |
+| TASK-003 | Implemented the exception hierarchy, PRE-04-aligned state groups, audit event types, fixed constants, and exact PF-002 non-claim | Targeted: 11 passed; full suite: 134 passed, 14 skipped; security greps passed | `699a74b` |
 
 ---
 
@@ -118,10 +118,10 @@ Satisfied conditions:
 ## LATEST VALIDATED COMMIT
 
 ```
-Commit: 1d5225c
-Branch: feature/task-002-skeleton
+Commit: 699a74b
+Branch: feature/task-003-types
 Date: 2026-09-27
-Tests: structure 59 passed; full suite 123 passed, 19 expected skips; imports and security greps passed
+Tests: TASK-003 targeted 11 passed; full suite 134 passed, 14 expected skips; security greps passed
 ```
 
 ---
@@ -130,8 +130,8 @@ Tests: structure 59 passed; full suite 123 passed, 19 expected skips; imports an
 
 ```
 Date: 2026-09-27
-Tests passed: 123
-Tests skipped: 19 expected task-gated tests
+Tests passed: 134
+Tests skipped: 14 expected task-gated tests
 Test tooling: pytest 9.1.1 installed in a temporary non-repository directory only
 Security grep checks: `weights_only=False` 0 matches; literal `risk_score` in `assurance_system/` 0 matches; no positive CLEAN/SAFE/HEALTHY assurance constants found
 
@@ -147,7 +147,7 @@ Integration gates:
 
 ## NEXT TASK
 
-**Next task:** TASK-003 (Core Type Foundation — exceptions and constants).
+**Next task:** TASK-004 (Configuration System).
 
 Critical path reminder:
 ```
@@ -195,14 +195,14 @@ PRE-04 resolved
 
 *(To be filled by the agent ending a session — for the agent starting the next session)*
 
-**Current session:** TASK-002 repository skeleton completed and tested on `feature/task-002-skeleton`.
+**Current session:** TASK-003 core type foundation completed and tested on `feature/task-003-types`.
 
 **What the next agent needs to know:**
-- TASK-002 structure test passed 59/59; the full current suite passed 123 with 19 expected skips.
-- TASK-003 may begin on its own branch; PRE-04 is resolved.
+- TASK-003 targeted tests passed 11/11; the full current suite passed 134 with 14 expected skips.
+- TASK-004 may begin on its own branch.
 - PRE-01 still blocks target-dependent wheel, isolation, and offline claims.
 - PRE-08 remains partially unresolved; COMP-C4 must retain `SIGNING_UNAVAILABLE` behavior until the target key path and ACL are verified.
-- Continue with TASK-003 through TASK-009 in dependency order (Tier 1 and Tier 2 in §11 Section 8).
+- Continue with TASK-004 through TASK-009 in dependency order (Tier 1 and Tier 2 in §11 Section 8).
 - TASK-009 (hostile fixture suite) is a P0 task and must not be deferred to make room for feature work.
 - The weights_only=False grep check (SEC-007) must be set up in CI from Day 1 and must never pass with a match.
 - Signing (TASK-019) will ship as SIGNING_UNAVAILABLE shell until the remaining PRE-08 provisioning condition is resolved. This is expected and does not block non-signing pipeline work.
