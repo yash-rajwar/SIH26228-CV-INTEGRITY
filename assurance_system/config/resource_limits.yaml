@@ -1,17 +1,2 @@
-# resource_limits.yaml
-# Authority: 10_TECHNICAL_SPECIFICATION_SIH26228.md §15; §09 §15.2
-# Status: STUB — defaults shown; values pending PRE-01 (target host confirmation)
-
-# Per-worker resource caps (applied by supervisor on subprocess dispatch)
-default:
-  timeout_seconds: 300
-  max_memory_mb: 2048        # CONDITIONAL: adjust after PRE-01
-  max_file_descriptors: 64
-
-# Worker-specific overrides
-c2a_structural:
-  timeout_seconds: 600       # All-box structural validation may be slower on large datasets
-
-c3d_safe_load:
-  timeout_seconds: 120
-  max_memory_mb: 4096        # PyTorch load may require higher limit — CONDITIONAL: PRE-01
+# resource_limits.yaml — STUB
+# Populated in TASK-004 with values from docs/TECHNICAL_SPECIFICATION.md §15.2

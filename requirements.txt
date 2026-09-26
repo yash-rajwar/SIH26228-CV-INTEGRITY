@@ -1,32 +1,8 @@
-# requirements.txt — SIH26228 CV Integrity Assurance System
-# Authority: 10_TECHNICAL_SPECIFICATION_SIH26228.md §2.1, §12
-# Status: STUB — PIN LIST NOT YET FROZEN
-#
-# Pin list must be frozen after PRE-01 (target host) is confirmed.
-# All wheels must be pre-staged in wheelhouse/ before offline deployment.
-#
-# Technology stack (§10 §2.1):
-#   Python stdlib:  hashlib, sqlite3, subprocess, hmac, argparse, http.server, json, uuid
-#                   → No extra package required for stdlib components.
-#
-# Non-stdlib packages (pre-staged wheels required):
-#
-#   onnx            → ONNX structural validator (COMP-W-C3C)
-#                     Version: TBD after PRE-01
-#
-#   torch           → PyTorch safe-loading gate (COMP-W-C3D)
-#                     Constraint: >= 2.10.0 (hard floor from XREG-005)
-#                     CPU-only wheel; CONDITIONAL on PRE-01 + PRE-05
-#
-#   pycocotools     → COCO parsing (REUSE-020 ADOPT/ADAPT; BSD)
-#                     C extension; CONDITIONAL on PRE-01 build test
-#
-#   cryptography    → Ed25519 signing path only (BLOCKED: PRE-02 XREG-002)
-#                     If XREG-002 → HMAC-SHA256: NOT required (stdlib hmac sufficient)
-#
-# EXCLUDED (see NOT BUILD):
-#   jsonschema      — COMP-SCHEMA uses custom validation (no jsonschema package)
-#   onnxruntime     — Not required for structural validation; ORT telemetry unverified
-#   ultralytics     — Not in approved dependency set
-#   alibi-detect    — BSL 1.1 license gate (NB-06)
-#   fabric-sdk      — R01 Fabric client unconditionally excluded (NB-01, REUSE-015)
+# requirements.txt — STUB
+# NOT PINNED until PRE-01 (target host) is confirmed and wheelhouse is verified.
+# Hard constraint already established: torch >= 2.10.0 (XREG-005)
+# See docs/TECHNICAL_SPECIFICATION.md §12.3
+# onnx
+# pycocotools
+# torch>=2.10.0
+# cryptography  # only if PRE-02 → Ed25519; PRE-02 selected HMAC-SHA256
