@@ -1,1 +1,38 @@
-{}
+{
+  "title": "Worker output",
+  "description": "Untrusted worker-to-supervisor result contract from Technical Specification section 4.2.",
+  "schema_version": "v1.0",
+  "type": "object",
+  "required": [
+    "schema_version",
+    "worker_id",
+    "assessment_status",
+    "raw_signal",
+    "access_mode",
+    "artifact_unit_id",
+    "coverage_gap_clean_label",
+    "limitations",
+    "non_claims",
+    "dependency_declaration",
+    "assessment_timestamp",
+    "error_detail"
+  ],
+  "prohibited": {
+    "scope": "recursive",
+    "field_names": ["risk\u005fscore", "aggregate\u005fassurance", "compromise\u005fprobability", "overall\u005fscore", "threat\u005fscore", "malicious\u005fprobability", "confidence\u005fscore", "trust\u005fscore", "safety\u005fscore"]
+  },
+  "properties": {
+    "schema_version": {"type": "string", "const": "worker-output-v1", "description": "Frozen worker output contract identifier."},
+    "worker_id": {"type": "string", "description": "Approved C2 or C3 worker identifier."},
+    "assessment_status": {"type": "string", "description": "Assessment state from the frozen SP-003 vocabulary."},
+    "raw_signal": {"type": ["object", "null"], "description": "Method-specific raw observations or null on failed/deferred assessment."},
+    "access_mode": {"type": "string", "description": "BLACK_BOX, GREY_BOX, WHITE_BOX, INTERNAL_ACTIVATION, or UNAVAILABLE."},
+    "artifact_unit_id": {"type": "string", "description": "Artifact-unit definition used, or UNAVAILABLE."},
+    "coverage_gap_clean_label": {"type": "boolean", "const": true, "description": "Permanent T05d coverage-gap label; always true."},
+    "limitations": {"type": "array", "minItems": 1, "description": "Non-empty method limitations.", "items": {"type": "string", "minLength": 1}},
+    "non_claims": {"type": "array", "minItems": 1, "description": "Non-empty claims the evidence does not establish.", "items": {"type": "string", "minLength": 1}},
+    "dependency_declaration": {"type": "object", "description": "Co-firing detector list and independence status."},
+    "assessment_timestamp": {"type": "string", "description": "ISO 8601 UTC assessment timestamp."},
+    "error_detail": {"type": ["string", "null"], "description": "Failure detail for ASSESSMENT_ERROR; null otherwise."}
+  }
+}

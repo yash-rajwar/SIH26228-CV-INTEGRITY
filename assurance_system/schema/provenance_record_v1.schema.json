@@ -1,1 +1,27 @@
-{}
+{
+  "title": "Provenance record",
+  "description": "Signed or explicitly signing-unavailable provenance contract from Technical Specification section 4.5.",
+  "schema_version": "v1.0",
+  "type": "object",
+  "required": ["provenance_id", "schema_version", "artifact_unit_digest", "evidence_record_digests", "signing_key_id", "signature", "signature_algorithm", "canonicalization_algorithm", "sequence_number", "replay_nonce", "pf_002_non_claim", "signing_status", "timestamp"],
+  "prohibited": {
+    "scope": "recursive",
+    "field_names": ["risk\u005fscore", "aggregate\u005fassurance", "compromise\u005fprobability", "overall\u005fscore", "threat\u005fscore", "malicious\u005fprobability", "confidence\u005fscore", "trust\u005fscore", "safety\u005fscore"]
+  },
+  "properties": {
+    "provenance_id": {"type": "string", "description": "Supervisor-generated provenance UUID."},
+    "schema_version": {"type": "string", "description": "Provenance schema version."},
+    "artifact_unit_digest": {"type": "string", "description": "C3B artifact-unit SHA-256 digest."},
+    "evidence_record_digests": {"type": "array", "description": "Supervisor-computed evidence record digests.", "items": {"type": "string"}},
+    "signing_key_id": {"type": "string", "description": "Identifier only; never signing key material."},
+    "signature": {"type": ["string", "null"], "description": "Hex signature or null when signing is unavailable."},
+    "signature_algorithm": {"type": ["string", "null"], "description": "HMAC-SHA256 or null when signing is unavailable."},
+    "canonicalization_algorithm": {"type": "string", "description": "Frozen canonical JSON algorithm identifier."},
+    "sequence_number": {"type": "integer", "description": "Monotonically increasing provenance sequence."},
+    "replay_nonce": {"type": "string", "description": "Unique replay-protection nonce."},
+    "pf_002_non_claim": {"type": "string", "description": "Required causal-execution non-claim."},
+    "signing_status": {"type": "string", "description": "SIGNED or SIGNING_UNAVAILABLE."},
+    "timestamp": {"type": "string", "description": "Local-clock ISO 8601 timestamp."},
+    "created_at": {"type": "string", "description": "Optional SQLite persistence timestamp."}
+  }
+}

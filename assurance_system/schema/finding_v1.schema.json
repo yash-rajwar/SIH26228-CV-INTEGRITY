@@ -1,1 +1,32 @@
-{}
+{
+  "title": "C5 finding",
+  "description": "Structured assurance finding contract from Technical Specification section 4.4 and the findings table.",
+  "schema_version": "v1.0",
+  "type": "object",
+  "required": ["finding_id", "schema_version", "asset_id", "method_id", "detection_status", "interpretation_status", "applicability_status", "reference_health", "limitations", "non_claims", "dependency_declaration", "coverage_gap_clean_label", "anomaly_not_malicious_non_claim", "global_backdoor_absence_not_established", "pf_002_non_claim", "analyst_disposition_prompt", "is_synthetic"],
+  "prohibited": {
+    "scope": "recursive",
+    "field_names": ["risk\u005fscore", "aggregate\u005fassurance", "compromise\u005fprobability", "overall\u005fscore", "threat\u005fscore", "malicious\u005fprobability", "confidence\u005fscore", "trust\u005fscore", "safety\u005fscore"]
+  },
+  "properties": {
+    "finding_id": {"type": "string", "description": "Supervisor-generated finding UUID."},
+    "schema_version": {"type": "string", "description": "Finding schema version."},
+    "asset_id": {"type": "string", "description": "Assessed asset identifier."},
+    "method_id": {"type": "string", "description": "Assessment method identifier."},
+    "detection_status": {"type": "string", "description": "Detection state without maliciousness or safety claims."},
+    "interpretation_status": {"type": "string", "description": "C5 interpretation state."},
+    "applicability_status": {"type": "string", "description": "Method applicability state."},
+    "raw_signal": {"type": ["object", "array", "string", "number", "boolean", "null"], "description": "Supporting raw observations."},
+    "reference_health": {"type": "string", "description": "Reference health passed through from COMP-REF."},
+    "limitations": {"type": "array", "description": "Non-empty finding limitations."},
+    "non_claims": {"type": "array", "description": "Non-empty finding non-claims."},
+    "dependency_declaration": {"type": "object", "description": "Detector dependency declaration."},
+    "coverage_gap_clean_label": {"type": ["boolean", "integer"], "description": "Permanent clean-label coverage-gap marker."},
+    "anomaly_not_malicious_non_claim": {"type": ["boolean", "integer"], "description": "Anomaly does not establish maliciousness."},
+    "global_backdoor_absence_not_established": {"type": ["boolean", "integer"], "description": "Finite assessment cannot establish global absence."},
+    "pf_002_non_claim": {"type": "string", "description": "Required provenance-binding non-claim or unavailable marker."},
+    "analyst_disposition_prompt": {"type": "string", "description": "Permitted analyst disposition prompt."},
+    "is_synthetic": {"type": ["boolean", "integer"], "description": "Synthetic-fixture provenance marker."},
+    "created_at": {"type": "string", "description": "Optional SQLite persistence timestamp."}
+  }
+}

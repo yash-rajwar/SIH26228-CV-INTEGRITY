@@ -1,1 +1,34 @@
-{}
+{
+  "title": "Worker input",
+  "description": "Supervisor-to-worker named-file task contract from Technical Specification section 4.1.",
+  "schema_version": "v1.0",
+  "type": "object",
+  "required": [
+    "schema_version",
+    "task",
+    "asset_paths",
+    "format",
+    "asset_directory",
+    "artifact_unit_definition_id",
+    "resource_limits",
+    "identity_quality"
+  ],
+  "prohibited": {
+    "scope": "recursive",
+    "field_names": ["key\u005fpath", "db\u005fpath", "*password*", "*secret*", "*credential*"]
+  },
+  "properties": {
+    "schema_version": {"type": "string", "const": "worker-input-v1", "description": "Frozen worker input contract identifier."},
+    "task": {"type": "string", "description": "Worker task identifier from the approved C2/C3 task vocabulary."},
+    "asset_paths": {"type": "array", "description": "Absolute submitted-asset paths contained by asset_directory.", "items": {"type": "string"}},
+    "format": {"type": "string", "description": "Declared COCO, YOLO, ONNX, PyTorch, or TorchScript format."},
+    "task_variant": {"type": "string", "description": "Optional task subtype."},
+    "asset_directory": {"type": "string", "description": "Submitted asset root used for worker-side containment checks."},
+    "artifact_unit_definition_id": {"type": "string", "description": "Approved artifact-unit definition identifier."},
+    "resource_limits": {"type": "object", "description": "Configured timeout, memory, and file-descriptor limits."},
+    "identity_quality": {"type": "string", "description": "TRUSTED, UNTRUSTED, or UNAVAILABLE contributor identity quality."},
+    "reference_digest": {"type": ["string", "null"], "description": "Optional trusted-reference SHA-256 digest."},
+    "contributor_metadata": {"type": "array", "description": "Optional contributor records for concentration analysis."},
+    "artifact_unit": {"type": ["object", "null"], "description": "Optional resolved artifact-unit record for C3B."}
+  }
+}

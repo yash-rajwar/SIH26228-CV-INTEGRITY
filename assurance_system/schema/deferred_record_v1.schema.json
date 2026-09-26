@@ -1,1 +1,23 @@
-{}
+{
+  "title": "Deferred capability record",
+  "description": "Explicit deferred, reference-unavailable, or completeness-unavailable record from the deferred_records table.",
+  "schema_version": "v1.0",
+  "type": "object",
+  "required": ["record_id", "schema_version", "asset_id", "method_id", "assessment_status", "deferral_reason", "finite_battery_non_claim", "limitations", "non_claims"],
+  "prohibited": {
+    "scope": "recursive",
+    "field_names": ["risk\u005fscore", "aggregate\u005fassurance", "compromise\u005fprobability", "overall\u005fscore", "threat\u005fscore", "malicious\u005fprobability", "confidence\u005fscore", "trust\u005fscore", "safety\u005fscore"]
+  },
+  "properties": {
+    "record_id": {"type": "string", "description": "Supervisor-generated deferred-record UUID."},
+    "schema_version": {"type": "string", "description": "Deferred record schema version."},
+    "asset_id": {"type": "string", "description": "Affected asset identifier."},
+    "method_id": {"type": "string", "description": "Deferred or unavailable method identifier."},
+    "assessment_status": {"type": "string", "description": "DEFERRED_IN_SCOPE, REFERENCE_UNAVAILABLE, or COMPLETENESS_UNAVAILABLE."},
+    "deferral_reason": {"type": "string", "description": "Explicit reason the capability was not assessed."},
+    "finite_battery_non_claim": {"type": ["boolean", "integer"], "description": "Finite battery cannot establish universal absence."},
+    "limitations": {"type": "array", "description": "Non-empty deferred-record limitations."},
+    "non_claims": {"type": "array", "description": "Non-empty deferred-record non-claims."},
+    "created_at": {"type": "string", "description": "Optional SQLite persistence timestamp."}
+  }
+}
