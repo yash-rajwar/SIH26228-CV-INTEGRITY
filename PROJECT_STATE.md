@@ -12,7 +12,7 @@ Update this file at the end of every coding session before committing.
 ## PROJECT
 
 **Name:** Trustworthy Computer Vision Integrity Assurance — SIH 2026 PS 26228  
-**Current stage:** Foundation implementation — TASK-004 tested; TASK-005 ready
+**Current stage:** Foundation implementation — TASK-005 implemented; TASK-006 ready
 **Repository created:** [DATE TO BE FILLED ON REPO INIT]  
 **Five-day window start:** [DATE — begins after P1 conditions resolved]
 
@@ -39,7 +39,7 @@ Status codes: `NOT STARTED` | `IN PROGRESS` | `IMPLEMENTED` | `TESTED` | `VALIDA
 | Repository skeleton | TASK-002 | `TESTED` | Full §2.2 skeleton committed at `1d5225c`; structure and import tests pass |
 | exceptions.py + constants.py | TASK-003 | `TESTED` | Full hierarchy and PRE-04-aligned vocabulary committed at `699a74b` |
 | Config system | TASK-004 | `TESTED` | Fail-closed loader and populated YAML configuration committed at `03bc988` |
-| Evidence store (SQLite, WAL) | TASK-005 | `NOT STARTED` | Ready; PRE-04 and TASK-002–004 complete |
+| Evidence store (SQLite, WAL) | TASK-005 | `IMPLEMENTED` | Seven-table §3.15 schema, WAL, supervisor-only connection, guarded writes, and read/export API committed at `eb49e18` |
 | Audit chain writer | TASK-006 | `NOT STARTED` | |
 | Worker base (IPC, resource limits) | TASK-007 | `NOT STARTED` | |
 | Schema validator + JSON schemas | TASK-008 | `NOT STARTED` | PRE-04 resolved; awaits foundation tasks |
@@ -68,15 +68,15 @@ Status codes: `NOT STARTED` | `IN PROGRESS` | `IMPLEMENTED` | `TESTED` | `VALIDA
 ## CURRENT TASK
 
 ```
-TASK: TASK-005 — Evidence Store
+TASK: TASK-006 — Audit Chain Writer
 Owner: Codex
-Branch: Not created
-Started: Not started
-Status: READY — PRE-04 resolved and TASK-004 tested
+Branch: feature/persistence
+Started: 2026-09-27
+Status: READY — TASK-005 implemented and tested
 
 Satisfied conditions:
   PRE-04: RESOLVED — schema contract frozen.
-  TASK-004: TESTED — 8/8 targeted tests passed; full suite passed 142
+  TASK-005: IMPLEMENTED — 6/6 targeted tests passed; full suite passed 148
             with 11 expected skips.
 ```
 
@@ -90,6 +90,7 @@ Satisfied conditions:
 | TASK-002 | Replaced premature scaffold content with task-scoped stubs; added the authoritative structure test, placeholder tests, package metadata, and wheelhouse README | Structure: 59 passed; full suite: 123 passed, 19 skipped; imports and security greps passed | `1d5225c` |
 | TASK-003 | Implemented the exception hierarchy, PRE-04-aligned state groups, audit event types, fixed constants, and exact PF-002 non-claim | Targeted: 11 passed; full suite: 134 passed, 14 skipped; security greps passed | `699a74b` |
 | TASK-004 | Implemented fail-closed YAML loading, type/key validation, resource-limit access, and PRE-04/PRE-05/PRE-02-aligned configuration | Targeted: 8 passed; full suite: 142 passed, 11 skipped; PyYAML-unavailable path and security greps passed | `03bc988` |
+| TASK-005 | Implemented the authoritative seven-table SQLite schema, WAL and foreign-key setup, supervisor-owned parameterised write paths, read/query API, ZIP export, schema guards, and REUSE-018 attribution | UT-STORE-001..006: 6 passed; full suite: 148 passed, 11 skipped; schema inspection and security greps passed | `eb49e18` |
 
 ---
 
@@ -119,10 +120,10 @@ Satisfied conditions:
 ## LATEST VALIDATED COMMIT
 
 ```
-Commit: 03bc988
-Branch: feature/task-004-config
+Commit: eb49e18
+Branch: feature/persistence
 Date: 2026-09-27
-Tests: TASK-004 targeted 8 passed; full suite 142 passed, 11 expected skips; PyYAML-unavailable path and security greps passed
+Tests: TASK-005 targeted 6 passed; full suite 148 passed, 11 expected skips; schema inspection, WAL, import, and security greps passed
 ```
 
 ---
@@ -131,7 +132,7 @@ Tests: TASK-004 targeted 8 passed; full suite 142 passed, 11 expected skips; PyY
 
 ```
 Date: 2026-09-27
-Tests passed: 142
+Tests passed: 148
 Tests skipped: 11 expected task-gated tests
 Test tooling: pytest 9.1.1 and PyYAML 6.0.3 installed in a temporary non-repository directory only
 Security grep checks: `weights_only=False` 0 matches; literal `risk_score` in `assurance_system/` 0 matches; no positive CLEAN/SAFE/HEALTHY assurance constants found
@@ -148,7 +149,7 @@ Integration gates:
 
 ## NEXT TASK
 
-**Next task:** TASK-005 (Evidence Store). PRE-04 is fully resolved.
+**Next task:** TASK-006 (Audit Chain Writer) on `feature/persistence`.
 
 Critical path reminder:
 ```
@@ -196,11 +197,13 @@ PRE-04 resolved
 
 *(To be filled by the agent ending a session — for the agent starting the next session)*
 
-**Current session:** TASK-004 configuration system completed and tested on `feature/task-004-config`.
+**Current session:** TASK-005 evidence store completed and tested on `feature/persistence`.
 
 **What the next agent needs to know:**
-- TASK-004 targeted tests passed 8/8; the full current suite passed 142 with 11 expected skips.
-- TASK-005 is released because PRE-04 is fully resolved and the foundation tasks are tested.
+- TASK-005 targeted tests passed 6/6; the full current suite passed 148 with 11 expected skips.
+- The authoritative §3.15 DDL contains four indexes despite TASK-005 prompt prose saying three; all four authoritative indexes are implemented.
+- PRE-04 is fully resolved; schema version `1.0.0` is used by tests and no `v1-pending` placeholder is present.
+- TASK-006 is released because TASK-005 is implemented and tested.
 - PRE-01 still blocks target-dependent wheel, isolation, and offline claims.
 - PRE-08 remains partially unresolved; COMP-C4 must retain `SIGNING_UNAVAILABLE` behavior until the target key path and ACL are verified.
 - Continue with TASK-005 through TASK-009 in dependency order (Tier 1 and Tier 2 in §11 Section 8).
