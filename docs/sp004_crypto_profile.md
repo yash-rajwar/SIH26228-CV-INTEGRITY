@@ -1,6 +1,6 @@
 # SP-004 Crypto Profile
 
-Decision date: 2026-09-27  
+Decision date: 2026-09-27
 Related decisions: PRE-02 resolved to HMAC-SHA256; PRE-08 path provisioning remains conditional on PRE-01
 
 ## Algorithm and key
@@ -41,4 +41,3 @@ Required invariants regardless of OS:
 HMAC authenticates records only to parties holding the shared secret. It does
 not provide public verification or asymmetric non-repudiation. All provenance
 records retain the complete PF-002 non-claim required by the specifications.
-

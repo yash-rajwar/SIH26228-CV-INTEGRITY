@@ -1,7 +1,7 @@
 # TASK-001 — P1 Condition Decision Register
 
-Date: 2026-09-27  
-Branch: `task/task-001-p1-decisions`  
+Date: 2026-09-27
+Branch: `task/task-001-p1-decisions`
 Authority: TASK-001 in `docs/MVP_IMPLEMENTATION_PLAN.md`
 
 This register records the disposition of PRE-01 through PRE-09. It does not
@@ -94,4 +94,3 @@ PRE-04 is complete, so TASK-002 may begin. This decision does not release:
   (PRE-01 remains unresolved);
 - operational signing (PRE-08 key storage path/provisioning remains unresolved);
 - TASK-027 offline validation.
-

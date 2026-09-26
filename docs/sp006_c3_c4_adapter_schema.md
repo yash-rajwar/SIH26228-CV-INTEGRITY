@@ -1,6 +1,6 @@
 # SP-006 C3→C4 Adapter Schema
 
-Decision date: 2026-09-27  
+Decision date: 2026-09-27
 Resolves: PRE-09
 
 ## Boundary rule
@@ -53,4 +53,3 @@ not mapped from C3 worker output:
   them into a positive state.
 - A signing failure follows SP-004 and produces an unsigned provenance record
   explicitly marked `SIGNING_UNAVAILABLE`; it is never represented as signed.
-

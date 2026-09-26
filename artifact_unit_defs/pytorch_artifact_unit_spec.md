@@ -1,7 +1,7 @@
 # PyTorch Artifact Unit Specification
 
-Specification ID: `pytorch-single-file-v1`  
-Decision date: 2026-09-27  
+Specification ID: `pytorch-single-file-v1`
+Decision date: 2026-09-27
 Resolves: PRE-03 / SP-002 for the MVP PyTorch path
 
 ## Unit definition
@@ -63,4 +63,3 @@ digest.
   semantic equivalence, or absence of backdoors.
 - Excluding companion configuration means the digest does not identify a full
   executable inference environment.
-

@@ -1,6 +1,6 @@
 # SP-001 Reference-Health Gate Procedure
 
-Decision date: 2026-09-27  
+Decision date: 2026-09-27
 Resolves: PRE-06
 
 ## Default and authority
@@ -52,4 +52,3 @@ there is no aggregate confidence or risk value.
 
 No reference has completed these gates. All references therefore remain
 `UNAVAILABLE`, and reference-relative methods remain unavailable at MVP start.
-

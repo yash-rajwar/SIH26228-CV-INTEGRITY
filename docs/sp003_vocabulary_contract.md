@@ -1,6 +1,6 @@
 # SP-003 Vocabulary Contract and Schema Version Freeze
 
-Decision date: 2026-09-27  
+Decision date: 2026-09-27
 Resolves: PRE-04
 
 ## Frozen identifiers
@@ -82,4 +82,3 @@ Any addition, removal, or semantic reinterpretation of a frozen value requires
 a new schema ID and an approved change record. Aliasing an unknown value to a
 known value is prohibited. An unknown or version-mismatched record is rejected
 as a schema violation and cannot be interpreted as a positive result.
-
