@@ -12,7 +12,7 @@ Update this file at the end of every coding session before committing.
 ## PROJECT
 
 **Name:** Trustworthy Computer Vision Integrity Assurance — SIH 2026 PS 26228  
-**Current stage:** Stage 5 data-integrity workers — TASK-010 through TASK-013 implemented
+**Current stage:** Stage 6 model-integrity workers — TASK-014 implemented with ONNX validation blocked by E-2 / HOST-CAP-003
 **Repository created:** [DATE TO BE FILLED ON REPO INIT]  
 **Five-day window start:** [DATE — begins after P1 conditions resolved]
 
@@ -48,7 +48,7 @@ Status codes: `NOT STARTED` | `IN PROGRESS` | `IMPLEMENTED` | `TESTED` | `VALIDA
 | COMP-W-C2B (exact hash) | TASK-011 | `IMPLEMENTED` | Stdlib-only streaming SHA-256 duplicate grouping, per-file error handling, fail-closed all-failed state, and mandatory deferred PDQ disclosure implemented in the current TASK-011 commit; 10 targeted tests and full regression pass |
 | COMP-W-C2C (concentration) | TASK-012 | `TESTED` | Exact §3.5 HHI/entropy statistics, source shares/counts, UNTRUSTED-default SYBIL_UNRELIABLE behavior, fail-closed missing/prohibited input handling, and FIX-012 integration implemented in the current TASK-012 commit; 8 targeted tests and full regression pass |
 | COMP-W-C2D (image hash) | TASK-013 | `TESTED` | Stdlib-only streaming SHA-256, byte-identical image grouping, path containment, per-file error handling, mandatory PDQ deferral, and permanent T05d non-claims implemented in the current TASK-013 commit; 6 targeted tests and full regression pass |
-| COMP-W-C3A (artifact-unit resolver) | TASK-014 | `NOT STARTED` | PRE-03 resolved; awaits foundation and worker-base tasks |
+| COMP-W-C3A (artifact-unit resolver) | TASK-014 | `BLOCKED` | Containment-first ONNX resolver, frozen `pytorch-single-file-v1` resolver, TorchScript deferral, and PF-002 output fields implemented; 7 targeted tests pass, while UT-C3A-001 through UT-C3A-005 plus the missing-external-file integration check are blocked on HOST-CAP-003; E-2 keeps the ONNX definition ID `UNAVAILABLE` |
 | COMP-W-C3B (model hasher) | TASK-015 | `NOT STARTED` | Depends on TASK-014 |
 | COMP-W-C3C (ONNX structural) | TASK-016 | `NOT STARTED` | |
 | COMP-W-C3D (PyTorch safe-load gate) | TASK-017 | `NOT STARTED` | PRE-05 resolved; repository-local Windows AMD64 / Python 3.13.12 Torch 2.10.0+cpu environment is verified; worker implementation remains future scope |
@@ -68,19 +68,21 @@ Status codes: `NOT STARTED` | `IN PROGRESS` | `IMPLEMENTED` | `TESTED` | `VALIDA
 ## CURRENT TASK
 
 ```
-TASK: TASK-013 — COMP-W-C2D Image-Level Hash Floor
+TASK: TASK-014 — COMP-W-C3A Artifact-Unit Resolver
 Owner: Codex
-Branch: feature/task-013-c2d-image-hash
+Branch: feature/task-014-c3a-artifact-unit
 Started: 2026-09-27
-Status: TESTED — all required image-hash-floor logic and tests pass.
+Status: BLOCKED — implementation is present; genuine ONNX integration validation is blocked on HOST-CAP-003 and final ONNX success remains blocked on E-2.
 
 Satisfied conditions:
-  TASK-007: TESTED — worker output and containment utilities available.
-  TASK-008: TESTED — C2D output schema validation available.
-  TASK-009: TESTED — fixture infrastructure remains intact.
-  TASK-013 TESTS: 6 targeted unit/security tests passed; full suite passed
-                  224 with 12 expected conditional skips.
-  REUSE-005: REIMPLEMENTED — stdlib hash floor only; no R01 code or image decoding.
+  TASK-007: TESTED — worker output, named-file IPC, and containment utility available.
+  TASK-008: TESTED — C3 output schema validation available.
+  TASK-009: TESTED — FIX-004/005/006/016 generators exist.
+  PRE-03 / TASK-014 packet E-4: RESOLVED — pytorch-single-file-v1 is implemented without importing Torch.
+  TASK-014 EXECUTABLE TESTS: 7 passed; 6 genuine ONNX tests skipped with
+                             "BLOCKED: HOST-CAP-003 — onnx not installed".
+  FULL REGRESSION: 231 passed, 18 expected conditional skips.
+  REUSE-008: HARDENED / REIMPLEMENTED — no R01 source copied.
 ```
 
 ---
@@ -114,7 +116,8 @@ Satisfied conditions:
 | HOST-CAP-001 | No C compiler detected; `pycocotools` and other native-extension support require separate Windows AMD64 / Python 3.13.12 verification | TASK-010 and any native-extension dependency claim | Dependency / deployment owner |
 | HOST-CAP-002 | Python `resource.setrlimit` and Unix RLIMIT controls are unavailable; no replacement isolation mechanism is authorized by PRE-01 | Resource-limit enforcement claims; later isolation hardening if required | Architecture / deployment owner |
 | OFFLINE-001 | Wheelhouse installation, imports, and zero-egress behavior have not been validated for Windows AMD64 / Python 3.13.12 | TASK-027 and every offline deployment claim | Deployment owner |
-| HOST-CAP-003 | `onnx` is not installed in the current test runtime; FIX-004/005/006/016 generation code is present but runtime verification is conditionally skipped | Conditional ONNX fixture verification and later TASK-016 | Dependency / deployment owner |
+| E-2 / SP-002-ONNX | No frozen ONNX artifact-unit definition ID exists. C3A returns the resolved manifest as `ARTIFACT_UNIT_AMBIGUOUS` with definition ID `UNAVAILABLE`; no ID is inferred from PyTorch. | Final ONNX C3A acceptance and TASK-015 ONNX hashing | Project owner / architecture owner |
+| HOST-CAP-003 / TASK-014 packet E-3 | `onnx` is not installed in the repository-local Python runtime; FIX-004/005/006/016 and UT-C3A-001 through UT-C3A-005 cannot receive genuine protobuf-backed runtime verification | TASK-014 ONNX validation, conditional ONNX fixtures, and TASK-016 | Dependency / deployment owner |
 
 ---
 
@@ -122,7 +125,7 @@ Satisfied conditions:
 
 *(At repository creation — to be updated as implementation progresses)*
 
-- Foundation components through TASK-009 and all four data workers TASK-010 through TASK-013 are implemented; model-integrity workers remain `NOT STARTED`.
+- Foundation components through TASK-009 and all four data workers TASK-010 through TASK-013 are implemented. TASK-014 code is implemented with partial validation; final ONNX acceptance remains blocked by E-2 and HOST-CAP-003.
 - Offline capability claim is not permissible until TASK-027 passes on the confirmed Windows AMD64 / Python 3.13.12 target host.
 - The target has no detected C compiler; native-extension dependencies remain unverified.
 - Python `resource.setrlimit` and Unix `RLIMIT_AS`, `RLIMIT_NOFILE`, and `RLIMIT_NPROC` are unavailable. `subprocess.Popen(..., close_fds=True)` is verified working.
@@ -137,10 +140,10 @@ Satisfied conditions:
 ## LATEST VALIDATED COMMIT
 
 ```
-Commit: This TASK-013 completion commit
-Branch: feature/task-013-c2d-image-hash
+Commit: This TASK-014 partial implementation commit
+Branch: feature/task-014-c3a-artifact-unit
 Date: 2026-09-27
-Tests: TASK-013 targeted unit/security suite 6 passed; full suite 224 passed, 12 expected skips; deterministic SHA-256, duplicate grouping, path containment, named-file CLI, schema acceptance, import audit, and security guards passed
+Tests: TASK-014 targeted suite 7 passed, 6 HOST-CAP-003 skips; security suite 9 passed, 4 expected task-gated skips; full suite 231 passed, 18 expected skips; compile, schema acceptance, import audit, and universal literal guards passed
 ```
 
 ---
@@ -149,10 +152,10 @@ Tests: TASK-013 targeted unit/security suite 6 passed; full suite 224 passed, 12
 
 ```
 Date: 2026-09-27
-Tests passed: 224
-Tests skipped: 12 expected task/dependency-gated tests
+Tests passed: 231
+Tests skipped: 18 expected task/dependency-gated tests, including 6 TASK-014 ONNX skips for HOST-CAP-003
 Test tooling: repository-local Python 3.13.12 with Torch 2.10.0+cpu; pytest 9.1.1 and PyYAML 6.0.3 loaded from a temporary non-repository directory
-Security grep checks: `weights_only=False` 0 matches; literal `risk_score` and `weights_only` in COMP-W-C2D 0 matches; no image-decoding, network, non-stdlib external, or COMP-W-C2B imports in COMP-W-C2D
+Security checks: `weights_only=False`, `risk_score`, `aggregate_assurance`, `compromise_probability`, and `load_external_data=True` each have 0 production Python matches; COMP-W-C3A has no Torch or ONNX Runtime import and imports ONNX only inside its post-containment loader
 
 Integration gates:
   GATE-1 (Foundation):       NOT PASSED
@@ -195,7 +198,7 @@ Integration gates:
 - FIX-004, FIX-005, and FIX-006 generators exist in `assurance_system/fixtures/hostile/onnx_path_traversal.py` for absolute-path, traversal-pattern, and symlink-escape external-data cases.
 - FIX-016 exists in `assurance_system/fixtures/hostile/benign.py` as a minimal structurally valid ONNX Identity graph.
 - The ONNX fixture test is currently skipped with `BLOCKED: onnx package not installed`; the focused check produced one expected skip.
-- TASK-009's ONNX generators are implemented, but runtime verification remains conditional on ONNX availability. No TASK-014/C3A test module is present yet.
+- TASK-009's ONNX generators are implemented, but runtime verification remains conditional on ONNX availability. `tests/unit/test_c3a_artifact_unit.py` now exists; its genuine ONNX cases retain the HOST-CAP-003 skip.
 
 ### Blockers
 
@@ -213,7 +216,7 @@ Integration gates:
 
 ## NEXT TASK
 
-**Next task:** Run the Stage 5 exit gate across TASK-010 through TASK-013. Do not begin TASK-014 until that gate authorizes Stage 6. TASK-010's pycocotools runtime dependency remains tracked under HOST-CAP-001 and does not authorize a positive-result fallback.
+**Next task:** Resolve E-2 and stage a verified compatible ONNX/protobuf dependency set under the offline policy, then rerun the six blocked TASK-014 ONNX tests. Do not begin TASK-015 from this blocked handoff.
 
 Critical path reminder:
 ```
@@ -250,6 +253,7 @@ PRE-04 resolved
 | PRE-07 / GAP-011 | **RESOLVED 2026-09-27:** ingestion excluded from MVP because no organizer source is established | Organizer | Closed for MVP |
 | PRE-08 / SP-004 | **PARTIAL 2026-09-27:** algorithm/key/encoding frozen; Windows target-host absolute path and supervisor-only ACL provisioning remain pending | Project team / deployment owner | P1 blocker for operational signing |
 | PRE-09 / SP-006 | **RESOLVED 2026-09-27:** C3→C4 field mapping frozen | Project team | Closed |
+| E-2 / SP-002-ONNX | Freeze the ONNX artifact-unit definition and its `artifact_unit_definition_id`; the PyTorch ID must not be reused or inferred | Project owner / architecture owner | Blocks final TASK-014 ONNX acceptance and TASK-015 ONNX hashing |
 | OQ-017 | Analyst authentication and authority hierarchy | Project owner | Post-MVP |
 | OQ-018 | Evidence retention policy | Project owner | Post-MVP |
 | AF-003 | Trusted clock source | Deployment environment | Post-MVP |
@@ -261,7 +265,7 @@ PRE-04 resolved
 
 *(To be filled by the agent ending a session — for the agent starting the next session)*
 
-**Current session:** TASK-013 implemented on `feature/task-013-c2d-image-hash`, stacked on the validated TASK-012 commit. Deterministic streaming SHA-256, duplicate grouping, path containment, PDQ deferral, T05d disclosure, named-file IPC, schema validation, and security rejection paths pass their targeted tests.
+**Current session:** TASK-014 implemented on `feature/task-014-c3a-artifact-unit`, stacked on the validated TASK-013 and Stage 6 preflight commits. PyTorch single-file resolution, TorchScript deferral, containment-before-import, dependency-unavailable behavior, schema acceptance, and mandatory C3/PF-002 output fields pass. Genuine ONNX protobuf-backed tests remain blocked on HOST-CAP-003, and E-2 keeps ONNX manifests fail-closed as `ARTIFACT_UNIT_AMBIGUOUS` with definition ID `UNAVAILABLE`.
 
 **What the next agent needs to know:**
 - TASK-006 unit tests passed 5/5 and SEC-010 passed; the full current suite passed 154 with 11 expected skips.
@@ -293,6 +297,11 @@ PRE-04 resolved
 - TASK-013 targeted tests passed 6/6 and the full suite passed 224 with 12 expected skips. Named-file IPC and schema validation accept the COMPLETED C2D record.
 - COMP-W-C2D uses only stdlib `hashlib` for streaming byte identity and does not decode images. PDQ remains DEFERRED_IN_SCOPE, and both the task-specific image-hash T05d non-claim and the mandatory §6.3 assessment-wide T05d non-claim are present on every output.
 - GAP-010/XREG-010 evidence ownership remains a recorded project-owner decision; TASK-013 does not redefine it or add any persistence path.
+- TASK-014 targeted tests passed 7 with 6 genuine ONNX cases skipped exactly as `BLOCKED: HOST-CAP-003 — onnx not installed`; full regression passed 231 with 18 expected skips.
+- COMP-W-C3A never imports Torch or ONNX Runtime. ONNX is imported lazily only after the submitted model path passes `is_within_directory`, and `onnx.load(..., load_external_data=False)` is the only model parse.
+- ONNX TensorProto references are discovered recursively through the protobuf message tree, covering initializers, sparse tensors, tensor attributes, subgraphs, and functions supported by the installed protobuf schema. Every external path is checked before file access.
+- E-2 remains open: ONNX manifests cannot produce final success without a frozen definition ID. E-3/HOST-CAP-003 remains open: ONNX is absent. TASK-014 packet E-4 is resolved: `pytorch-single-file-v1` is active and tested without deserialization.
+- Every C3A output uses the existing builder, carries non-empty limitations/non-claims, non-null `access_mode`, `coverage_gap_clean_label=True`, the `PF_002_NON_CLAIM` text, and all three hash-match boolean non-claims.
 - The weights_only=False grep check (SEC-007) must be set up in CI from Day 1 and must never pass with a match.
 - Signing (TASK-019) will ship as SIGNING_UNAVAILABLE shell until the remaining PRE-08 provisioning condition is resolved. This is expected and does not block non-signing pipeline work.
 - Antigravity begins AFTER GATE-2 passes — not before.
