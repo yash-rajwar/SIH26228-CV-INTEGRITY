@@ -1,2 +1,19 @@
-# resource_limits.yaml — STUB
-# Populated in TASK-004 with values from docs/TECHNICAL_SPECIFICATION.md §15.2
+# resource_limits.yaml
+# Authority: docs/TECHNICAL_SPECIFICATION.md §15.2
+# Each value names the controlled resource and documents its default rationale.
+
+resource_limits:
+  default:
+    timeout_seconds: 120       # General subprocess completion timeout.
+    memory_limit_mb: 2048      # General RLIMIT_AS cap where available.
+    max_file_descriptors: 64   # General RLIMIT_NOFILE cap where available.
+
+  C3D_SAFE_LOAD:
+    timeout_seconds: 60        # Shorter containment window for model loading.
+    memory_limit_mb: 4096      # Additional RAM for PyTorch CPU loading.
+    max_file_descriptors: 32   # Safe-load worker needs a small file set.
+
+  C2A_STRUCTURAL:
+    timeout_seconds: 300       # Large annotation files can require more time.
+    memory_limit_mb: 2048      # General memory cap remains sufficient.
+    max_file_descriptors: 32   # Structural validation uses a bounded file set.

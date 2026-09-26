@@ -1,6 +1,28 @@
-# system_config.yaml — STUB
-# Authoritative content defined in docs/TECHNICAL_SPECIFICATION.md §15.2
-# Populated in TASK-004
-# PRE-04 resolved in docs/sp003_vocabulary_contract.md
+# system_config.yaml
+# Authority: docs/TECHNICAL_SPECIFICATION.md §15.2
+# Architecture: docs/ARCHITECTURE_SPECIFICATION.md §15.1
+# All thresholds are named parameters.
+
 schema_version: "v1.0"
 schema_active_version_id: "worker-output-v1"
+
+evidence_store:
+  path: "/var/assurance/evidence-store/evidence.db"
+
+audit_trail:
+  path: "/var/assurance/audit-trail/audit.db"
+
+signing:
+  key_path: "/var/assurance/keys/hmac_key.bin"
+  public_key_path: "/var/assurance/keys/signing_key.pub"
+  sequence_state_path: "/var/assurance/keys/sequence_state.json"
+  algorithm: "HMAC-SHA256"
+
+supported_formats_config: "config/supported_formats.yaml"
+artifact_unit_defs_dir: "artifact_unit_defs/"
+supervisor_version_id: "0.1.0-mvp"
+worker_temp_dir_base: "/tmp/assurance-workers"
+
+# Maximum accepted COCO annotation JSON size. The 2 GiB default bounds worker
+# resource use while retaining support for large offline datasets.
+coco_annotation_file_max_size_bytes: 2147483648

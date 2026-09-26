@@ -1,34 +1,10 @@
 # supported_formats.yaml
-# Authority: docs/TECHNICAL_SPECIFICATION.md §13; docs/ARCHITECTURE_SPECIFICATION.md §13
-# Status: PRE-05 RESOLVED — 2026-09-27
+# Authority: docs/TECHNICAL_SPECIFICATION.md §13.4
+# PRE-05 resolved in docs/p1_decisions.md on 2026-09-27.
 
-data_formats:
-  coco:
-    status: "SUPPORTED"
-    note: "MVP scope confirmed. Runtime availability remains conditional on PRE-01 pycocotools target-host closure."
-  yolo_detect:
-    status: "SUPPORTED"
-    note: "MVP scope confirmed."
-  yolo_segment:
-    status: "SUPPORTED"
-    note: "MVP scope confirmed; structural polygon validation only."
-  yolo_pose:
-    status: "UNSUPPORTED"
-    note: "Not in MVP; submissions produce an explicit UNSUPPORTED record."
-  yolo_obb:
-    status: "UNSUPPORTED"
-    note: "Not in MVP; submissions produce an explicit UNSUPPORTED record."
-
-model_formats:
-  onnx:
-    status: "SUPPORTED"
-    note: "Both external-data and no-external-data variants are in MVP; runtime availability remains conditional on target-host wheel closure."
-  pytorch_pt_pth:
-    status: "SUPPORTED"
-    note: "MVP scope confirmed; runtime availability remains conditional on PRE-01 and torch >= 2.10.0."
-  torchscript:
-    status: "DEFERRED_IN_SCOPE"
-    note: "Not demonstrated on target host; RC-014 state-dict mapping unresolved."
-  safetensors:
-    status: "DEFERRED_IN_SCOPE"
-    note: "YOLO state-dict mapping absent (RC-014)."
+coco_in_scope: true
+onnx_in_scope: true
+yolo_task_variants:
+  - YOLO_DETECTION
+  - YOLO_SEG
+pytorch_in_scope: true
