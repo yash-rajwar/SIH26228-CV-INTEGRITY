@@ -12,7 +12,7 @@ Update this file at the end of every coding session before committing.
 ## PROJECT
 
 **Name:** Trustworthy Computer Vision Integrity Assurance — SIH 2026 PS 26228  
-**Current stage:** Stage 5 data-integrity workers — TASK-010 through TASK-012 implemented
+**Current stage:** Stage 5 data-integrity workers — TASK-010 through TASK-013 implemented
 **Repository created:** [DATE TO BE FILLED ON REPO INIT]  
 **Five-day window start:** [DATE — begins after P1 conditions resolved]
 
@@ -47,7 +47,7 @@ Status codes: `NOT STARTED` | `IN PROGRESS` | `IMPLEMENTED` | `TESTED` | `VALIDA
 | COMP-W-C2A (all-box structural) | TASK-010 | `IMPLEMENTED` | All-box COCO geometry layer and PRE-05-authorized YOLO detection/segmentation parser implemented at `65fef55`; 14 targeted tests and full regression pass; real `pycocotools` runtime remains conditional under HOST-CAP-001 and fails closed when unavailable |
 | COMP-W-C2B (exact hash) | TASK-011 | `IMPLEMENTED` | Stdlib-only streaming SHA-256 duplicate grouping, per-file error handling, fail-closed all-failed state, and mandatory deferred PDQ disclosure implemented in the current TASK-011 commit; 10 targeted tests and full regression pass |
 | COMP-W-C2C (concentration) | TASK-012 | `TESTED` | Exact §3.5 HHI/entropy statistics, source shares/counts, UNTRUSTED-default SYBIL_UNRELIABLE behavior, fail-closed missing/prohibited input handling, and FIX-012 integration implemented in the current TASK-012 commit; 8 targeted tests and full regression pass |
-| COMP-W-C2D (image hash) | TASK-013 | `NOT STARTED` | |
+| COMP-W-C2D (image hash) | TASK-013 | `TESTED` | Stdlib-only streaming SHA-256, byte-identical image grouping, path containment, per-file error handling, mandatory PDQ deferral, and permanent T05d non-claims implemented in the current TASK-013 commit; 6 targeted tests and full regression pass |
 | COMP-W-C3A (artifact-unit resolver) | TASK-014 | `NOT STARTED` | PRE-03 resolved; awaits foundation and worker-base tasks |
 | COMP-W-C3B (model hasher) | TASK-015 | `NOT STARTED` | Depends on TASK-014 |
 | COMP-W-C3C (ONNX structural) | TASK-016 | `NOT STARTED` | |
@@ -68,19 +68,19 @@ Status codes: `NOT STARTED` | `IN PROGRESS` | `IMPLEMENTED` | `TESTED` | `VALIDA
 ## CURRENT TASK
 
 ```
-TASK: TASK-012 — COMP-W-C2C Source Concentration Statistics
+TASK: TASK-013 — COMP-W-C2D Image-Level Hash Floor
 Owner: Codex
-Branch: feature/task-012-c2c-concentration
+Branch: feature/task-013-c2d-image-hash
 Started: 2026-09-27
-Status: TESTED — all required concentration-statistics logic and tests pass.
+Status: TESTED — all required image-hash-floor logic and tests pass.
 
 Satisfied conditions:
   TASK-007: TESTED — worker output and containment utilities available.
-  TASK-008: TESTED — C2C output schema validation available.
-  TASK-009: TESTED — FIX-012 fixture available and integrated.
-  TASK-012 TESTS: 8 targeted unit/integration tests passed; full suite passed
-                  218 with 12 expected conditional skips.
-  REUSE-006: REIMPLEMENTED — raw statistics only; no R01 code or scoring semantics.
+  TASK-008: TESTED — C2D output schema validation available.
+  TASK-009: TESTED — fixture infrastructure remains intact.
+  TASK-013 TESTS: 6 targeted unit/security tests passed; full suite passed
+                  224 with 12 expected conditional skips.
+  REUSE-005: REIMPLEMENTED — stdlib hash floor only; no R01 code or image decoding.
 ```
 
 ---
@@ -102,6 +102,7 @@ Satisfied conditions:
 | TASK-010 | Implemented COMP-W-C2A all-annotation COCO geometry validation on conditional pycocotools data, pure-stdlib YOLO detection/segmentation validation, fail-closed input/path/size/dependency handling, permanent T05d non-claims, and explicit unsupported pose/OBB behavior | UT-C2A-001..009 plus segmentation/dependency/size checks and SEC-C2A-001..002: 14 passed; full suite: 200 passed, 12 expected skips; all-box AST review and universal security guards passed | `65fef55` |
 | TASK-011 | Implemented COMP-W-C2B deterministic SHA-256 streaming, exact-duplicate grouping, path containment and read-error isolation, all-failed ASSESSMENT_ERROR handling, and non-suppressible DEFERRED_IN_SCOPE PDQ disclosure | UT-C2B-001..006, REPRO-002, empty-corpus boundary, and SEC-C2B-001..002: 10 passed; full suite: 210 passed, 12 expected skips; stdlib-only import and universal security guards passed | This TASK-011 completion commit |
 | TASK-012 | Implemented COMP-W-C2C HHI, Shannon entropy, per-source shares/counts, UNTRUSTED-default SYBIL_UNRELIABLE semantics, fail-closed missing/prohibited input handling, and FIX-012 integration | UT-C2C-001..006 plus FIX-012 and prohibited-input checks: 8 passed; CLI/schema acceptance passed; full suite: 218 passed, 12 expected skips; stdlib-only import and universal security guards passed | This TASK-012 completion commit |
+| TASK-013 | Implemented COMP-W-C2D streaming SHA-256 image identity, byte-identical duplicate grouping, containment/read-error handling, non-suppressible PDQ deferral, and permanent T05d disclosure without image decoding | UT-C2D-001..004 plus containment and prohibited-input checks: 6 passed; CLI/schema acceptance passed; full suite: 224 passed, 12 expected skips; stdlib-only import and universal security guards passed | This TASK-013 completion commit |
 
 ---
 
@@ -121,7 +122,7 @@ Satisfied conditions:
 
 *(At repository creation — to be updated as implementation progresses)*
 
-- Foundation components through TASK-009 and data workers TASK-010/TASK-011/TASK-012 are implemented; remaining assessment workers are `NOT STARTED`.
+- Foundation components through TASK-009 and all four data workers TASK-010 through TASK-013 are implemented; model-integrity workers remain `NOT STARTED`.
 - Offline capability claim is not permissible until TASK-027 passes on the confirmed Windows AMD64 / Python 3.13.12 target host.
 - The target has no detected C compiler; native-extension dependencies remain unverified.
 - Python `resource.setrlimit` and Unix `RLIMIT_AS`, `RLIMIT_NOFILE`, and `RLIMIT_NPROC` are unavailable. `subprocess.Popen(..., close_fds=True)` is verified working.
@@ -136,10 +137,10 @@ Satisfied conditions:
 ## LATEST VALIDATED COMMIT
 
 ```
-Commit: This TASK-012 completion commit
-Branch: feature/task-012-c2c-concentration
+Commit: This TASK-013 completion commit
+Branch: feature/task-013-c2d-image-hash
 Date: 2026-09-27
-Tests: TASK-012 targeted unit/integration suite 8 passed; full suite 218 passed, 12 expected skips; FIX-012 HHI/entropy behavior, named-file CLI, schema acceptance, import audit, and security guards passed
+Tests: TASK-013 targeted unit/security suite 6 passed; full suite 224 passed, 12 expected skips; deterministic SHA-256, duplicate grouping, path containment, named-file CLI, schema acceptance, import audit, and security guards passed
 ```
 
 ---
@@ -148,10 +149,10 @@ Tests: TASK-012 targeted unit/integration suite 8 passed; full suite 218 passed,
 
 ```
 Date: 2026-09-27
-Tests passed: 218
+Tests passed: 224
 Tests skipped: 12 expected task/dependency-gated tests
 Test tooling: repository-local Python 3.13.12 with Torch 2.10.0+cpu; pytest 9.1.1 and PyYAML 6.0.3 loaded from a temporary non-repository directory
-Security grep checks: `weights_only=False` 0 matches; literal `risk_score` in COMP-W-C2C 0 matches; no network or non-stdlib external imports in COMP-W-C2C
+Security grep checks: `weights_only=False` 0 matches; literal `risk_score` and `weights_only` in COMP-W-C2D 0 matches; no image-decoding, network, non-stdlib external, or COMP-W-C2B imports in COMP-W-C2D
 
 Integration gates:
   GATE-1 (Foundation):       NOT PASSED
@@ -165,7 +166,7 @@ Integration gates:
 
 ## NEXT TASK
 
-**Next task:** TASK-013 — implement COMP-W-C2D image-level hash floor, then run the Stage 5 exit gate. TASK-010's pycocotools runtime dependency remains tracked under HOST-CAP-001 and does not authorize a positive-result fallback.
+**Next task:** Run the Stage 5 exit gate across TASK-010 through TASK-013. Do not begin TASK-014 until that gate authorizes Stage 6. TASK-010's pycocotools runtime dependency remains tracked under HOST-CAP-001 and does not authorize a positive-result fallback.
 
 Critical path reminder:
 ```
@@ -213,7 +214,7 @@ PRE-04 resolved
 
 *(To be filled by the agent ending a session — for the agent starting the next session)*
 
-**Current session:** TASK-012 implemented on `feature/task-012-c2c-concentration`, stacked on the validated TASK-011 commit. HHI/entropy calculations, identity-quality behavior, FIX-012 integration, named-file IPC, schema validation, and security rejection paths pass their targeted tests.
+**Current session:** TASK-013 implemented on `feature/task-013-c2d-image-hash`, stacked on the validated TASK-012 commit. Deterministic streaming SHA-256, duplicate grouping, path containment, PDQ deferral, T05d disclosure, named-file IPC, schema validation, and security rejection paths pass their targeted tests.
 
 **What the next agent needs to know:**
 - TASK-006 unit tests passed 5/5 and SEC-010 passed; the full current suite passed 154 with 11 expected skips.
@@ -242,6 +243,9 @@ PRE-04 resolved
 - COMP-W-C2B uses stdlib `hashlib` only for hashing. PDQ remains DEFERRED_IN_SCOPE on every output; no image-processing or near-duplicate dependency was introduced.
 - TASK-012 targeted tests passed 8/8 and the full suite passed 218 with 12 expected skips. The first Windows run lacked `grep` on PATH; rerunning with the locally installed Git grep exposed passed both pre-existing subprocess-based security tests.
 - COMP-W-C2C emits only HHI, Shannon entropy, source shares/counts, identity quality, and SYBIL_UNRELIABLE statistics. Missing metadata and prohibited input fail closed; no contributor-risk or attack-intent score is produced.
+- TASK-013 targeted tests passed 6/6 and the full suite passed 224 with 12 expected skips. Named-file IPC and schema validation accept the COMPLETED C2D record.
+- COMP-W-C2D uses only stdlib `hashlib` for streaming byte identity and does not decode images. PDQ remains DEFERRED_IN_SCOPE, and both the task-specific image-hash T05d non-claim and the mandatory §6.3 assessment-wide T05d non-claim are present on every output.
+- GAP-010/XREG-010 evidence ownership remains a recorded project-owner decision; TASK-013 does not redefine it or add any persistence path.
 - The weights_only=False grep check (SEC-007) must be set up in CI from Day 1 and must never pass with a match.
 - Signing (TASK-019) will ship as SIGNING_UNAVAILABLE shell until the remaining PRE-08 provisioning condition is resolved. This is expected and does not block non-signing pipeline work.
 - Antigravity begins AFTER GATE-2 passes — not before.
