@@ -12,7 +12,7 @@ Update this file at the end of every coding session before committing.
 ## PROJECT
 
 **Name:** Trustworthy Computer Vision Integrity Assurance — SIH 2026 PS 26228  
-**Current stage:** Foundation implementation — PRE-01 resolved; Stage 3 entry-state re-check pending
+**Current stage:** Foundation implementation — TASK-007 tested; TASK-008 ready
 **Repository created:** [DATE TO BE FILLED ON REPO INIT]  
 **Five-day window start:** [DATE — begins after P1 conditions resolved]
 
@@ -41,7 +41,7 @@ Status codes: `NOT STARTED` | `IN PROGRESS` | `IMPLEMENTED` | `TESTED` | `VALIDA
 | Config system | TASK-004 | `TESTED` | Fail-closed loader and populated YAML configuration committed at `03bc988` |
 | Evidence store (SQLite, WAL) | TASK-005 | `IMPLEMENTED` | Seven-table §3.15 schema, WAL, supervisor-only connection, guarded writes, and read/export API committed at `eb49e18` |
 | Audit chain writer | TASK-006 | `IMPLEMENTED` | Fail-closed atomic hash chain, corruption diagnostics, sequence-gap detection, and no reset path committed at `0f671ca` |
-| Worker base (IPC, resource limits) | TASK-007 | `NOT STARTED` | Awaiting Stage 3 entry-state re-check; Windows target has `close_fds=True` support but no `resource.setrlimit` or Unix RLIMIT controls |
+| Worker base (IPC, resource limits) | TASK-007 | `TESTED` | Worker-side named-file IPC, fail-closed output builder, path containment, crash handling, and timeout test harness committed at `793950a`; Windows RLIMIT limitations remain explicit |
 | Schema validator + JSON schemas | TASK-008 | `NOT STARTED` | PRE-04 resolved; awaits foundation tasks |
 | Hostile fixture suite (P0) | TASK-009 | `NOT STARTED` | Must build before any security test |
 | COMP-W-C2A (all-box structural) | TASK-010 | `NOT STARTED` | PRE-05 resolved; `pycocotools` remains conditional on Windows AMD64 / Python 3.13.12 wheel or native-extension verification |
@@ -68,19 +68,19 @@ Status codes: `NOT STARTED` | `IN PROGRESS` | `IMPLEMENTED` | `TESTED` | `VALIDA
 ## CURRENT TASK
 
 ```
-TASK: TASK-007 — Worker Base
+TASK: TASK-008 — Schema Validator + JSON Schemas
 Owner: Codex
-Branch: feature/worker-base (not yet created)
+Branch: Not created
 Started: Not started
-Status: NOT STARTED — Stage 3 entry-state re-check is the next allowed action
+Status: READY — TASK-007 tested; PRE-04 frozen
 
 Satisfied conditions:
   PRE-01: RESOLVED — Windows 10 Pro build 22631 / AMD64 /
           Python 3.13.12 / 16 GB RAM.
   PRE-04: RESOLVED — schema contract frozen.
   PRE-05: RESOLVED — mandatory MVP format list frozen.
-  TASK-006: IMPLEMENTED — 5/5 targeted unit tests and SEC-010 passed;
-            full suite passed 154
+  TASK-007: TESTED — 8/8 targeted unit tests passed;
+            full suite passed 162
             with 11 expected skips.
 ```
 
@@ -96,6 +96,7 @@ Satisfied conditions:
 | TASK-004 | Implemented fail-closed YAML loading, type/key validation, resource-limit access, and PRE-04/PRE-05/PRE-02-aligned configuration | Targeted: 8 passed; full suite: 142 passed, 11 skipped; PyYAML-unavailable path and security greps passed | `03bc988` |
 | TASK-005 | Implemented the authoritative seven-table SQLite schema, WAL and foreign-key setup, supervisor-owned parameterised write paths, read/query API, ZIP export, schema guards, and REUSE-018 attribution | UT-STORE-001..006: 6 passed; full suite: 148 passed, 11 skipped; schema inspection and security greps passed | `eb49e18` |
 | TASK-006 | Implemented the fail-closed supervisor audit writer, canonical SHA-256 event links, atomic audit-event/chain-state persistence, corruption and sequence-gap diagnostics, and no destructive recovery path | UT-AUD-001..005: 5 passed; SEC-010 passed; full suite: 154 passed, 11 skipped; import, method, and security guards passed | `0f671ca` |
+| TASK-007 | Implemented the worker-side named-file IPC entry point, complete fail-closed output builder, recursive prohibited-field checks, canonical path containment, crash result writing, and timeout termination test harness | UT-BASE-001..008: 8 passed; full suite: 162 passed, 11 skipped; import and universal security guards passed | `793950a` |
 
 ---
 
@@ -129,10 +130,10 @@ Satisfied conditions:
 ## LATEST VALIDATED COMMIT
 
 ```
-Commit: 0f671ca
-Branch: feature/persistence
+Commit: 793950a
+Branch: feature/task-007-worker-base
 Date: 2026-09-27
-Tests: TASK-006 targeted 5 passed; SEC-010 passed; full suite 154 passed, 11 expected skips; import, prohibited-method, atomic-chain, and security guards passed
+Tests: TASK-007 targeted 8 passed; full suite 162 passed, 11 expected skips; import, path-containment, crash/timeout, and security guards passed
 ```
 
 ---
@@ -141,7 +142,7 @@ Tests: TASK-006 targeted 5 passed; SEC-010 passed; full suite 154 passed, 11 exp
 
 ```
 Date: 2026-09-27
-Tests passed: 154
+Tests passed: 162
 Tests skipped: 11 expected task-gated tests
 Test tooling: pytest 9.1.1 and PyYAML 6.0.3 installed in a temporary non-repository directory only
 Security grep checks: `weights_only=False` 0 matches; literal `risk_score` in `assurance_system/` 0 matches; no positive CLEAN/SAFE/HEALTHY assurance constants found
@@ -158,7 +159,7 @@ Integration gates:
 
 ## NEXT TASK
 
-**Next allowed action:** Stage 3 entry-state re-check before TASK-007. Do not start TASK-007 until that check passes.
+**Next task:** TASK-008 (Schema Validator + JSON Schemas). TASK-009 may begin in parallel for fixtures that do not depend on unfinished schemas or unavailable native packages.
 
 Critical path reminder:
 ```
@@ -206,19 +207,20 @@ PRE-04 resolved
 
 *(To be filled by the agent ending a session — for the agent starting the next session)*
 
-**Current session:** TASK-006 audit chain completed and tested on `feature/persistence`.
+**Current session:** TASK-007 worker base completed and tested on `feature/task-007-worker-base`.
 
 **What the next agent needs to know:**
 - TASK-006 unit tests passed 5/5 and SEC-010 passed; the full current suite passed 154 with 11 expected skips.
 - TASK-006 made the permitted minimal amendment to `EvidenceStore.write_audit_event()`: audit insert and `chain_state` update now commit atomically in one transaction.
 - The authoritative §3.15 DDL has no separate audit-event sequence column. TASK-006 preserves that DDL, uses `event_id` as the persisted sequence, and cross-checks it against `chain_state.last_sequence_number` during verification.
 - Corruption diagnostics append `CHAIN_CORRUPT`; sequence gaps also append `SEQUENCE_GAP_DETECTED`. Neither path deletes, resets, repairs, or truncates prior events.
-- GATE-1 still requires TASK-007 and TASK-008 before the foundation gate can be attempted.
+- GATE-1 still requires TASK-008 before the foundation gate can be attempted.
 - PRE-01 is resolved as host identification only. Target tuple: Windows 10 Pro build 22631 / AMD64 / Python 3.13.12 / 16 GB RAM.
 - `subprocess.Popen(..., close_fds=True)` is verified working. Python `resource.setrlimit` and Unix RLIMIT controls are unavailable, and no C compiler is detected.
 - Native-extension/wheel compatibility and offline operation remain unclaimed until separately verified on the confirmed target.
 - PRE-08 remains partially unresolved; COMP-C4 must retain `SIGNING_UNAVAILABLE` behavior until the target key path and ACL are verified.
-- Re-run the Stage 3 entry-state check before beginning TASK-007; no Stage 3 implementation was started by the PRE-01 documentation task.
+- TASK-007 targeted tests passed 8/8; full suite passed 162 with 11 expected skips. TASK-008 is released.
+- TASK-007 does not claim Unix RLIMIT enforcement on Windows. The verified `close_fds=True` subprocess behavior is used by tests; supervisor dispatch remains TASK-022 scope.
 - TASK-009 (hostile fixture suite) is a P0 task and must not be deferred to make room for feature work.
 - The weights_only=False grep check (SEC-007) must be set up in CI from Day 1 and must never pass with a match.
 - Signing (TASK-019) will ship as SIGNING_UNAVAILABLE shell until the remaining PRE-08 provisioning condition is resolved. This is expected and does not block non-signing pipeline work.
