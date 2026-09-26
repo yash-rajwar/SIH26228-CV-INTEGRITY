@@ -12,7 +12,7 @@ Update this file at the end of every coding session before committing.
 ## PROJECT
 
 **Name:** Trustworthy Computer Vision Integrity Assurance — SIH 2026 PS 26228  
-**Current stage:** Foundation implementation — TASK-008 tested; TASK-009 Part A ready
+**Current stage:** Fixture implementation — TASK-009 Part A tested; Part B ready
 **Repository created:** [DATE TO BE FILLED ON REPO INIT]  
 **Five-day window start:** [DATE — begins after P1 conditions resolved]
 
@@ -43,7 +43,7 @@ Status codes: `NOT STARTED` | `IN PROGRESS` | `IMPLEMENTED` | `TESTED` | `VALIDA
 | Audit chain writer | TASK-006 | `IMPLEMENTED` | Fail-closed atomic hash chain, corruption diagnostics, sequence-gap detection, and no reset path committed at `0f671ca` |
 | Worker base (IPC, resource limits) | TASK-007 | `TESTED` | Worker-side named-file IPC, fail-closed output builder, path containment, crash handling, and timeout test harness committed at `793950a`; Windows RLIMIT limitations remain explicit |
 | Schema validator + JSON schemas | TASK-008 | `TESTED` | Custom fail-closed validator and six `v1.0` schema documents committed at `a78e5c4`; SEC-011 and SEC-012 confirmed |
-| Hostile fixture suite (P0) | TASK-009 | `NOT STARTED` | Must build before any security test |
+| Hostile fixture suite (P0) | TASK-009 | `IN PROGRESS` | Part A non-torch families implemented and tested at `5af987f`; Part B torch and YOLO segmentation fixtures pending; ONNX runtime verification blocked because `onnx` is not installed |
 | COMP-W-C2A (all-box structural) | TASK-010 | `NOT STARTED` | PRE-05 resolved; `pycocotools` remains conditional on Windows AMD64 / Python 3.13.12 wheel or native-extension verification |
 | COMP-W-C2B (exact hash) | TASK-011 | `NOT STARTED` | |
 | COMP-W-C2C (concentration) | TASK-012 | `NOT STARTED` | |
@@ -68,20 +68,20 @@ Status codes: `NOT STARTED` | `IN PROGRESS` | `IMPLEMENTED` | `TESTED` | `VALIDA
 ## CURRENT TASK
 
 ```
-TASK: TASK-009 Part A — Core Hostile Fixture Families
+TASK: TASK-009 Part B — Torch-Dependent and YOLO Segmentation Fixtures
 Owner: Codex
-Branch: Not created
-Started: Not started
-Status: READY — TASK-008 tested; fixture prompt received
+Branch: feature/task-009-fixtures
+Started: 2026-09-27
+Status: READY — Part A tested; Part B prompt received
 
 Satisfied conditions:
   PRE-01: RESOLVED — Windows 10 Pro build 22631 / AMD64 /
           Python 3.13.12 / 16 GB RAM.
   PRE-04: RESOLVED — schema contract frozen.
   PRE-05: RESOLVED — mandatory MVP format list frozen.
-  TASK-008: TESTED — 8/8 targeted unit tests and SEC-011/SEC-012 passed;
-            full suite passed 172
-            with 11 expected skips.
+  TASK-009 Part A: TESTED — 8 targeted tests passed and the ONNX test was
+                   conditionally skipped because `onnx` is not installed;
+                   full suite passed 180 with 12 expected skips.
 ```
 
 ---
@@ -98,6 +98,7 @@ Satisfied conditions:
 | TASK-006 | Implemented the fail-closed supervisor audit writer, canonical SHA-256 event links, atomic audit-event/chain-state persistence, corruption and sequence-gap diagnostics, and no destructive recovery path | UT-AUD-001..005: 5 passed; SEC-010 passed; full suite: 154 passed, 11 skipped; import, method, and security guards passed | `0f671ca` |
 | TASK-007 | Implemented the worker-side named-file IPC entry point, complete fail-closed output builder, recursive prohibited-field checks, canonical path containment, crash result writing, and timeout termination test harness | UT-BASE-001..008: 8 passed; full suite: 162 passed, 11 skipped; import and universal security guards passed | `793950a` |
 | TASK-008 | Implemented the pure-Python fail-closed worker/finding/provenance validator and six machine-readable `v1.0` schema documents; prohibited nested fields, exact boolean coverage labels, C3 access mode, timestamps, and frozen vocabulary enforced | UT-SCHEMA-001..008: 8 passed; SEC-011 and SEC-012 passed; full suite: 172 passed, 11 skipped; all schema JSON and security guards passed | `a78e5c4` |
+| TASK-009 Part A | Implemented the seed-pinned fixture CLI and FIX-007/008/009-D/010/011/012/013/017/018/019 plus benign COCO control; implemented lazy ONNX FIX-004/005/006/016 generators; retained explicit Part B and unsupported-format boundaries | Fixture tests: 8 passed, 1 ONNX skip; full suite: 180 passed, 12 skipped; all non-ONNX CLI families and security guards passed | `5af987f` |
 
 ---
 
@@ -109,6 +110,7 @@ Satisfied conditions:
 | HOST-CAP-001 | No C compiler detected; `pycocotools` and other native-extension support require separate Windows AMD64 / Python 3.13.12 verification | TASK-010 and any native-extension dependency claim | Dependency / deployment owner |
 | HOST-CAP-002 | Python `resource.setrlimit` and Unix RLIMIT controls are unavailable; no replacement isolation mechanism is authorized by PRE-01 | Resource-limit enforcement claims; later isolation hardening if required | Architecture / deployment owner |
 | OFFLINE-001 | Wheelhouse installation, imports, and zero-egress behavior have not been validated for Windows AMD64 / Python 3.13.12 | TASK-027 and every offline deployment claim | Deployment owner |
+| HOST-CAP-003 | `onnx` is not installed in the current test runtime; FIX-004/005/006/016 generation code is present but runtime verification is conditionally skipped | TASK-009 ONNX fixture verification and later TASK-016 | Dependency / deployment owner |
 
 ---
 
@@ -116,7 +118,7 @@ Satisfied conditions:
 
 *(At repository creation — to be updated as implementation progresses)*
 
-- No capabilities are implemented yet. All assessment states are `NOT STARTED`.
+- Foundation components through TASK-008 and TASK-009 Part A fixtures are implemented; assessment workers remain `NOT STARTED`.
 - Offline capability claim is not permissible until TASK-027 passes on the confirmed Windows AMD64 / Python 3.13.12 target host.
 - The target has no detected C compiler; native-extension dependencies remain unverified.
 - Python `resource.setrlimit` and Unix `RLIMIT_AS`, `RLIMIT_NOFILE`, and `RLIMIT_NPROC` are unavailable. `subprocess.Popen(..., close_fds=True)` is verified working.
@@ -131,10 +133,10 @@ Satisfied conditions:
 ## LATEST VALIDATED COMMIT
 
 ```
-Commit: a78e5c4
-Branch: feature/task-008-schema-validator
+Commit: 5af987f
+Branch: feature/task-009-fixtures
 Date: 2026-09-27
-Tests: TASK-008 targeted 8 passed; SEC-011 and SEC-012 passed; full suite 172 passed, 11 expected skips; six-schema parse check, future-timestamp check, import, and security guards passed
+Tests: TASK-009 Part A targeted 8 passed, 1 expected ONNX skip; full suite 180 passed, 12 expected skips; all non-ONNX CLI families, REPRO-006, import boundaries, and security guards passed
 ```
 
 ---
@@ -143,8 +145,8 @@ Tests: TASK-008 targeted 8 passed; SEC-011 and SEC-012 passed; full suite 172 pa
 
 ```
 Date: 2026-09-27
-Tests passed: 172
-Tests skipped: 11 expected task-gated tests
+Tests passed: 180
+Tests skipped: 12 expected task/dependency-gated tests
 Test tooling: pytest 9.1.1 and PyYAML 6.0.3 installed in a temporary non-repository directory only
 Security grep checks: `weights_only=False` 0 matches; literal `risk_score` in `assurance_system/` 0 matches; no positive CLEAN/SAFE/HEALTHY assurance constants found
 
@@ -160,7 +162,7 @@ Integration gates:
 
 ## NEXT TASK
 
-**Next task:** TASK-009 Part A (Core Hostile Fixture Families). Native-package-dependent fixtures remain subject to their recorded host capability blockers.
+**Next task:** TASK-009 Part B (Torch-Dependent and YOLO Segmentation Fixtures). Torch-dependent verification remains subject to the Part B dependency pre-check; YOLO pose and OBB remain outside the frozen MVP scope.
 
 Critical path reminder:
 ```
@@ -208,7 +210,7 @@ PRE-04 resolved
 
 *(To be filled by the agent ending a session — for the agent starting the next session)*
 
-**Current session:** TASK-008 schema validator completed and tested on `feature/task-008-schema-validator`.
+**Current session:** TASK-009 Part A completed and tested on `feature/task-009-fixtures`; Part B prompt is queued.
 
 **What the next agent needs to know:**
 - TASK-006 unit tests passed 5/5 and SEC-010 passed; the full current suite passed 154 with 11 expected skips.
@@ -225,6 +227,9 @@ PRE-04 resolved
 - TASK-008 targeted tests passed 8/8 and SEC-011/SEC-012 passed; full suite passed 172 with 11 expected skips.
 - The six JSON schema documents use frozen schema version `v1.0`; recursive prohibited-name metadata is documentation only and the custom validator remains the runtime gatekeeper.
 - TASK-009 (hostile fixture suite) is a P0 task and must not be deferred to make room for feature work.
+- TASK-009 Part A implemented all non-torch families. FIX-004/005/006/016 use lazy `onnx` imports and their verification is skipped with the explicit dependency blocker because `onnx` is absent.
+- PRE-05 is resolved: YOLO detection and segmentation are in MVP; pose and OBB are outside the frozen MVP scope. Part A implemented detection; Part B owns segmentation.
+- The fixture test suite passed 8 tests with 1 expected ONNX skip; the full suite passed 180 tests with 12 expected skips. Every exercised CLI manifest was synthetic-labelled, and literal security guards returned zero matches.
 - The weights_only=False grep check (SEC-007) must be set up in CI from Day 1 and must never pass with a match.
 - Signing (TASK-019) will ship as SIGNING_UNAVAILABLE shell until the remaining PRE-08 provisioning condition is resolved. This is expected and does not block non-signing pipeline work.
 - Antigravity begins AFTER GATE-2 passes — not before.
