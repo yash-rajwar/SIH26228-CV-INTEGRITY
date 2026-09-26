@@ -12,7 +12,7 @@ Update this file at the end of every coding session before committing.
 ## PROJECT
 
 **Name:** Trustworthy Computer Vision Integrity Assurance — SIH 2026 PS 26228  
-**Current stage:** Implementation readiness — TASK-001 decision records complete; TASK-002 released by PRE-04
+**Current stage:** Foundation implementation — TASK-002 tested; TASK-003 ready
 **Repository created:** [DATE TO BE FILLED ON REPO INIT]  
 **Five-day window start:** [DATE — begins after P1 conditions resolved]
 
@@ -36,8 +36,8 @@ Status codes: `NOT STARTED` | `IN PROGRESS` | `IMPLEMENTED` | `TESTED` | `VALIDA
 | Component | Module | Status | Notes |
 |---|---|---|---|
 | P1 condition resolution | TASK-001 | `TESTED` | Decision record committed at `431b92f`; PRE-01 and PRE-08 path provisioning remain explicitly unresolved |
-| Repository skeleton | TASK-002 | `NOT STARTED` | PRE-04 minimum resolved; ready to begin after TASK-001 branch review/merge |
-| exceptions.py + constants.py | TASK-003 | `NOT STARTED` | |
+| Repository skeleton | TASK-002 | `TESTED` | Full §2.2 skeleton committed at `1d5225c`; structure and import tests pass |
+| exceptions.py + constants.py | TASK-003 | `NOT STARTED` | Ready; TASK-002 tested and PRE-04 resolved |
 | Config system | TASK-004 | `NOT STARTED` | |
 | Evidence store (SQLite, WAL) | TASK-005 | `NOT STARTED` | PRE-04 resolved; awaits TASK-002–004 |
 | Audit chain writer | TASK-006 | `NOT STARTED` | |
@@ -68,17 +68,17 @@ Status codes: `NOT STARTED` | `IN PROGRESS` | `IMPLEMENTED` | `TESTED` | `VALIDA
 ## CURRENT TASK
 
 ```
-TASK: TASK-002 — Repository Skeleton
-Owner: Unassigned
-Branch: Not created (TASK-001 decision branch is pending review/merge)
+TASK: TASK-003 — Core Type Foundation
+Owner: Codex
+Branch: Not created (starts after TASK-002 branch is pushed)
 Started: Not started
-Status: READY — PRE-04 minimum resolved in commit 431b92f
+Status: READY — TASK-002 tested and PRE-04 resolved
 
-Release conditions:
+Satisfied conditions:
   PRE-04: RESOLVED — schema version v1.0, worker-output-v1, vocabulary,
           and json-canonical-utf8-sort-keys-v1 are frozen.
-  PRE-01: UNRESOLVED — blocks target-dependent wheel/offline work, not TASK-002.
-  PRE-08: PARTIAL — blocks operational signing, not TASK-002.
+  TASK-002: TESTED — structure suite passed 59/59; full suite passed 123
+            with 19 expected skips.
 ```
 
 ---
@@ -88,6 +88,7 @@ Release conditions:
 | Task | What was done | Tests | Commit |
 |---|---|---|---|
 | TASK-001 | Recorded PRE-01–PRE-09 dispositions; froze PRE-03/04/05/06/07/09; selected HMAC-SHA256; preserved explicit PRE-01 and PRE-08 path blockers | JSON parse for touched schemas; security literal guards; documentation/config review | `431b92f` |
+| TASK-002 | Replaced premature scaffold content with task-scoped stubs; added the authoritative structure test, placeholder tests, package metadata, and wheelhouse README | Structure: 59 passed; full suite: 123 passed, 19 skipped; imports and security greps passed | `1d5225c` |
 
 ---
 
@@ -117,10 +118,10 @@ Release conditions:
 ## LATEST VALIDATED COMMIT
 
 ```
-Commit: 431b92f
-Branch: task/task-001-p1-decisions
+Commit: 1d5225c
+Branch: feature/task-002-skeleton
 Date: 2026-09-27
-Tests: TASK-001 decision/config validation only; full pytest unavailable in the local offline runtime
+Tests: structure 59 passed; full suite 123 passed, 19 expected skips; imports and security greps passed
 ```
 
 ---
@@ -129,8 +130,9 @@ Tests: TASK-001 decision/config validation only; full pytest unavailable in the 
 
 ```
 Date: 2026-09-27
-Tests passed: 3 touched JSON schemas parsed and retained decoded prohibited-field metadata; format configuration manually reviewed
-Tests blocked: pytest unavailable (module not installed in system or bundled Python); no package installation attempted
+Tests passed: 123
+Tests skipped: 19 expected task-gated tests
+Test tooling: pytest 9.1.1 installed in a temporary non-repository directory only
 Security grep checks: `weights_only=False` 0 matches; literal `risk_score` in `assurance_system/` 0 matches; no positive CLEAN/SAFE/HEALTHY assurance constants found
 
 Integration gates:
@@ -145,7 +147,7 @@ Integration gates:
 
 ## NEXT TASK
 
-**Next task:** TASK-002 (Repository Skeleton). PRE-04 minimum is resolved; begin after TASK-001 review/merge.
+**Next task:** TASK-003 (Core Type Foundation — exceptions and constants).
 
 Critical path reminder:
 ```
@@ -193,12 +195,14 @@ PRE-04 resolved
 
 *(To be filled by the agent ending a session — for the agent starting the next session)*
 
-**Current session:** TASK-001 decision records completed on `task/task-001-p1-decisions`.
+**Current session:** TASK-002 repository skeleton completed and tested on `feature/task-002-skeleton`.
 
 **What the next agent needs to know:**
-- PRE-04 and PRE-05 are resolved; TASK-002 is released by the TASK-001 acceptance rule. PRE-01 still blocks target-dependent wheel, isolation, and offline claims.
+- TASK-002 structure test passed 59/59; the full current suite passed 123 with 19 expected skips.
+- TASK-003 may begin on its own branch; PRE-04 is resolved.
+- PRE-01 still blocks target-dependent wheel, isolation, and offline claims.
 - PRE-08 remains partially unresolved; COMP-C4 must retain `SIGNING_UNAVAILABLE` behavior until the target key path and ACL are verified.
-- Start TASK-002 through TASK-009 in dependency order (Tier 1 and Tier 2 in §11 Section 8) after review/merge of the TASK-001 branch.
+- Continue with TASK-003 through TASK-009 in dependency order (Tier 1 and Tier 2 in §11 Section 8).
 - TASK-009 (hostile fixture suite) is a P0 task and must not be deferred to make room for feature work.
 - The weights_only=False grep check (SEC-007) must be set up in CI from Day 1 and must never pass with a match.
 - Signing (TASK-019) will ship as SIGNING_UNAVAILABLE shell until the remaining PRE-08 provisioning condition is resolved. This is expected and does not block non-signing pipeline work.
