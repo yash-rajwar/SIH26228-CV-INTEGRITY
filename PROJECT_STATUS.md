@@ -2,7 +2,7 @@
 
 ## Current Milestone
 
-Stage 8 component acceptance includes TASK-018, TASK-019 Part A, and TASK-020. The complete Stage 8 exit gate is not yet accepted.
+Stage 8 component implementation is complete. TASK-018, TASK-019 Part A, and TASK-020 are tested; the component exit review passed with TASK-019 Part B explicitly deferred on PRE-08.
 
 COMP-CAP now produces bounded scope declarations and 15 explicit missing-coverage records. Its default is `UNAVAILABLE`, and unsupported capabilities are rejected. Operational signing and downstream CLI/orchestrator integration remain pending. The prior Stage 7 exit remains `PASS-WITH-DEFERRED-TASK-022`.
 
@@ -25,6 +25,8 @@ COMP-CAP now produces bounded scope declarations and 15 explicit missing-coverag
 | TASK-017 unit tests | 29 passed, 0 failed, 0 skipped |
 | TASK-017 security tests | 9 passed, 0 failed, 2 TASK-022 skips |
 | SEC-007 guards | 3 passed, 0 failed |
+| TASK-018 tests | 7 passed, 0 failed |
+| TASK-019 Part A tests | 7 passed, 0 failed, 2 expected signing skips |
 | TASK-020 unit/security tests | 53 passed, 0 failed, 1 TASK-023 CLI skip |
 | Full security suite | 61 passed, 0 failed, 6 expected skips |
 | Full regression | 385 passed, 0 failed, 28 expected skips |
@@ -33,7 +35,7 @@ COMP-CAP now produces bounded scope declarations and 15 explicit missing-coverag
 | Deterministic empty-file case | `LOAD_ERROR` |
 | TASK-017 security review | 24 passed, 1 blocked on TASK-022 |
 
-The two TASK-017 skips are SEC-002 and SEC-003. UT-CAP-003 requires the TASK-023 CLI. Skipped cases are not counted as passed.
+The two TASK-017 skips are SEC-002 and SEC-003. TASK-019's two skips are the deferred HMAC/Ed25519 signing paths. UT-CAP-003 requires the TASK-023 CLI. Skipped cases are not counted as passed.
 
 ## Pending Components
 

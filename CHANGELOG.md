@@ -1,6 +1,6 @@
 # Changelog
 
-## Stage 8 — Supervisor Component Milestones
+## Stage 8 — Component Implementation Complete
 
 ### Added
 
@@ -11,12 +11,15 @@
 
 ### Changed
 
+- Completed the Stage 8 component exit review: TASK-018, TASK-019 Part A, and TASK-020 are TESTED; TASK-019 Part B is DEFERRED on PRE-08.
 - Synchronized public status with the current Stage 8 component evidence.
 - Preserved architecture-specific reference/tail unavailable states and permanent T05d semantics in the existing deferred-record schema.
 - Workers, provenance, signing, schemas, constants, and protected research documentation were unchanged by TASK-020.
 
 ### Validation
 
+- TASK-018 tests: 7 passed, 0 failed.
+- TASK-019 Part A tests: 7 passed, 0 failed, 2 expected conditional signing skips.
 - TASK-020 unit/security tests: 53 passed, 0 failed, 1 named TASK-023 CLI skip.
 - Prerequisite constants/store/schema regression: 21 passed.
 - Full security suite: 61 passed, 0 failed, 6 expected skips.
@@ -30,7 +33,7 @@
 - TASK-021 interpretation, TASK-022 orchestration, CLI/export, end-to-end integration, and offline acceptance remain pending.
 - E-2 and HOST-CAP-003 retain their ONNX identity/runtime blockers; C3C is excluded from declared supported capabilities.
 - Existing store/audit commit boundaries are unchanged; write failures propagate without claiming batch atomicity.
-- The complete Stage 8 exit gate remains unaccepted.
+- Stage 8 component implementation is complete; deferred signing, CLI, orchestrator, ONNX, and integration blockers remain explicitly open.
 
 ## Stage 7 — C3D PyTorch Safe-Loading Gate
 

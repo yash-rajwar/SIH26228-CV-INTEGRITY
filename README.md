@@ -40,15 +40,17 @@ The architectural authority is `docs/ARCHITECTURE_SPECIFICATION.md`; the build c
 
 ## Current Status
 
-Stage 8 component work now includes tested TASK-018, TASK-019 Part A, and TASK-020 COMP-CAP. Capability declarations default to `UNAVAILABLE`, accept only explicit bounded operations, and report 15 coverage gaps, including permanent T05d non-claims. They do not establish malware detection, model safety, or complete integrity assurance.
+Stage 8 component implementation is complete: TASK-018, TASK-019 Part A, and TASK-020 are tested. Capability declarations default to `UNAVAILABLE`, accept only explicit bounded operations, and report 15 coverage gaps, including permanent T05d non-claims. They do not establish malware detection, model safety, or complete integrity assurance.
 
-Stage 8 has no final exit-gate acceptance yet. Operational signing remains blocked on PRE-08; capability CLI display awaits TASK-023. The pipeline orchestrator and end-to-end integration remain pending. C3D supervisor-level OOM/timeout verification still requires TASK-022.
+The Stage 8 component exit review passed with carried blockers. TASK-019 Part B operational signing remains deferred on PRE-08; no signing key material or runtime signature generation is present. Capability CLI display awaits TASK-023. The pipeline orchestrator and end-to-end integration remain pending, and C3D supervisor-level OOM/timeout verification still requires TASK-022.
 
 ## Validation Evidence
 
 - TASK-017 unit tests: 29 passed, 0 failed, 0 skipped.
 - TASK-017 security tests: 9 passed, 0 failed, 2 TASK-022 skips.
 - SEC-007 unsafe-fallback guards: 3 passed, 0 failed.
+- TASK-018 tests: 7 passed, 0 failed.
+- TASK-019 Part A tests: 7 passed, 0 failed, 2 expected conditional signing skips.
 - TASK-020 unit/security tests: 53 passed, 0 failed, 1 TASK-023 CLI skip.
 - Full security suite: 61 passed, 0 failed, 6 expected skips.
 - Full repository regression: 385 passed, 0 failed, 28 expected dependency/task-gated skips.
