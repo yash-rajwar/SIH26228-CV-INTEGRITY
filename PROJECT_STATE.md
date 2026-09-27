@@ -12,7 +12,7 @@ Update this file at the end of every coding session before committing.
 ## PROJECT
 
 **Name:** Trustworthy Computer Vision Integrity Assurance — SIH 2026 PS 26228  
-**Current stage:** Stage 6 exit gate `PASS-WITH-BLOCKERS`; TASK-017 is authorized to begin under its separate PyTorch dependencies
+**Current stage:** Stage 7 exit `PASS-WITH-DEFERRED-TASK-022`; TASK-017 worker-level implementation and validation are complete
 **Repository created:** [DATE TO BE FILLED ON REPO INIT]  
 **Five-day window start:** [DATE — begins after P1 conditions resolved]
 
@@ -51,7 +51,7 @@ Status codes: `NOT STARTED` | `IN PROGRESS` | `IMPLEMENTED` | `TESTED` | `VALIDA
 | COMP-W-C3A (artifact-unit resolver) | TASK-014 | `IMPLEMENTED` | IMPLEMENTED WITH BLOCKER: implementation and adversarial security review complete; 23 targeted checks pass, while UT-C3A-001 through UT-C3A-005 plus the missing-external-file integration check remain blocked on HOST-CAP-003; E-2 keeps the ONNX definition ID `UNAVAILABLE` |
 | COMP-W-C3B (model hasher) | TASK-015 | `IMPLEMENTED` | IMPLEMENTED WITH BLOCKER: deterministic whole-unit SHA-256, fail-closed ambiguity/containment/read-error handling, reference comparison, and PF-002 contract pass 18 targeted tests; ONNX identity path blocked pending ONNX artifact-unit definition ID (E-2) |
 | COMP-W-C3C (ONNX structural) | TASK-016 | `IMPLEMENTED` | IMPLEMENTED WITH BLOCKER: containment-first lazy ONNX loading, C3A external-reference helper reuse, in-memory checker validation, architecture-authoritative malformed-protobuf mapping, metadata, PF-002, and EF-004 contracts are implemented; 12 executable targeted tests pass and 5 genuine ONNX tests remain blocked on HOST-CAP-003 |
-| COMP-W-C3D (PyTorch safe-load gate) | TASK-017 | `NOT STARTED` | PRE-05 resolved; repository-local Windows AMD64 / Python 3.13.12 Torch 2.10.0+cpu environment is verified; worker implementation remains future scope |
+| COMP-W-C3D (PyTorch safe-load gate) | TASK-017 | `TESTED` | Worker-level implementation and runtime/security validation complete with repository-local Torch 2.10.0+cpu; SEC-002 OOM dispatch and SEC-003 timeout dispatch remain explicitly deferred to TASK-022 |
 | COMP-REF (reference manager) | TASK-018 | `NOT STARTED` | All references UNAVAILABLE at MVP start |
 | COMP-C4 (provenance + signing) | TASK-019 | `NOT STARTED` | PRE-02, PRE-04, and PRE-09 resolved; operational signing remains BLOCKED on PRE-08 target-specific key-path provisioning |
 | COMP-CAP (capability declaration) | TASK-020 | `NOT STARTED` | |
@@ -68,21 +68,25 @@ Status codes: `NOT STARTED` | `IN PROGRESS` | `IMPLEMENTED` | `TESTED` | `VALIDA
 ## CURRENT TASK
 
 ```
-TASK: STAGE 6 EXIT GATE
+TASK: TASK-017 — COMP-W-C3D PyTorch Safe-Loading Gate
 Owner: Codex
-Branch: feature/task-016-c3c-onnx-structural
+Branch: feature/task-017-c3d-safe-load
 Started: 2026-09-27
-Status: PASS-WITH-BLOCKERS — every Stage 6 exit item is satisfied or explicitly blocked with named, fail-closed evidence.
+Status: TESTED — worker-level implementation and runtime/security validation complete; supervisor integration remains deferred to TASK-022.
 
-Satisfied conditions:
-  STAGE 5 GATE: PASS — recorded as E-1 CLEAR in the committed Stage 6 preflight before TASK-014.
-  TASK-014 / C3A: IMPLEMENTED WITH BLOCKER; security review complete; 23 passed, 6 named HOST-CAP-003 skips.
-  TASK-015 / C3B: IMPLEMENTED WITH BLOCKER; 18/18 targeted tests pass; E-2 blocks final ONNX identity hashing.
-  TASK-016 / C3C: IMPLEMENTED WITH BLOCKER; 12 passed, 5 named HOST-CAP-003 skips.
-  C3 TARGETED REGRESSION: 53 passed, 11 named HOST-CAP-003 skips.
-  FULL REGRESSION: 277 passed, 0 failed, 23 expected conditional skips.
-  UNIVERSAL SECURITY CHECKS: PASS.
-  STAGE 7 / TASK-017: AUTHORIZED; E-2 and HOST-CAP-003 are not TASK-017 dependencies.
+Validated conditions:
+  HOST: Windows build 22631 / AMD64 / Python 3.13.12.
+  DEVELOPMENT/TEST ENVIRONMENT: repository-local .venv-torch-test with Torch 2.10.0+cpu; this is development/test qualification only.
+  FIX-001: PASS — LOAD_BLOCKED through the real restricted worker path.
+  FIX-015: PASS — LOAD_SUCCESS through the real restricted worker path.
+  LOAD_ERROR: PASS — deterministic empty-file case.
+  SEC-001: PASS.
+  SEC-007: PASS — 3 passed, 0 failed.
+  SEC-002 / SEC-003: BLOCKED / DEFERRED — TASK-022 supervisor dispatch/orchestrator required.
+  TASK-017 UNIT: 29 passed, 0 failed, 0 skipped.
+  TASK-017 SECURITY: 9 passed, 0 failed, 2 TASK-022 skips.
+  FULL REGRESSION: 318 passed, 0 failed, 25 expected skips.
+  SECURITY REVIEW: 24 PASS, 1 BLOCKED TASK-022.
 ```
 
 ---
@@ -107,6 +111,7 @@ Satisfied conditions:
 | TASK-013 | Implemented COMP-W-C2D streaming SHA-256 image identity, byte-identical duplicate grouping, containment/read-error handling, non-suppressible PDQ deferral, and permanent T05d disclosure without image decoding | UT-C2D-001..004 plus containment and prohibited-input checks: 6 passed; CLI/schema acceptance passed; full suite: 224 passed, 12 expected skips; stdlib-only import and universal security guards passed | This TASK-013 completion commit |
 | TASK-015 | Implemented COMP-W-C3B streaming whole-artifact SHA-256, frozen lexicographic digest composition, fail-closed ambiguity/containment/read-error handling, byte-only reference comparison, and mandatory PF-002 disclosures without model parsing | UT-C3B-001..004: 4 passed; REPRO-003: 1 passed; supplementary: 13 passed; schema validation passed; full suite: 265 passed, 18 expected skips; stdlib-only import and universal security guards passed | This TASK-015 completion commit |
 | TASK-016 | Implemented COMP-W-C3C containment-first ONNX structural validation with lazy import, external-data path classification through unchanged C3A helpers, `load_external_data=False`, in-memory checker invocation, fail-closed error mapping, non-executable metadata, and mandatory PF-002/EF-004 disclosures | Targeted: 12 passed, 5 HOST-CAP-003 skips; UT-C3C-005 and supplementary contract/security tests passed; UT-C3C-001..004 and SEC-006 runtime execution blocked; schema validation passed; security suite 9 passed, 4 pre-existing skips; full suite 277 passed, 23 expected skips; universal guards passed | This TASK-016 completion commit |
+| TASK-017 | Implemented COMP-W-C3D restricted PyTorch safe-loading with lazy Torch import, exactly one `torch.load(..., weights_only=True, map_location="cpu")` path, no fallback, path containment, mandatory resource-limit input, fail-closed output, PF-002 disclosures, and the frozen three-way exception classification | Unit: 29 passed; security: 9 passed, 2 TASK-022 skips; SEC-007: 3 passed; full suite: 318 passed, 25 expected skips; universal guards and 24/25 immediately executable security-review items passed | This TASK-017 completion commit |
 
 ---
 
@@ -120,6 +125,7 @@ Satisfied conditions:
 | OFFLINE-001 | Wheelhouse installation, imports, and zero-egress behavior have not been validated for Windows AMD64 / Python 3.13.12 | TASK-027 and every offline deployment claim | Deployment owner |
 | E-2 / SP-002-ONNX | No frozen ONNX artifact-unit definition ID exists. C3A returns the resolved manifest as `ARTIFACT_UNIT_AMBIGUOUS` with definition ID `UNAVAILABLE`; no ID is inferred from PyTorch. | Final ONNX C3A acceptance and TASK-015 ONNX hashing | Project owner / architecture owner |
 | HOST-CAP-003 / TASK-014 packet E-3 | `onnx` is not installed in the repository-local Python runtime; FIX-004/005/006/016, the genuine C3A ONNX tests, and UT-C3C-001 through UT-C3C-004 plus SEC-006 cannot receive protobuf-backed runtime verification | TASK-014 ONNX validation, conditional ONNX fixtures, and TASK-016 runtime acceptance | Dependency / deployment owner |
+| TASK-022-C3D-INTEGRATION | SEC-002 OOM termination/continuation and SEC-003 timeout/responsiveness require the real supervisor dispatch/orchestrator; worker-level C3D validation is complete and these integration claims remain explicitly unverified | TASK-017 supervisor-level integration evidence | TASK-022 implementation owner |
 
 ---
 
@@ -127,13 +133,14 @@ Satisfied conditions:
 
 *(At repository creation — to be updated as implementation progresses)*
 
-- Foundation components through TASK-009, all four data workers TASK-010 through TASK-013, and the core TASK-015/C3B and TASK-016/C3C contracts are implemented. TASK-014 retains partial ONNX validation; final ONNX C3A/C3B identity acceptance remains blocked by E-2, while genuine TASK-016 protobuf/checker runtime acceptance remains blocked by HOST-CAP-003.
+- Foundation components through TASK-009, all four data workers TASK-010 through TASK-013, and TASK-017/C3D are tested at worker level; the core TASK-015/C3B and TASK-016/C3C contracts are implemented. TASK-014 retains partial ONNX validation; final ONNX C3A/C3B identity acceptance remains blocked by E-2, while genuine TASK-016 protobuf/checker runtime acceptance remains blocked by HOST-CAP-003.
 - Offline capability claim is not permissible until TASK-027 passes on the confirmed Windows AMD64 / Python 3.13.12 target host.
 - The target has no detected C compiler; native-extension dependencies remain unverified.
 - Python `resource.setrlimit` and Unix `RLIMIT_AS`, `RLIMIT_NOFILE`, and `RLIMIT_NPROC` are unavailable. `subprocess.Popen(..., close_fds=True)` is verified working.
 - T05d clean-label poisoning coverage gap is a **permanent** non-claim. This will never change under the current baseline.
 - All references are UNAVAILABLE at MVP start. No reference-relative assessments are possible.
 - TorchScript loading is DEFERRED_IN_SCOPE — isolated worker not yet demonstrated on any target.
+- TASK-017 SEC-002 and SEC-003 supervisor OOM/timeout behavior remains deferred until TASK-022 provides the real dispatcher; neither test is recorded as passed.
 - C4 signing will ship as SIGNING_UNAVAILABLE shell until PRE-08 target-host key-path provisioning is resolved. PRE-02, PRE-04, and PRE-09 are resolved.
 - Analyst authentication is UNAVAILABLE — `analyst_id = 'UNAVAILABLE'` on all analyst disposition events until OQ-017 is resolved.
 
@@ -142,10 +149,10 @@ Satisfied conditions:
 ## LATEST VALIDATED COMMIT
 
 ```
-Commit: This Stage 6 exit-gate commit
-Branch: feature/task-016-c3c-onnx-structural
+Commit: This TASK-017 completion commit
+Branch: feature/task-017-c3d-safe-load
 Date: 2026-09-27
-Tests: C3A/C3B/C3C targeted regression 53 passed, 11 named HOST-CAP-003 skips; full suite 277 passed, 0 failed, 23 expected skips; universal production guards and Stage 6 import/write/path audits passed
+Tests: TASK-017 combined regression 41 passed, 2 named TASK-022 skips; full suite 318 passed, 0 failed, 25 expected skips; SEC-007 and universal production guards passed
 ```
 
 ---
@@ -154,10 +161,10 @@ Tests: C3A/C3B/C3C targeted regression 53 passed, 11 named HOST-CAP-003 skips; f
 
 ```
 Date: 2026-09-27
-Tests passed: 277
-Tests skipped: 23 expected task/dependency-gated tests, including 6 TASK-014 and 5 TASK-016 ONNX skips for HOST-CAP-003
+Tests passed: 318
+Tests skipped: 25 expected task/dependency-gated tests, including 2 TASK-017 supervisor-integration skips for TASK-022
 Test tooling: repository-local Python 3.13.12 with Torch 2.10.0+cpu; pytest 9.1.1 and PyYAML 6.0.3 loaded from a temporary non-repository directory
-Security checks: `weights_only=False`, `risk_score`, `aggregate_assurance`, `compromise_probability`, `onnxruntime`, and `load_external_data=True` each have 0 production Python matches; C3A/C3B/C3C have no Torch, ONNX Runtime, or network import, no evidence/audit-store write path, no signing-key path, and no committed machine-specific fixture/output path
+Security checks: SEC-007 3/3 passed; `weights_only=False`, broad `weights_only.*False`, `risk_score`, `aggregate_assurance`, `compromise_probability`, prohibited positive-assurance constants, network access, `onnxruntime`, signing-key worker access, and evidence/audit-store worker writes have 0 prohibited production matches
 
 Integration gates:
   GATE-1 (Foundation):       NOT PASSED
@@ -317,7 +324,7 @@ The Stage 6 rule permits exit when every requirement is either satisfied with ev
 
 ## NEXT TASK
 
-**Next task:** TASK-017 — COMP-W-C3D PyTorch Safe-Loading Gate is authorized to begin under its own execution packet. Stage 6 ONNX blockers remain open and must be carried forward; they are not TASK-017 dependencies. Do not implement TASK-017 without its execution packet.
+**Next task:** Next stage/task requires review of the next authoritative execution packet.
 
 Critical path reminder:
 ```
@@ -369,7 +376,7 @@ PRE-04 resolved
 
 *(To be filled by the agent ending a session — for the agent starting the next session)*
 
-**Current session:** The Stage 6 exit gate completed on `feature/task-016-c3c-onnx-structural` with `PASS-WITH-BLOCKERS`. No worker implementation changed. C3A/C3B/C3C remain `IMPLEMENTED WITH BLOCKER`; the current C3 regression is 53 passed with 11 named HOST-CAP-003 skips, and the full suite is 277 passed, 0 failed, 23 expected skips. The exact C3A artifact-unit/helper handoff is recorded in the gate checkpoint. E-2 and HOST-CAP-003 remain open and fail-closed. TASK-017 is authorized because its PyTorch dependencies are satisfied and it does not depend on ONNX.
+**Current session:** TASK-017 completed on `feature/task-017-c3d-safe-load` with worker-level status `TESTED` and Stage 7 exit `PASS-WITH-DEFERRED-TASK-022`. The repository-local `.venv-torch-test` uses Python 3.13.12 and Torch 2.10.0+cpu on Windows build 22631 / AMD64; this is development/test qualification only. FIX-001 produced `LOAD_BLOCKED`, FIX-015 produced `LOAD_SUCCESS`, deterministic empty-file input produced `LOAD_ERROR`, SEC-001 passed, and SEC-007 passed 3/3. SEC-002 and SEC-003 remain explicitly blocked/deferred until TASK-022 supplies the real supervisor dispatcher. Full regression passed 318 with 25 expected skips and no failures. E-2, HOST-CAP-003, PRE-08, and all other unrelated blockers remain open and unchanged.
 
 **What the next agent needs to know:**
 - TASK-006 unit tests passed 5/5 and SEC-010 passed; the full current suite passed 154 with 11 expected skips.
@@ -414,7 +421,11 @@ PRE-04 resolved
 - TASK-016 follows the E-5 authority resolution: malformed protobuf maps to `STRUCTURAL_INVALID`, not the lower-ranked MVP wording `ASSESSMENT_ERROR`. The test documentation records this precedence.
 - C3C uses `onnx.load(path, load_external_data=False)` only after model containment. It never imports ONNX Runtime, Torch, NumPy, image libraries, or networking modules, performs no inference or shape inference, creates no temporary resources, and does not resolve or hash artifact units.
 - TASK-016 security tests passed 9 with 4 pre-existing task-gated skips; full regression passed 277 with 23 expected skips. Production Python matches are zero for `weights_only=False`, prohibited score fields, `onnxruntime`, and `load_external_data=True`.
-- Stage 6 exit is not yet authorized: TASK-017 remains `NOT STARTED`. The next action is the Stage 6 exit-gate check; do not begin TASK-017 from this handoff.
+- TASK-017 unit tests passed 29/29. Its security suite passed 9 with SEC-002 and SEC-003 skipped exactly as `BLOCKED: TASK-022 — supervisor dispatch/orchestrator required`; SEC-007 passed 3/3; the combined TASK-017 suite passed 41 with 2 expected TASK-022 skips.
+- FIX-001 exercised the real restricted load path and returned `LOAD_BLOCKED`; FIX-015 returned `LOAD_SUCCESS`; the deterministic empty-file case returned `LOAD_ERROR`. The exception classification remains frozen: `RuntimeError` / `pickle.UnpicklingError` → `LOAD_BLOCKED`, other `Exception` → `LOAD_ERROR`, and timeout/OOM dispatch → supervisor `ASSESSMENT_ERROR`.
+- The TASK-017 test harness originally assumed every worker subprocess exited zero. TASK-007 base IPC intentionally writes a fail-closed `ASSESSMENT_ERROR` record and exits nonzero for specific base-level validation failures. Tests now verify both the subprocess return code and emitted result JSON; production C3D semantics were not changed during the corrective pass.
+- TASK-017 uses exactly one restricted `torch.load` call with `weights_only=True` and `map_location="cpu"`, has no unsafe fallback, and imports Torch lazily inside the assessment path. The 25-item security review recorded 24 PASS and 1 BLOCKED TASK-022.
+- Stage 7 exit is `PASS-WITH-DEFERRED-TASK-022`. No later task is authorized by this state update; the next stage/task requires its own authoritative execution packet.
 - The weights_only=False grep check (SEC-007) must be set up in CI from Day 1 and must never pass with a match.
 - Signing (TASK-019) will ship as SIGNING_UNAVAILABLE shell until the remaining PRE-08 provisioning condition is resolved. This is expected and does not block non-signing pipeline work.
 - Antigravity begins AFTER GATE-2 passes — not before.
