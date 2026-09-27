@@ -197,10 +197,12 @@ def _external_references(model_proto: Any, onnx_module: Any) -> tuple[list[str],
 
 def _is_absolute_reference(reference: str) -> bool:
     normalized = reference.replace("\\", "/")
+    windows_path = pathlib.PureWindowsPath(reference)
     return (
         os.path.isabs(reference)
         or pathlib.PurePosixPath(normalized).is_absolute()
-        or pathlib.PureWindowsPath(reference).is_absolute()
+        or windows_path.is_absolute()
+        or bool(windows_path.drive)
     )
 
 
@@ -222,6 +224,9 @@ def _resolve_external_files(
             continue
 
         unresolved_path = os.path.join(model_directory, reference)
+        if not is_within_directory(unresolved_path, asset_directory):
+            violations.append({"ref": reference, "reason": "SYMLINK_ESCAPE"})
+            continue
         candidate_real = os.path.realpath(unresolved_path)
         if not is_within_directory(candidate_real, asset_directory):
             violations.append({"ref": reference, "reason": "SYMLINK_ESCAPE"})
@@ -239,6 +244,13 @@ def resolve_onnx_artifact_unit(
 ) -> dict[str, Any]:
     """Resolve an ONNX file manifest without loading any external tensor bytes."""
 
+    if not is_within_directory(model_path, asset_directory):
+        return _onnx_path_violation(
+            model_path,
+            ref=model_path,
+            reason="MODEL_FILE_OUTSIDE_ASSET_DIR",
+        )
+
     model_real = os.path.realpath(model_path)
     if not is_within_directory(model_real, asset_directory):
         return _onnx_path_violation(
@@ -246,7 +258,6 @@ def resolve_onnx_artifact_unit(
             ref=model_path,
             reason="MODEL_FILE_OUTSIDE_ASSET_DIR",
         )
-
     if not os.path.isfile(model_real):
         return _assessment_error("MODEL_FILE_NOT_REGULAR_OR_MISSING")
 
@@ -254,11 +265,13 @@ def resolve_onnx_artifact_unit(
         onnx_module = _load_onnx_module()
     except ImportError:
         return _assessment_error("ONNX_UNAVAILABLE: HOST-CAP-003")
+    except Exception as exc:
+        return _assessment_error(f"ONNX_IMPORT_FAILED: {type(exc).__name__}")
 
     try:
         model_proto = onnx_module.load(model_real, load_external_data=False)
     except Exception as exc:
-        return _assessment_error(f"ONNX_LOAD_HEADER_FAILED: {type(exc).__name__}: {exc}")
+        return _assessment_error(f"ONNX_LOAD_HEADER_FAILED: {type(exc).__name__}")
 
     references, manifest_inconsistencies = _external_references(
         model_proto, onnx_module
@@ -324,13 +337,18 @@ def resolve_pytorch_artifact_unit(
 ) -> dict[str, Any]:
     """Apply the frozen PRE-03 single-file definition without importing Torch."""
 
+    if not is_within_directory(model_path, asset_directory):
+        return _ambiguous_output(
+            "MODEL_FILE_OUTSIDE_ASSET_DIR",
+            limitations=["The PyTorch model path is outside the submitted asset directory."],
+        )
+
     model_real = os.path.realpath(model_path)
     if not is_within_directory(model_real, asset_directory):
         return _ambiguous_output(
             "MODEL_FILE_OUTSIDE_ASSET_DIR",
             limitations=["The PyTorch model path is outside the submitted asset directory."],
         )
-
     if not os.path.isfile(model_real):
         return _ambiguous_output(
             "MODEL_FILE_NOT_REGULAR_OR_MISSING",
@@ -386,7 +404,7 @@ def resolve_torchscript_artifact_unit(model_path: str) -> dict[str, Any]:
     )
 
 
-def run_assessment(task: dict[str, Any]) -> dict[str, Any]:
+def _run_assessment(task: dict[str, Any]) -> dict[str, Any]:
     """Resolve exactly one submitted model artifact according to its declared format."""
 
     if not isinstance(task, dict) or task.get("schema_version") != _WORKER_INPUT_SCHEMA:
@@ -426,6 +444,17 @@ def run_assessment(task: dict[str, Any]) -> dict[str, Any]:
         access_mode=AccessMode.UNAVAILABLE,
         limitations=[f"Model format {normalized_format} is not supported by COMP-W-C3A."],
     )
+
+
+def run_assessment(task: dict[str, Any]) -> dict[str, Any]:
+    """Return a C3A-contract result for every resolver outcome."""
+
+    try:
+        return _run_assessment(task)
+    except Exception as exc:
+        return _assessment_error(
+            f"UNEXPECTED_RESOLUTION_ERROR: {type(exc).__name__}"
+        )
 
 
 def main() -> None:
