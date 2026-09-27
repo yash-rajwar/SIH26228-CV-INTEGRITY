@@ -12,7 +12,7 @@ Update this file at the end of every coding session before committing.
 ## PROJECT
 
 **Name:** Trustworthy Computer Vision Integrity Assurance — SIH 2026 PS 26228  
-**Current stage:** Stage 6 model-integrity workers — TASK-015 implemented with the ONNX identity path blocked by E-2
+**Current stage:** Stage 6 model-integrity workers — TASK-016 implemented with runtime ONNX verification blocked by HOST-CAP-003
 **Repository created:** [DATE TO BE FILLED ON REPO INIT]  
 **Five-day window start:** [DATE — begins after P1 conditions resolved]
 
@@ -50,7 +50,7 @@ Status codes: `NOT STARTED` | `IN PROGRESS` | `IMPLEMENTED` | `TESTED` | `VALIDA
 | COMP-W-C2D (image hash) | TASK-013 | `TESTED` | Stdlib-only streaming SHA-256, byte-identical image grouping, path containment, per-file error handling, mandatory PDQ deferral, and permanent T05d non-claims implemented in the current TASK-013 commit; 6 targeted tests and full regression pass |
 | COMP-W-C3A (artifact-unit resolver) | TASK-014 | `BLOCKED` | Implementation and adversarial security review complete; 23 targeted checks pass, while UT-C3A-001 through UT-C3A-005 plus the missing-external-file integration check remain blocked on HOST-CAP-003; E-2 keeps the ONNX definition ID `UNAVAILABLE` |
 | COMP-W-C3B (model hasher) | TASK-015 | `IMPLEMENTED` | IMPLEMENTED WITH BLOCKER: deterministic whole-unit SHA-256, fail-closed ambiguity/containment/read-error handling, reference comparison, and PF-002 contract pass 18 targeted tests; ONNX identity path blocked pending ONNX artifact-unit definition ID (E-2) |
-| COMP-W-C3C (ONNX structural) | TASK-016 | `NOT STARTED` | |
+| COMP-W-C3C (ONNX structural) | TASK-016 | `IMPLEMENTED` | IMPLEMENTED WITH BLOCKER: containment-first lazy ONNX loading, C3A external-reference helper reuse, in-memory checker validation, architecture-authoritative malformed-protobuf mapping, metadata, PF-002, and EF-004 contracts are implemented; 12 executable targeted tests pass and 5 genuine ONNX tests remain blocked on HOST-CAP-003 |
 | COMP-W-C3D (PyTorch safe-load gate) | TASK-017 | `NOT STARTED` | PRE-05 resolved; repository-local Windows AMD64 / Python 3.13.12 Torch 2.10.0+cpu environment is verified; worker implementation remains future scope |
 | COMP-REF (reference manager) | TASK-018 | `NOT STARTED` | All references UNAVAILABLE at MVP start |
 | COMP-C4 (provenance + signing) | TASK-019 | `NOT STARTED` | PRE-02, PRE-04, and PRE-09 resolved; operational signing remains BLOCKED on PRE-08 target-specific key-path provisioning |
@@ -68,21 +68,22 @@ Status codes: `NOT STARTED` | `IN PROGRESS` | `IMPLEMENTED` | `TESTED` | `VALIDA
 ## CURRENT TASK
 
 ```
-TASK: TASK-015 — COMP-W-C3B Model SHA-256 Identity Hasher
+TASK: TASK-016 — COMP-W-C3C ONNX Structural Validator
 Owner: Codex
-Branch: feature/task-015-c3b-model-hash
+Branch: feature/task-016-c3c-onnx-structural
 Started: 2026-09-27
-Status: IMPLEMENTED WITH BLOCKER — core C3B hashing contract and tests pass; ONNX identity path blocked pending ONNX artifact-unit definition ID (E-2).
+Status: IMPLEMENTED WITH BLOCKER — core C3C contract and executable tests pass; genuine ONNX runtime verification is blocked by HOST-CAP-003.
 
 Satisfied conditions:
   TASK-007: TESTED — worker output, named-file IPC, and containment utility available.
-  TASK-014: IMPLEMENTED WITH BLOCKER — stable artifact_unit contract is available.
-  TASK-015 TARGETED TESTS: 18 passed (UT-C3B-001..004, REPRO-003, and 13 supplementary cases).
-  SCHEMA VALIDATION: valid C3B COMPLETED output accepted.
-  FULL REGRESSION: 265 passed, 18 expected conditional skips.
-  REUSE-008: HARDENED / REIMPLEMENTED — no R01 source copied.
-  E-2: OPEN — test-only definition IDs validate only the input/hash contract.
-  E-3: OPEN — does not block C3B core hashing or tests; no ONNX import exists in C3B.
+  TASK-014: IMPLEMENTED WITH BLOCKER — stable external-reference extraction and containment helpers are reused unchanged.
+  TASK-016 TARGETED TESTS: 12 passed, 5 HOST-CAP-003 skips.
+  SCHEMA VALIDATION: valid C3C STRUCTURAL_VALID output accepted using a test-only injected ONNX interface.
+  FULL REGRESSION: 277 passed, 23 expected conditional skips.
+  REUSE-009: REPLACE — approved ONNX APIs and original project logic; no R01 source or ONNX Runtime.
+  E-2: OPEN — has no direct dependency effect on C3C structural validation.
+  E-3 / HOST-CAP-003: OPEN — blocks genuine protobuf/checker runtime verification, not core implementation.
+  E-5: RESOLVED BY AUTHORITY — malformed protobuf maps to STRUCTURAL_INVALID.
 ```
 
 ---
@@ -106,6 +107,7 @@ Satisfied conditions:
 | TASK-012 | Implemented COMP-W-C2C HHI, Shannon entropy, per-source shares/counts, UNTRUSTED-default SYBIL_UNRELIABLE semantics, fail-closed missing/prohibited input handling, and FIX-012 integration | UT-C2C-001..006 plus FIX-012 and prohibited-input checks: 8 passed; CLI/schema acceptance passed; full suite: 218 passed, 12 expected skips; stdlib-only import and universal security guards passed | This TASK-012 completion commit |
 | TASK-013 | Implemented COMP-W-C2D streaming SHA-256 image identity, byte-identical duplicate grouping, containment/read-error handling, non-suppressible PDQ deferral, and permanent T05d disclosure without image decoding | UT-C2D-001..004 plus containment and prohibited-input checks: 6 passed; CLI/schema acceptance passed; full suite: 224 passed, 12 expected skips; stdlib-only import and universal security guards passed | This TASK-013 completion commit |
 | TASK-015 | Implemented COMP-W-C3B streaming whole-artifact SHA-256, frozen lexicographic digest composition, fail-closed ambiguity/containment/read-error handling, byte-only reference comparison, and mandatory PF-002 disclosures without model parsing | UT-C3B-001..004: 4 passed; REPRO-003: 1 passed; supplementary: 13 passed; schema validation passed; full suite: 265 passed, 18 expected skips; stdlib-only import and universal security guards passed | This TASK-015 completion commit |
+| TASK-016 | Implemented COMP-W-C3C containment-first ONNX structural validation with lazy import, external-data path classification through unchanged C3A helpers, `load_external_data=False`, in-memory checker invocation, fail-closed error mapping, non-executable metadata, and mandatory PF-002/EF-004 disclosures | Targeted: 12 passed, 5 HOST-CAP-003 skips; UT-C3C-005 and supplementary contract/security tests passed; UT-C3C-001..004 and SEC-006 runtime execution blocked; schema validation passed; security suite 9 passed, 4 pre-existing skips; full suite 277 passed, 23 expected skips; universal guards passed | This TASK-016 completion commit |
 
 ---
 
@@ -118,7 +120,7 @@ Satisfied conditions:
 | HOST-CAP-002 | Python `resource.setrlimit` and Unix RLIMIT controls are unavailable; no replacement isolation mechanism is authorized by PRE-01 | Resource-limit enforcement claims; later isolation hardening if required | Architecture / deployment owner |
 | OFFLINE-001 | Wheelhouse installation, imports, and zero-egress behavior have not been validated for Windows AMD64 / Python 3.13.12 | TASK-027 and every offline deployment claim | Deployment owner |
 | E-2 / SP-002-ONNX | No frozen ONNX artifact-unit definition ID exists. C3A returns the resolved manifest as `ARTIFACT_UNIT_AMBIGUOUS` with definition ID `UNAVAILABLE`; no ID is inferred from PyTorch. | Final ONNX C3A acceptance and TASK-015 ONNX hashing | Project owner / architecture owner |
-| HOST-CAP-003 / TASK-014 packet E-3 | `onnx` is not installed in the repository-local Python runtime; FIX-004/005/006/016 and UT-C3A-001 through UT-C3A-005 cannot receive genuine protobuf-backed runtime verification | TASK-014 ONNX validation, conditional ONNX fixtures, and TASK-016 | Dependency / deployment owner |
+| HOST-CAP-003 / TASK-014 packet E-3 | `onnx` is not installed in the repository-local Python runtime; FIX-004/005/006/016, the genuine C3A ONNX tests, and UT-C3C-001 through UT-C3C-004 plus SEC-006 cannot receive protobuf-backed runtime verification | TASK-014 ONNX validation, conditional ONNX fixtures, and TASK-016 runtime acceptance | Dependency / deployment owner |
 
 ---
 
@@ -126,7 +128,7 @@ Satisfied conditions:
 
 *(At repository creation — to be updated as implementation progresses)*
 
-- Foundation components through TASK-009, all four data workers TASK-010 through TASK-013, and the core TASK-015 C3B hashing contract are implemented. TASK-014 retains partial ONNX validation; final ONNX C3A/C3B identity acceptance remains blocked by E-2 and HOST-CAP-003.
+- Foundation components through TASK-009, all four data workers TASK-010 through TASK-013, and the core TASK-015/C3B and TASK-016/C3C contracts are implemented. TASK-014 retains partial ONNX validation; final ONNX C3A/C3B identity acceptance remains blocked by E-2, while genuine TASK-016 protobuf/checker runtime acceptance remains blocked by HOST-CAP-003.
 - Offline capability claim is not permissible until TASK-027 passes on the confirmed Windows AMD64 / Python 3.13.12 target host.
 - The target has no detected C compiler; native-extension dependencies remain unverified.
 - Python `resource.setrlimit` and Unix `RLIMIT_AS`, `RLIMIT_NOFILE`, and `RLIMIT_NPROC` are unavailable. `subprocess.Popen(..., close_fds=True)` is verified working.
@@ -141,10 +143,10 @@ Satisfied conditions:
 ## LATEST VALIDATED COMMIT
 
 ```
-Commit: This TASK-015 completion commit
-Branch: feature/task-015-c3b-model-hash
+Commit: This TASK-016 completion commit
+Branch: feature/task-016-c3c-onnx-structural
 Date: 2026-09-27
-Tests: TASK-015 targeted suite 18 passed; UT-C3B-001..004 passed; REPRO-003 passed; 13 supplementary cases passed; schema acceptance passed; full suite 265 passed, 18 expected skips; compile, import audit, and universal security guards passed
+Tests: TASK-016 targeted suite 12 passed, 5 HOST-CAP-003 skips; UT-C3C-005 and supplementary cases passed; UT-C3C-001..004 plus SEC-006 runtime execution skipped honestly; schema acceptance passed; security suite 9 passed, 4 pre-existing skips; full suite 277 passed, 23 expected skips; compile, import audit, and universal security guards passed
 ```
 
 ---
@@ -153,10 +155,10 @@ Tests: TASK-015 targeted suite 18 passed; UT-C3B-001..004 passed; REPRO-003 pass
 
 ```
 Date: 2026-09-27
-Tests passed: 265
-Tests skipped: 18 expected task/dependency-gated tests, including 6 TASK-014 ONNX skips for HOST-CAP-003
+Tests passed: 277
+Tests skipped: 23 expected task/dependency-gated tests, including 6 TASK-014 and 5 TASK-016 ONNX skips for HOST-CAP-003
 Test tooling: repository-local Python 3.13.12 with Torch 2.10.0+cpu; pytest 9.1.1 and PyYAML 6.0.3 loaded from a temporary non-repository directory
-Security checks: `weights_only=False`, `risk_score`, `aggregate_assurance`, `compromise_probability`, and `onnxruntime` each have 0 production Python matches; COMP-W-C3B has no ONNX, Torch, network, persistence, audit-store, or signing-key reference and re-checks the complete artifact unit before opening its first member
+Security checks: `weights_only=False`, `risk_score`, `aggregate_assurance`, `compromise_probability`, `onnxruntime`, and `load_external_data=True` each have 0 production Python matches; C3C has no Torch/network/runtime-execution import, imports ONNX lazily after model containment, reuses the C3A external-reference helpers, and sends the in-memory model to the checker
 
 Integration gates:
   GATE-1 (Foundation):       NOT PASSED
@@ -253,9 +255,32 @@ TASK-014 remains `BLOCKED / IMPLEMENTED WITH BLOCKER` and is not marked `TESTED`
 
 ---
 
+## TASK-016 Implementation Checkpoint
+
+**Date:** 2026-09-27
+**Status:** `IMPLEMENTED WITH BLOCKER`
+**Component:** COMP-W-C3C `IMPLEMENTED`; genuine ONNX runtime verification `BLOCKED-HOST-CAP-003`
+
+| Check | Status | Evidence |
+|---|---|---|
+| UT-C3C-001 | `BLOCKED` | FIX-016 execution skipped exactly as `BLOCKED: HOST-CAP-003 — onnx not installed`. |
+| UT-C3C-002 / SEC-004 | `BLOCKED` | FIX-004 protobuf-backed execution has the named HOST-CAP-003 skip; the same C3A absolute-reference helper is exercised by a supplementary test without treating that test as SEC-004 runtime acceptance. |
+| UT-C3C-003 / SEC-005 | `BLOCKED` | FIX-005 protobuf-backed execution has the named HOST-CAP-003 skip; C3A traversal behavior remains covered by its existing helper tests without treating those tests as SEC-005 runtime acceptance. |
+| UT-C3C-004 | `BLOCKED` | Malformed-protobuf runtime execution has the named HOST-CAP-003 skip. The test contract follows E-5 and expects `STRUCTURAL_INVALID`. |
+| UT-C3C-005 | `PASS` | PF-002 fields, top-level and raw-signal EF-004 fields, non-empty semantic boundaries, non-null `BLACK_BOX` access mode, `coverage_gap_clean_label=True`, positive-state absence, and prohibited-score absence verified. |
+| SEC-006 | `BLOCKED` | FIX-006 protobuf-backed C3C execution has the named HOST-CAP-003 skip. Existing C3A helper-level symlink containment evidence is not relabeled as C3C runtime acceptance. |
+| Supplementary / schema | `PASS` | Fail-closed ONNX import, outside-model rejection before import/read, outside-reference rejection before file stat, in-memory checker identity, metadata, checker/load failures, recursive prohibited-field absence, helper identity, and schema validation pass. |
+| E-5 | `RESOLVED BY AUTHORITY` | Architecture and Technical Specification take precedence over the MVP test wording: malformed protobuf maps to `STRUCTURAL_INVALID`. |
+| C3A reuse | `PASS` | C3C imports C3A `_external_references` and `_resolve_external_files` by identity and contains no competing external-reference path algorithm. C3A was not modified. |
+| Security / imports | `PASS` | Zero production matches for unsafe load, prohibited score fields, ONNX Runtime, or external-data loading enabled; no Torch import; checker receives the in-memory model. |
+
+E-2 remains open and unchanged. It blocks the C3A/C3B ONNX identity path but has no direct dependency effect on C3C structural validation. HOST-CAP-003 blocks runtime acceptance, so TASK-016 and COMP-W-C3C must not be marked `TESTED`.
+
+---
+
 ## NEXT TASK
 
-**Next task:** TASK-016 — COMP-W-C3C ONNX Structural Validator, after its HOST-CAP-003 dependency gate is satisfied. Do not install ONNX from the network or treat the unavailable dependency as a passing runtime check.
+**Next action:** Run the Stage 6 exit gate. TASK-017 remains `NOT STARTED`, so the complete Stage 6 worker set must not be authorized as finished solely from TASK-016 results. Do not begin TASK-017 without its execution packet.
 
 Critical path reminder:
 ```
@@ -304,7 +329,7 @@ PRE-04 resolved
 
 *(To be filled by the agent ending a session — for the agent starting the next session)*
 
-**Current session:** TASK-015 implemented COMP-W-C3B on `feature/task-015-c3b-model-hash` using only stdlib SHA-256 and the stable C3A artifact-unit dictionary. The complete unit is containment-checked before any member is opened; ambiguity and read failure emit no digest; comparison results remain byte-identity-only; and all outputs carry PF-002. E-2 remains open, so the real ONNX identity path is blocked even though the core input-contract/hash-logic tests pass. E-3 does not affect C3B core execution because C3B imports no ONNX package.
+**Current session:** TASK-016 implemented COMP-W-C3C on `feature/task-016-c3c-onnx-structural`, stacked on validated TASK-015 commit `944e0f3`. C3C checks model containment before lazy ONNX import, loads with external data disabled, delegates every external-reference classification and canonical containment decision to C3A, and passes the in-memory model to `onnx.checker.check_model`. Every result uses the shared builder with non-null access mode, PF-002, EF-004, non-empty limitations/non-claims, and `coverage_gap_clean_label=True`. HOST-CAP-003 remains open, so genuine protobuf/checker tests are blocked and the component is `IMPLEMENTED`, not `TESTED`. E-2 remains open but does not block C3C.
 
 **What the next agent needs to know:**
 - TASK-006 unit tests passed 5/5 and SEC-010 passed; the full current suite passed 154 with 11 expected skips.
@@ -345,6 +370,11 @@ PRE-04 resolved
 - REPRO-003 confirms repeat determinism and confirms that a moved-directory copy with identical member names/bytes retains the same combined digest under the frozen lexicographic path-order algorithm. The test-only artifact-unit definition ID exists only in `tests/unit/test_c3b_model_hash.py` and is not an ONNX identity definition.
 - COMP-W-C3B consumes but never resolves the C3A artifact-unit contract. `UNAVAILABLE` or malformed units return `ARTIFACT_UNIT_AMBIGUOUS` without digest fields; any member read failure returns `ASSESSMENT_ERROR` without partial digest; and containment failure returns `ONNX_PATH_CONTAINMENT_VIOLATION` before any member is opened.
 - ONNX identity path blocked pending ONNX artifact-unit definition ID (E-2). E-3 does not block C3B core tests; C3B imports only stdlib `hashlib`/typing and existing internal modules.
+- TASK-016 targeted tests passed 12 with 5 genuine ONNX cases skipped exactly as `BLOCKED: HOST-CAP-003 — onnx not installed`. UT-C3C-001 through UT-C3C-004 and SEC-006 remain blocked; UT-C3C-005, fail-closed dependency handling, containment-before-import, C3A helper reuse (including helper-level symlink classification), in-memory checker invocation, error mapping, import audit, score-field absence, and schema acceptance pass.
+- TASK-016 follows the E-5 authority resolution: malformed protobuf maps to `STRUCTURAL_INVALID`, not the lower-ranked MVP wording `ASSESSMENT_ERROR`. The test documentation records this precedence.
+- C3C uses `onnx.load(path, load_external_data=False)` only after model containment. It never imports ONNX Runtime, Torch, NumPy, image libraries, or networking modules, performs no inference or shape inference, creates no temporary resources, and does not resolve or hash artifact units.
+- TASK-016 security tests passed 9 with 4 pre-existing task-gated skips; full regression passed 277 with 23 expected skips. Production Python matches are zero for `weights_only=False`, prohibited score fields, `onnxruntime`, and `load_external_data=True`.
+- Stage 6 exit is not yet authorized: TASK-017 remains `NOT STARTED`. The next action is the Stage 6 exit-gate check; do not begin TASK-017 from this handoff.
 - The weights_only=False grep check (SEC-007) must be set up in CI from Day 1 and must never pass with a match.
 - Signing (TASK-019) will ship as SIGNING_UNAVAILABLE shell until the remaining PRE-08 provisioning condition is resolved. This is expected and does not block non-signing pipeline work.
 - Antigravity begins AFTER GATE-2 passes — not before.
