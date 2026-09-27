@@ -12,7 +12,7 @@ Update this file at the end of every coding session before committing.
 ## PROJECT
 
 **Name:** Trustworthy Computer Vision Integrity Assurance — SIH 2026 PS 26228  
-**Current stage:** Stage 8 entry `READY`; prerequisite reconciliation complete and TASK-018 implementation has not started
+**Current stage:** Stage 8 TASK-018 `TESTED`; TASK-019 Part A and TASK-020 remain not started
 **Repository created:** [DATE TO BE FILLED ON REPO INIT]  
 **Five-day window start:** [DATE — begins after P1 conditions resolved]
 
@@ -52,7 +52,7 @@ Status codes: `NOT STARTED` | `IN PROGRESS` | `IMPLEMENTED` | `TESTED` | `VALIDA
 | COMP-W-C3B (model hasher) | TASK-015 | `IMPLEMENTED` | IMPLEMENTED WITH BLOCKER: deterministic whole-unit SHA-256, fail-closed ambiguity/containment/read-error handling, reference comparison, and PF-002 contract pass 18 targeted tests; ONNX identity path blocked pending ONNX artifact-unit definition ID (E-2) |
 | COMP-W-C3C (ONNX structural) | TASK-016 | `IMPLEMENTED` | IMPLEMENTED WITH BLOCKER: containment-first lazy ONNX loading, C3A external-reference helper reuse, in-memory checker validation, architecture-authoritative malformed-protobuf mapping, metadata, PF-002, and EF-004 contracts are implemented; 12 executable targeted tests pass and 5 genuine ONNX tests remain blocked on HOST-CAP-003 |
 | COMP-W-C3D (PyTorch safe-load gate) | TASK-017 | `TESTED` | Worker-level implementation and runtime/security validation complete with repository-local Torch 2.10.0+cpu; SEC-002 OOM dispatch and SEC-003 timeout dispatch remain explicitly deferred to TASK-022 |
-| COMP-REF (reference manager) | TASK-018 | `NOT STARTED` | Stage 8 prerequisites TASK-003, TASK-005, and TASK-006 are `TESTED`; PRE-06 is resolved by the approved SP-001 decision record; all references remain `UNAVAILABLE` at MVP start |
+| COMP-REF (reference manager) | TASK-018 | `TESTED` | Approved SP-001 all-of R0–R7 gate enforcement, fail-closed default, FORMAT_ASSET boundary, audited transitions, staleness downgrade, and AuditWriteError rollback verified; 7 targeted tests and full regression pass |
 | COMP-C4 (provenance + signing) | TASK-019 | `NOT STARTED` | PRE-02, PRE-04, and PRE-09 resolved; operational signing remains BLOCKED on PRE-08 target-specific key-path provisioning |
 | COMP-CAP (capability declaration) | TASK-020 | `NOT STARTED` | |
 | COMP-C5 (interpretation engine) | TASK-021 | `NOT STARTED` | PRE-04 resolved; awaits evidence components |
@@ -68,19 +68,25 @@ Status codes: `NOT STARTED` | `IN PROGRESS` | `IMPLEMENTED` | `TESTED` | `VALIDA
 ## CURRENT TASK
 
 ```
-TASK: STAGE 8 PREREQUISITE RECONCILIATION
+TASK: TASK-018 — COMP-REF Reference Manager
 Owner: Codex
 Branch: feature/task-018-reference-manager
 Started: 2026-09-27
-Status: PASS — documentation/state reconciliation only; TASK-018, TASK-019, and TASK-020 were not implemented.
+Status: TESTED — implementation and validation complete.
 
-Reconciled evidence:
-  TASK-003: TESTED — dependency satisfied.
-  TASK-005: TESTED — UT-STORE-001..006 passed 6/6 on the current repository.
-  TASK-006: TESTED — UT-AUD-001..005 and SEC-010 passed 6/6 on the current repository.
-  PRE-06: RESOLVED — docs/sp001_reference_health_gates.md is the approved committed decision record, corroborated by docs/p1_decisions.md.
-  STALE PACKET NOTE: the Stage 8 statement that PRE-06 is unresolved is superseded by the approved repository decision record.
-  TASK-018 ENTRY GATE: SATISFIED.
+Validated behavior:
+  DEFAULT: unregistered references return UNAVAILABLE.
+  REGISTRATION: non-format references begin HEALTH_UNVERIFIED; FORMAT_ASSET remains distinct and never implies verified health.
+  PROMOTION: HEALTH_VERIFIED requires all R0–R7 records, the same reference_id and artifact_digest, and passed=true for every gate.
+  FORMAT_ASSET: promotion returns FORMAT_ASSET and emits REFERENCE_CATEGORY_VIOLATION.
+  STALENESS: transitions to STALE_SUSPECTED and emits REFERENCE_HEALTH_TRANSITION with reference_id and reason.
+  AUDIT FAILURE: AuditWriteError propagates and the state transition rolls back.
+  WORKER ISOLATION: no worker imports or accesses ReferenceManager.
+  PRE-06: RESOLVED by approved docs/sp001_reference_health_gates.md.
+  TASK-018 TESTS: 7 passed, 0 failed, 0 skipped.
+  STORE/AUDIT/TASK-018 REGRESSION: 19 passed, 0 failed, 0 skipped.
+  FULL REGRESSION: 325 passed, 0 failed, 25 expected skips.
+  SECURITY SCANS: zero matches for weights_only=False, risk_score, and prohibited positive-assurance constants.
 ```
 
 ---
@@ -106,6 +112,7 @@ Reconciled evidence:
 | TASK-015 | Implemented COMP-W-C3B streaming whole-artifact SHA-256, frozen lexicographic digest composition, fail-closed ambiguity/containment/read-error handling, byte-only reference comparison, and mandatory PF-002 disclosures without model parsing | UT-C3B-001..004: 4 passed; REPRO-003: 1 passed; supplementary: 13 passed; schema validation passed; full suite: 265 passed, 18 expected skips; stdlib-only import and universal security guards passed | This TASK-015 completion commit |
 | TASK-016 | Implemented COMP-W-C3C containment-first ONNX structural validation with lazy import, external-data path classification through unchanged C3A helpers, `load_external_data=False`, in-memory checker invocation, fail-closed error mapping, non-executable metadata, and mandatory PF-002/EF-004 disclosures | Targeted: 12 passed, 5 HOST-CAP-003 skips; UT-C3C-005 and supplementary contract/security tests passed; UT-C3C-001..004 and SEC-006 runtime execution blocked; schema validation passed; security suite 9 passed, 4 pre-existing skips; full suite 277 passed, 23 expected skips; universal guards passed | This TASK-016 completion commit |
 | TASK-017 | Implemented COMP-W-C3D restricted PyTorch safe-loading with lazy Torch import, exactly one `torch.load(..., weights_only=True, map_location="cpu")` path, no fallback, path containment, mandatory resource-limit input, fail-closed output, PF-002 disclosures, and the frozen three-way exception classification | Unit: 29 passed; security: 9 passed, 2 TASK-022 skips; SEC-007: 3 passed; full suite: 318 passed, 25 expected skips; universal guards and 24/25 immediately executable security-review items passed | This TASK-017 completion commit |
+| TASK-018 | Implemented COMP-REF reference registration and health state management under approved SP-001: fail-closed UNAVAILABLE default, HEALTH_UNVERIFIED registration, all-of R0–R7 promotion, FORMAT_ASSET category enforcement, audited state transitions, staleness downgrade, and fail-closed audit rollback | UT-REF-001..003 plus 4 supplementary gate, rollback, and isolation tests: 7 passed; store/audit/reference regression: 19 passed; full suite: 325 passed, 25 expected skips; mandatory security scans passed | This TASK-018 completion commit |
 
 ---
 
@@ -143,10 +150,10 @@ Reconciled evidence:
 ## LATEST VALIDATED COMMIT
 
 ```
-Commit: This Stage 8 prerequisite-reconciliation commit
+Commit: This TASK-018 completion commit
 Branch: feature/task-018-reference-manager
 Date: 2026-09-27
-Tests: TASK-005 UT-STORE-001..006 and TASK-006 UT-AUD-001..005 plus SEC-010: 12 passed, 0 failed, 0 skipped; implementation code and tests unchanged
+Tests: TASK-018 targeted 7 passed; store/audit/reference regression 19 passed; full suite 325 passed, 0 failed, 25 expected skips; mandatory production security scans passed
 ```
 
 ---
@@ -155,8 +162,8 @@ Tests: TASK-005 UT-STORE-001..006 and TASK-006 UT-AUD-001..005 plus SEC-010: 12 
 
 ```
 Date: 2026-09-27
-Tests passed: 12 targeted Stage 8 prerequisite tests; prior full regression remains 318 passed
-Tests skipped: 0 in the targeted prerequisite run; prior full regression retains 25 expected task/dependency-gated skips
+Tests passed: 325
+Tests skipped: 25 expected task/dependency-gated tests
 Test tooling: repository-local Python 3.13.12 with Torch 2.10.0+cpu; pytest 9.1.1 and PyYAML 6.0.3 loaded from a temporary non-repository directory
 Security checks: SEC-007 3/3 passed; `weights_only=False`, broad `weights_only.*False`, `risk_score`, `aggregate_assurance`, `compromise_probability`, prohibited positive-assurance constants, network access, `onnxruntime`, signing-key worker access, and evidence/audit-store worker writes have 0 prohibited production matches
 
@@ -318,7 +325,7 @@ The Stage 6 rule permits exit when every requirement is either satisfied with ev
 
 ## NEXT TASK
 
-**Next task:** TASK-018 entry prerequisites are satisfied. TASK-018 may begin only under its implementation execution packet; TASK-019 and TASK-020 were not started by this reconciliation.
+**Next task:** TASK-019 Part A and TASK-020 require their own entry/dependency review and execution packets. Neither task was started by TASK-018.
 
 Critical path reminder:
 ```
@@ -371,7 +378,7 @@ PRE-04 resolved
 
 *(To be filled by the agent ending a session — for the agent starting the next session)*
 
-**Current session:** Stage 8 prerequisite reconciliation completed on `feature/task-018-reference-manager` without modifying implementation code, tests, or architecture files. TASK-005 UT-STORE-001..006 passed 6/6. TASK-006 UT-AUD-001..005 plus the dedicated SEC-010 corruption test passed 6/6. TASK-005 and TASK-006 are therefore promoted from `IMPLEMENTED` to `TESTED`. The approved committed SP-001 decision record and P1 registry both resolve PRE-06; the Stage 8 packet's unresolved statement is recorded as stale. TASK-018's entry gate is now satisfied, but TASK-018, TASK-019, and TASK-020 were not implemented during this reconciliation.
+**Current session:** TASK-018 completed on `feature/task-018-reference-manager` with status `TESTED`. COMP-REF uses the existing supervisor-owned evidence store and audit chain, preserves the `UNAVAILABLE` default, registers non-format references as `HEALTH_UNVERIFIED`, enforces the approved all-of R0–R7 promotion rule, prevents FORMAT_ASSET promotion with a `REFERENCE_CATEGORY_VIOLATION` event, records staleness as `STALE_SUSPECTED`, and propagates `AuditWriteError` while rolling back the state change. Seven TASK-018 tests, 19 relevant store/audit/reference tests, and the 325-test full regression pass; 25 unrelated dependency/task-gated skips remain. TASK-019 and TASK-020 were not started.
 
 **What the next agent needs to know:**
 - TASK-006 unit tests passed 5/5 and SEC-010 passed; the full current suite passed 154 with 11 expected skips.
