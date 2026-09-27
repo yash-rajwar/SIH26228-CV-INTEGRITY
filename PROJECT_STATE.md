@@ -12,7 +12,7 @@ Update this file at the end of every coding session before committing.
 ## PROJECT
 
 **Name:** Trustworthy Computer Vision Integrity Assurance — SIH 2026 PS 26228  
-**Current stage:** Stage 8 `COMPONENT IMPLEMENTATION COMPLETE`; TASK-018, TASK-019 Part A, and TASK-020 are `TESTED`, while TASK-019 Part B remains `DEFERRED` on PRE-08 and CLI integration awaits TASK-023
+**Current stage:** Stage 9 TASK-021 COMP-C5 Part A `IMPLEMENTED`; Part B test sources are present but test execution is blocked because pytest is unavailable
 **Repository created:** [DATE TO BE FILLED ON REPO INIT]  
 **Five-day window start:** [DATE — begins after P1 conditions resolved]
 
@@ -56,7 +56,7 @@ Status codes: `NOT STARTED` | `IN PROGRESS` | `IMPLEMENTED` | `TESTED` | `VALIDA
 | COMP-C4 provenance record builder | TASK-019 Part A | `TESTED` | Provenance structure, canonicalization, replay rejection, durable sequence recovery, PF-002 binding, and explicit SIGNING_UNAVAILABLE behavior are tested. No signing primitive or key access is implemented. |
 | COMP-C4 operational signing | TASK-019 Part B | `DEFERRED` | PRE-08 target-specific key-path/ACL provisioning remains unresolved. PRE-02, PRE-04, and PRE-09 remain resolved; no signing key material, runtime signing, or fake signature is present. |
 | COMP-CAP (capability declaration) | TASK-020 | `TESTED` | Component acceptance: fail-closed bounded method declarations, fixed non-claims, schema-gated persistence of 15 coverage-gap records, architecture-specific unavailable states, and mandatory audit events pass 53 tests; UT-CAP-003 list-deferred CLI acceptance remains explicitly blocked on TASK-023. No signing or worker changes. |
-| COMP-C5 (interpretation engine) | TASK-021 | `NOT STARTED` | PRE-04 resolved; awaits evidence components |
+| COMP-C5 (interpretation engine) | TASK-021 | `IMPLEMENTED` | Part A rule engine is implemented with frozen `v1.0` vocabulary; Part B unit and negative test sources compile, but pytest is unavailable in both accessible Python environments, so TASK-021 is not `TESTED` |
 | COMP-SUP (orchestrator) | TASK-022 | `NOT STARTED` | Depends on all workers and supervisor components |
 | CLI entry points | TASK-023 | `NOT STARTED` | |
 | Dashboard (SHOULD BUILD) | TASK-024 | `NOT STARTED` | Antigravity — begins after GATE-2 |
@@ -69,27 +69,18 @@ Status codes: `NOT STARTED` | `IN PROGRESS` | `IMPLEMENTED` | `TESTED` | `VALIDA
 ## CURRENT TASK
 
 ```
-TASK: STAGE 8 FINAL EXIT REVIEW
+TASK: TASK-021 — COMP-C5 Assurance Interpretation Rule Engine
 Owner: Codex
-Branch: feature/capability-declaration
+Branch: feature/interpretation
 Started: 2026-09-28
-Status: COMPONENT IMPLEMENTATION COMPLETE — TASK-018, TASK-019 Part A, and TASK-020 TESTED; TASK-019 Part B DEFERRED on PRE-08.
+Status: IMPLEMENTED / TEST EXECUTION BLOCKED — pytest unavailable.
 
 Validated behavior:
-  DEFAULT: assessment_status=UNAVAILABLE and no supported capabilities advertised unless explicitly requested.
-  SUPPORTED SCOPE: only bounded M01/M02/M06/M15/C3A/C3B/C3D operations; requests for C3C, deferred methods, unknown variants, or broader guarantees are rejected.
-  COVERAGE GAPS: 15 schema-compliant records, including separately enumerated drift/OOD and heavyweight methods; M11=REFERENCE_UNAVAILABLE and tail=COMPLETENESS_UNAVAILABLE.
-  NON-CLAIMS: permanent T05d gap and SYBIL_UNRELIABLE semantics survive persistence; no malware, model-safety, or complete-integrity claim.
-  SCHEMA GATE: immutable record scopes, non-empty limitations/non-claims, exact boolean flags, UUID4 identifiers, asset bindings, and complete gap coverage verified before persistence.
-  AUDIT: CAPABILITY_DECLARATION_EMITTED and DEFERRED_IN_SCOPE_EMITTED events; AuditWriteError and StorageWriteError propagate without a success result.
-  TASK-018 TESTS: 7 passed, 0 failed; full regression at completion 325 passed, 25 expected skips.
-  TASK-019 PART A TESTS: 7 passed, 0 failed, 2 expected conditional signing skips; full regression at completion 332 passed, 27 expected skips.
-  TASK-019 PART B: DEFERRED; signing tests remain skipped and no signing primitive/key access exists.
-  TASK-020 TESTS: 53 passed, 0 failed, 1 expected TASK-023 CLI skip (UT-CAP-003).
-  PREREQUISITE REGRESSION: constants/store/schema 21 passed, 0 failed.
-  SECURITY SUITE: 61 passed, 0 failed, 6 expected dependency/task-gated skips.
-  FULL REGRESSION: 385 passed, 0 failed, 28 expected skips.
-  SECURITY SCANS: zero matches for weights_only=False, risk_score, aggregate_assurance, compromise_probability, and prohibited positive-assurance constants.
+  PART A: deterministic priority rules, finding construction, mandatory T05d/PF-002/dependency non-claims, C3 backdoor-absence marker, and optional schema validation implemented.
+  PART B SOURCES: unit rule/schema/security coverage and FIX-013 negative propagation coverage created.
+  TEST EXECUTION: BLOCKED — pytest is absent from the default Python 3.13.12 interpreter and `.venv-torch-test`; no package was installed.
+  STATIC VALIDATION: production import passed; implementation and both test files compile in memory.
+  SECURITY SCANS: zero `weights_only=False` and `risk_score` matches; zero prohibited state literals in `interpretation.py`. The required broad state-word scan reports only pre-existing rejection/configuration/identifier substrings outside TASK-021 output production.
 ```
 
 ---
@@ -133,6 +124,7 @@ Validated behavior:
 | HOST-CAP-003 / TASK-014 packet E-3 | `onnx` is not installed in the repository-local Python runtime; FIX-004/005/006/016, the genuine C3A ONNX tests, and UT-C3C-001 through UT-C3C-004 plus SEC-006 cannot receive protobuf-backed runtime verification | TASK-014 ONNX validation, conditional ONNX fixtures, and TASK-016 runtime acceptance | Dependency / deployment owner |
 | TASK-022-C3D-INTEGRATION | SEC-002 OOM termination/continuation and SEC-003 timeout/responsiveness require the real supervisor dispatch/orchestrator; worker-level C3D validation is complete and these integration claims remain explicitly unverified | TASK-017 supervisor-level integration evidence | TASK-022 implementation owner |
 | TASK-023-CAP-CLI | UT-CAP-003 list-deferred CLI acceptance cannot execute until TASK-023 implements the analyst CLI; TASK-020 component persistence and audit tests pass, but CLI display is not claimed | TASK-020 downstream CLI integration acceptance | TASK-023 implementation owner |
+| TEST-RUNNER-001 | Pytest is unavailable in both accessible Python 3.13.12 environments and no offline pytest wheel is staged; TASK-021 Part B test execution cannot be performed without an approved runner | TASK-021 validation and completion status | Development environment owner |
 
 ---
 
@@ -175,6 +167,7 @@ Tests passed: 385
 Tests skipped: 28 expected task/dependency-gated tests, including UT-CAP-003 blocked on TASK-023
 Test tooling: latest committed full-suite evidence used repository-local Python 3.13.12 with Torch 2.10.0+cpu, pytest 9.1.1, and PyYAML 6.0.3 from a temporary non-repository directory. That temporary pytest environment is no longer present; the 2026-09-28 exit review therefore ran imports, compile validation, Git scope checks, and security scans without claiming a fresh pytest execution.
 Security checks: SEC-007 3/3 passed; `weights_only=False`, broad `weights_only.*False`, `risk_score`, `aggregate_assurance`, `compromise_probability`, prohibited positive-assurance constants, network access, `onnxruntime`, signing-key worker access, and evidence/audit-store worker writes have 0 prohibited production matches
+TASK-021 Part B: TEST EXECUTION BLOCKED — pytest unavailable. Production import and three-file in-memory compilation passed; no TASK-021 test is claimed as passed.
 
 Integration gates:
   GATE-1 (Foundation):       NOT PASSED
@@ -405,7 +398,7 @@ PRE-04 resolved
 
 *(To be filled by the agent ending a session — for the agent starting the next session)*
 
-**Current session:** TASK-020 COMP-CAP component acceptance completed on `feature/capability-declaration`. `declare_capabilities(asset_id, supported_capabilities=None)` defaults to UNAVAILABLE with an empty supported list, rejects unknown or inflated requests, and audits bounded declarations. `emit_deferred_records(asset_id)` validates all 15 records before using the existing store write API and auditing each emission. Architecture-specific M11/tail states and persisted permanent T05d/Sybil non-claims are preserved. Targeted tests passed 53 with UT-CAP-003 explicitly skipped on TASK-023; security tests passed 61 with 6 existing skips; full regression passed 385 with 28 expected skips. Public status documentation was synchronized under the standing documentation policy; protected research content was unchanged. TASK-019 Part B, signing, workers, provenance, and later implementation tasks were not modified.
+**Current session:** TASK-021 Parts A and B source work completed on `feature/interpretation`. `C5InterpretationEngine` implements the authoritative priority mapping and complete finding contract without persistence or audit writes. Unit and FIX-013 negative tests were added, but pytest is unavailable in both accessible Python environments, so the files received import/compilation/static validation only and TASK-021 remains `IMPLEMENTED`, not `TESTED`. TASK-022 and TASK-023 were not started.
 
 **TASK-020 specification reconciliation:** No separately saved Stage 8 packet was available in the repository or attachments; the current TASK-020 execution request and committed architecture/technical/MVP contracts supplied the scope. The MVP's §10 §3.17 citation points to COMP-FIX, so the concrete COMP-CAP API follows TASK-020 and the deferred persistence/audit contracts in §10 §§3.1, 3.15, 20.3. UT-CAP-001's generic deferred-count wording is met by enumerating drift/OOD and heavyweight methods separately while retaining M11=REFERENCE_UNAVAILABLE and tail=COMPLETENESS_UNAVAILABLE. T05d remains a permanent NON_CLAIM in persisted reason/non-claim text using the existing deferred-table envelope; no new assessment status was introduced.
 
