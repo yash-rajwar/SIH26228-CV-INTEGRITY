@@ -12,7 +12,7 @@ Update this file at the end of every coding session before committing.
 ## PROJECT
 
 **Name:** Trustworthy Computer Vision Integrity Assurance — SIH 2026 PS 26228  
-**Current stage:** Stage 8 TASK-018 `TESTED`; TASK-019 Part A and TASK-020 remain not started
+**Current stage:** Stage 8 TASK-019 Part A `TESTED`; operational signing remains blocked on PRE-08 and TASK-020 remains not started
 **Repository created:** [DATE TO BE FILLED ON REPO INIT]  
 **Five-day window start:** [DATE — begins after P1 conditions resolved]
 
@@ -53,7 +53,7 @@ Status codes: `NOT STARTED` | `IN PROGRESS` | `IMPLEMENTED` | `TESTED` | `VALIDA
 | COMP-W-C3C (ONNX structural) | TASK-016 | `IMPLEMENTED` | IMPLEMENTED WITH BLOCKER: containment-first lazy ONNX loading, C3A external-reference helper reuse, in-memory checker validation, architecture-authoritative malformed-protobuf mapping, metadata, PF-002, and EF-004 contracts are implemented; 12 executable targeted tests pass and 5 genuine ONNX tests remain blocked on HOST-CAP-003 |
 | COMP-W-C3D (PyTorch safe-load gate) | TASK-017 | `TESTED` | Worker-level implementation and runtime/security validation complete with repository-local Torch 2.10.0+cpu; SEC-002 OOM dispatch and SEC-003 timeout dispatch remain explicitly deferred to TASK-022 |
 | COMP-REF (reference manager) | TASK-018 | `TESTED` | Approved SP-001 all-of R0–R7 gate enforcement, fail-closed default, FORMAT_ASSET boundary, audited transitions, staleness downgrade, and AuditWriteError rollback verified; 7 targeted tests and full regression pass |
-| COMP-C4 (provenance + signing) | TASK-019 | `NOT STARTED` | PRE-02, PRE-04, and PRE-09 resolved; operational signing remains BLOCKED on PRE-08 target-specific key-path provisioning |
+| COMP-C4 (provenance + signing) | TASK-019 | `IMPLEMENTED` | Part A provenance structure, canonicalization, replay rejection, durable sequence recovery, PF-002 binding, and explicit SIGNING_UNAVAILABLE behavior are TESTED; Part B operational signing remains BLOCKED on PRE-08 target-specific key-path/ACL provisioning. PRE-02, PRE-04, and PRE-09 remain resolved. |
 | COMP-CAP (capability declaration) | TASK-020 | `NOT STARTED` | |
 | COMP-C5 (interpretation engine) | TASK-021 | `NOT STARTED` | PRE-04 resolved; awaits evidence components |
 | COMP-SUP (orchestrator) | TASK-022 | `NOT STARTED` | Depends on all workers and supervisor components |
@@ -68,25 +68,25 @@ Status codes: `NOT STARTED` | `IN PROGRESS` | `IMPLEMENTED` | `TESTED` | `VALIDA
 ## CURRENT TASK
 
 ```
-TASK: TASK-018 — COMP-REF Reference Manager
+TASK: TASK-019 Part A — COMP-C4 Provenance Record Builder
 Owner: Codex
-Branch: feature/task-018-reference-manager
+Branch: feature/task-019-provenance
 Started: 2026-09-27
-Status: TESTED — implementation and validation complete.
+Status: TESTED — Part A implementation and validation complete; Part B signing not started.
 
 Validated behavior:
-  DEFAULT: unregistered references return UNAVAILABLE.
-  REGISTRATION: non-format references begin HEALTH_UNVERIFIED; FORMAT_ASSET remains distinct and never implies verified health.
-  PROMOTION: HEALTH_VERIFIED requires all R0–R7 records, the same reference_id and artifact_digest, and passed=true for every gate.
-  FORMAT_ASSET: promotion returns FORMAT_ASSET and emits REFERENCE_CATEGORY_VIOLATION.
-  STALENESS: transitions to STALE_SUSPECTED and emits REFERENCE_HEALTH_TRANSITION with reference_id and reason.
-  AUDIT FAILURE: AuditWriteError propagates and the state transition rolls back.
-  WORKER ISOLATION: no worker imports or accesses ReferenceManager.
-  PRE-06: RESOLVED by approved docs/sp001_reference_health_gates.md.
-  TASK-018 TESTS: 7 passed, 0 failed, 0 skipped.
-  STORE/AUDIT/TASK-018 REGRESSION: 19 passed, 0 failed, 0 skipped.
-  FULL REGRESSION: 325 passed, 0 failed, 25 expected skips.
-  SECURITY SCANS: zero matches for weights_only=False, risk_score, and prohibited positive-assurance constants.
+  RECORD: frozen v1.0 provenance structure carries artifact/evidence digests and exact PF_002_NON_CLAIM.
+  CANONICALIZATION: deterministic json-canonical-utf8-sort-keys-v1 bytes.
+  REPLAY: UUID4 nonce generation; duplicate nonce rejected with ReplayAttemptError and REPLAY_ATTEMPT_DETECTED.
+  SEQUENCE: store-backed next sequence; supplied gaps emit SEQUENCE_GAP_DETECTED and recover monotonically.
+  SIGNING: _sign() is the required Part A SIGNING_UNAVAILABLE stub; no key access or signing algorithm implementation.
+  AUDIT: SIGNING_UNAVAILABLE and PROVENANCE_RECORD_WRITTEN emitted; AuditWriteError propagates.
+  PRE CONDITIONS: PRE-02 and PRE-09 remain resolved; PRE-08 key-path/ACL provisioning remains the operational signing blocker.
+  TASK-019 PART A TESTS: 7 passed, 0 failed, 2 expected conditional signing skips.
+  STORE/AUDIT/SCHEMA/PROVENANCE REGRESSION: 26 passed, 0 failed, 2 expected skips.
+  SECURITY SUITE: 23 passed, 0 failed, 6 expected dependency/task-gated skips.
+  FULL REGRESSION: 332 passed, 0 failed, 27 expected skips.
+  SECURITY SCANS: zero matches for weights_only=False, risk_score, aggregate_assurance, compromise_probability, and prohibited positive-assurance constants.
 ```
 
 ---
@@ -113,6 +113,7 @@ Validated behavior:
 | TASK-016 | Implemented COMP-W-C3C containment-first ONNX structural validation with lazy import, external-data path classification through unchanged C3A helpers, `load_external_data=False`, in-memory checker invocation, fail-closed error mapping, non-executable metadata, and mandatory PF-002/EF-004 disclosures | Targeted: 12 passed, 5 HOST-CAP-003 skips; UT-C3C-005 and supplementary contract/security tests passed; UT-C3C-001..004 and SEC-006 runtime execution blocked; schema validation passed; security suite 9 passed, 4 pre-existing skips; full suite 277 passed, 23 expected skips; universal guards passed | This TASK-016 completion commit |
 | TASK-017 | Implemented COMP-W-C3D restricted PyTorch safe-loading with lazy Torch import, exactly one `torch.load(..., weights_only=True, map_location="cpu")` path, no fallback, path containment, mandatory resource-limit input, fail-closed output, PF-002 disclosures, and the frozen three-way exception classification | Unit: 29 passed; security: 9 passed, 2 TASK-022 skips; SEC-007: 3 passed; full suite: 318 passed, 25 expected skips; universal guards and 24/25 immediately executable security-review items passed | This TASK-017 completion commit |
 | TASK-018 | Implemented COMP-REF reference registration and health state management under approved SP-001: fail-closed UNAVAILABLE default, HEALTH_UNVERIFIED registration, all-of R0–R7 promotion, FORMAT_ASSET category enforcement, audited state transitions, staleness downgrade, and fail-closed audit rollback | UT-REF-001..003 plus 4 supplementary gate, rollback, and isolation tests: 7 passed; store/audit/reference regression: 19 passed; full suite: 325 passed, 25 expected skips; mandatory security scans passed | This TASK-018 completion commit |
+| TASK-019 Part A | Implemented the unsigned COMP-C4 provenance shell: frozen record contract and canonicalization, UUID4 replay nonces with duplicate rejection, store-backed monotonic sequence recovery and gap auditing, exact PF-002 non-claim, explicit SIGNING_UNAVAILABLE persistence, and mandatory audit events. No signing primitive or key access was implemented. | UT-C4-001/002/003/006 plus audit-failure and SEC-009 coverage: 7 passed, 2 expected conditional signing skips; relevant regression 26 passed, 2 skipped; security suite 23 passed, 6 skipped; full suite 332 passed, 27 expected skips; universal guards passed | This TASK-019 Part A completion commit |
 
 ---
 
@@ -150,10 +151,10 @@ Validated behavior:
 ## LATEST VALIDATED COMMIT
 
 ```
-Commit: This TASK-018 completion commit
-Branch: feature/task-018-reference-manager
+Commit: This TASK-019 Part A completion commit
+Branch: feature/task-019-provenance
 Date: 2026-09-27
-Tests: TASK-018 targeted 7 passed; store/audit/reference regression 19 passed; full suite 325 passed, 0 failed, 25 expected skips; mandatory production security scans passed
+Tests: TASK-019 Part A targeted 7 passed, 2 expected signing skips; store/audit/schema/provenance regression 26 passed, 2 skipped; security suite 23 passed, 6 skipped; full suite 332 passed, 0 failed, 27 expected skips; mandatory production security scans passed
 ```
 
 ---
@@ -162,8 +163,8 @@ Tests: TASK-018 targeted 7 passed; store/audit/reference regression 19 passed; f
 
 ```
 Date: 2026-09-27
-Tests passed: 325
-Tests skipped: 25 expected task/dependency-gated tests
+Tests passed: 332
+Tests skipped: 27 expected task/dependency-gated tests
 Test tooling: repository-local Python 3.13.12 with Torch 2.10.0+cpu; pytest 9.1.1 and PyYAML 6.0.3 loaded from a temporary non-repository directory
 Security checks: SEC-007 3/3 passed; `weights_only=False`, broad `weights_only.*False`, `risk_score`, `aggregate_assurance`, `compromise_probability`, prohibited positive-assurance constants, network access, `onnxruntime`, signing-key worker access, and evidence/audit-store worker writes have 0 prohibited production matches
 
@@ -325,7 +326,7 @@ The Stage 6 rule permits exit when every requirement is either satisfied with ev
 
 ## NEXT TASK
 
-**Next task:** TASK-019 Part A and TASK-020 require their own entry/dependency review and execution packets. Neither task was started by TASK-018.
+**Next task:** TASK-019 Part B remains blocked on PRE-08 target-host key-path/ACL provisioning. TASK-020 requires its own entry/dependency review and execution packet. Neither was started by TASK-019 Part A.
 
 Critical path reminder:
 ```
@@ -378,7 +379,7 @@ PRE-04 resolved
 
 *(To be filled by the agent ending a session — for the agent starting the next session)*
 
-**Current session:** TASK-018 completed on `feature/task-018-reference-manager` with status `TESTED`. COMP-REF uses the existing supervisor-owned evidence store and audit chain, preserves the `UNAVAILABLE` default, registers non-format references as `HEALTH_UNVERIFIED`, enforces the approved all-of R0–R7 promotion rule, prevents FORMAT_ASSET promotion with a `REFERENCE_CATEGORY_VIOLATION` event, records staleness as `STALE_SUSPECTED`, and propagates `AuditWriteError` while rolling back the state change. Seven TASK-018 tests, 19 relevant store/audit/reference tests, and the 325-test full regression pass; 25 unrelated dependency/task-gated skips remain. TASK-019 and TASK-020 were not started.
+**Current session:** TASK-019 Part A completed on `feature/task-019-provenance` with status `TESTED`. COMP-C4 now builds and persists the unsigned provenance contract, canonicalizes deterministically, generates and rejects replay nonces with audited detection, recovers monotonic sequence state with audited gap detection, includes the exact PF-002 non-claim, and emits both signing-unavailable and record-written audit events. Seven executable Part A tests pass; UT-C4-004 and UT-C4-005 remain correctly skipped because signing is outside Part A and PRE-02 selected HMAC-SHA256 rather than Ed25519. The relevant regression passed 26 tests, the security suite passed 23 tests, and the full suite passed 332 tests; 27 expected dependency/task-gated skips remain. PRE-02 and PRE-09 remain resolved, while PRE-08 continues to block operational signing. TASK-019 Part B and TASK-020 were not started.
 
 **What the next agent needs to know:**
 - TASK-006 unit tests passed 5/5 and SEC-010 passed; the full current suite passed 154 with 11 expected skips.
