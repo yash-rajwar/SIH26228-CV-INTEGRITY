@@ -1,99 +1,82 @@
 # SIH26228-CV-INTEGRITY
 
-**SIH 2026 · Problem Statement 26228**
-**Trustworthy Computer Vision Integrity Assurance for Data, Models and Inference Outputs in Multi-Contributor Pipelines**
+SIH 2026 Problem Statement 26228 — Trustworthy Computer Vision Integrity Assurance for Data, Models, and Inference Outputs in Multi-Contributor Pipelines.
 
----
+## Project Overview
 
-## Status
+This repository implements an offline-first, evidence-first integrity-assurance pipeline for computer-vision datasets and model artifacts. Deterministic workers examine untrusted inputs in subprocess boundaries and produce schema-controlled evidence without converting unavailable coverage or anomalous signals into positive safety claims.
 
-**Repository skeleton — implementation has not begun.**
+## Problem Statement
 
-This repository was initialized as Stage 13 of the project workflow.
-Implementation follows the approved architecture and technical specification.
+Multi-contributor computer-vision pipelines can receive corrupted labels, duplicated or concentrated data, substituted models, unsafe serialized artifacts, and incomplete provenance. The project provides bounded, reproducible evidence for those conditions while preserving the distinction between an observed anomaly and proof of malicious intent.
 
-| Stage | Document | Status |
-|-------|----------|--------|
-| Architecture Specification | `09_ARCHITECTURE_SPECIFICATION_SIH26228.md` | APPROVED |
-| Technical Specification | `10_TECHNICAL_SPECIFICATION_SIH26228.md` | COMPLETE |
-| MVP Implementation Plan | `11_MVP_IMPLEMENTATION_PLAN_SIH26228.md` | COMPLETE |
-| Repository Setup | This repository | SKELETON |
-| Implementation | — | NOT STARTED — pending P1 conditions |
+## Proposed Solution
 
----
+The approved design is Option A: Deterministic Integrity Spine + Signed Evidence Governance + Offline-First Supervisor-Worker Architecture. It combines:
 
-## Approved Architecture
+- deterministic dataset and artifact checks;
+- isolated worker execution for untrusted parsing and loading;
+- fail-closed schema validation and audit handling;
+- explicit limitations and non-claims on every assessment;
+- hash-based identity and provenance evidence without aggregate risk scoring.
 
-**Option A — Deterministic Integrity Spine + Signed Evidence Governance + Offline-First Supervisor-Worker Architecture**
+## Architecture
 
-Approval: Project-owner verbal confirmation, 2026-09-25.
+The repository follows a supervisor-worker architecture. Workers receive named-file IPC tasks, enforce path containment, and return structured evidence. The supervisor owns persistence, orchestration, signing-key access, audit-chain writes, and timeout/OOM handling. Workers cannot write to the evidence or audit stores.
 
----
+The architectural authority is `docs/ARCHITECTURE_SPECIFICATION.md`; the build contract is `docs/TECHNICAL_SPECIFICATION.md`; live implementation state is maintained in `PROJECT_STATE.md`.
 
-## Governing Invariants (Absolute — No Exception)
+## Implemented Components
 
-```
-UNAVAILABLE ≠ CLEAN
-NOT_ASSESSED ≠ CLEAN
-DEFERRED_IN_SCOPE ≠ CLEAN
-anomaly ≠ malicious intent
-ANOMALY ≠ PROVEN_ATTACK
-raw detector score ≠ compromise probability
-hash match ≠ safe ≠ semantically equivalent (PF-002)
-finite test coverage ≠ global backdoor absence
-```
+- Repository, exception/constants, configuration, evidence-store, and audit-chain foundations.
+- Worker IPC/output base and schema validation.
+- Seed-pinned hostile and benign fixture families.
+- C2A structural geometry validation, C2B exact duplicate hashing, C2C source-concentration statistics, and C2D image-level SHA-256 identity.
+- C3A artifact-unit resolution, C3B model hashing, and C3C ONNX structural-validation contracts, with their named ONNX blockers retained.
+- C3D PyTorch safe-loading gate using one restricted `torch.load` path with `weights_only=True` and `map_location="cpu"`, with no unsafe fallback.
 
----
+## Current Status
 
-## Before Implementation Begins
+Stage 7 exits `PASS-WITH-DEFERRED-TASK-022`. COMP-W-C3D is tested at worker level. Its real hostile-pickle, benign-model, deterministic load-error, and security-boundary cases pass. Supervisor-level OOM and timeout integration remain deferred until TASK-022 implements the orchestrator.
 
-**P1 conditions must be resolved first (TASK-001):**
+No subsequent task is authorized by this status; the next stage requires its own authoritative execution packet.
 
-- PRE-01: Target host (OS, Python version, CPU, RAM) — hard gate
-- PRE-04: SP-003 vocabulary contract — hard gate
-- PRE-05: Mandatory format list — hard gate
-- PRE-02, PRE-03, PRE-06, PRE-07, PRE-08, PRE-09: See §10 §1.4
+## Validation Evidence
 
----
+- TASK-017 unit tests: 29 passed, 0 failed, 0 skipped.
+- TASK-017 security tests: 9 passed, 0 failed, 2 TASK-022 skips.
+- SEC-007 unsafe-fallback guards: 3 passed, 0 failed.
+- Full repository regression: 318 passed, 0 failed, 25 expected dependency/task-gated skips.
+- FIX-001: `LOAD_BLOCKED` through the restricted worker path.
+- FIX-015: `LOAD_SUCCESS` through the restricted worker path.
+- Deterministic empty-file case: `LOAD_ERROR`.
 
-## Quick Start (after P1 conditions resolved)
+## Security Boundaries
 
-```bash
-# Structure verification (works now, on skeleton):
-python -m pytest tests/test_repository_structure.py -v
+- All submitted artifacts are untrusted and must be processed by workers, not the supervisor.
+- `weights_only=True` is mandatory; no fallback to unrestricted PyTorch loading is permitted.
+- `UNAVAILABLE`, `ASSESSMENT_ERROR`, and `DEFERRED_IN_SCOPE` never mean clean or safe.
+- Anomaly and load-block signals do not prove malicious intent.
+- Aggregate risk scores and compromise probabilities are prohibited.
+- Signing keys and evidence/audit-store write paths remain supervisor-only.
+- A successful load or hash match does not establish behavioral safety, semantic equivalence, global backdoor absence, or causal execution proof.
 
-# Security invariant checks (weights_only=False and risk_score grep):
-python -m pytest tests/security/test_security_invariants.py -v
+## Known Limitations
 
-# All tests (skipped stubs expected; 0 failures on skeleton):
-python -m pytest tests/ -v
-```
+- SEC-002 OOM dispatch and SEC-003 timeout dispatch require TASK-022 and remain unverified.
+- The ONNX artifact-unit definition ID is not frozen, blocking final C3A/C3B ONNX identity acceptance.
+- ONNX is unavailable in the validated repository-local environment, so genuine C3A/C3C protobuf runtime tests remain skipped with a named blocker.
+- Windows does not provide the Unix `resource.setrlimit` controls used on supported Unix hosts.
+- Operational signing awaits target-host key-path and ACL provisioning.
+- Offline installation and zero-egress deployment validation remain future acceptance work.
+- T05d clean-label poisoning detection is a permanent non-claim under the current baseline.
 
-See `docs/SETUP.md` for full setup instructions.
+## Research Documentation
 
----
+Six protected evaluator-facing research dossiers are tracked under `docs/research/`, covering mission/threat context, data integrity, model security, provenance/cryptography, assurance/drift/evidence, and engineering validation.
 
-## Project Documents
+## Future Roadmap
 
-Place copies of the following in `docs/`:
-- `09_ARCHITECTURE_SPECIFICATION_SIH26228.md`
-- `10_TECHNICAL_SPECIFICATION_SIH26228.md`
-- `11_MVP_IMPLEMENTATION_PLAN_SIH26228.md`
+Future work remains subject to task-specific entry gates. Planned components include reference management, provenance/signing, capability declaration, interpretation, supervisor orchestration, CLI integration, evidence export, end-to-end validation, and target-host offline validation.
 
-Do not edit these copies. The master documents are the authorities.
-
----
-
-## What This System Does NOT Claim
-
-- Does not produce an aggregate risk score or compromise probability (absolutely prohibited).
-- Does not claim T05d clean-label poisoning detection (permanent non-claim).
-- Does not claim global backdoor absence from any finite fixture test.
-- Does not claim that UNAVAILABLE or DEFERRED_IN_SCOPE means no threat is present.
-- Does not claim that a valid provenance signature proves the model executed the assessed inferences (PF-002).
-
----
-
-## Branch Convention
-
-See `docs/BRANCH_NAMING.md`. Branches represent tasks — not devices, locations, or agents.
+For current implementation evidence and blockers, see `PROJECT_STATUS.md` and `PROJECT_STATE.md`.
