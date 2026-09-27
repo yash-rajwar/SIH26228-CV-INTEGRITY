@@ -1,0 +1,37 @@
+# supported_formats.yaml
+# Authority: 10_TECHNICAL_SPECIFICATION_SIH26228.md §13; §09 §13
+# Status: STUB — BLOCKED on PRE-05 (mandatory format list not yet confirmed)
+#
+# PRE-05: YOLO task-variant scope and PyTorch in/out-of-scope not yet confirmed.
+# This file must not be treated as authoritative until PRE-05 is resolved.
+
+data_formats:
+  coco:
+    status: "SUPPORTED"
+    note: "All-box structural/geometry validation. pycocotools CONDITIONAL on PRE-01 C extension build."
+  yolo_detect:
+    status: "SUPPORTED"
+    note: "Detection task variant."
+  yolo_segment:
+    status: "CONDITIONAL"
+    note: "BLOCKED: PRE-05"
+  yolo_pose:
+    status: "CONDITIONAL"
+    note: "BLOCKED: PRE-05"
+  yolo_obb:
+    status: "CONDITIONAL"
+    note: "BLOCKED: PRE-05"
+
+model_formats:
+  onnx:
+    status: "SUPPORTED"
+    note: "Structural validator + path-containment check. onnx package required (pre-staged wheel)."
+  pytorch_pt_pth:
+    status: "CONDITIONAL"
+    note: "BLOCKED: PRE-01 (torch CPU wheel) + PRE-05 (format list confirms PyTorch scope)."
+  torchscript:
+    status: "DEFERRED_IN_SCOPE"
+    note: "Not demonstrated on target host; RC-014 state-dict mapping unresolved."
+  safetensors:
+    status: "DEFERRED_IN_SCOPE"
+    note: "YOLO state-dict mapping absent (RC-014)."

@@ -1,0 +1,30 @@
+# system_config.yaml
+# Authority: 10_TECHNICAL_SPECIFICATION_SIH26228.md §15
+# Status: STUB — values pending P1 condition resolution
+#
+# PRE-01: target host (OS, Python version, RAM) not yet confirmed
+# PRE-02: signing mechanism (HMAC-SHA256 vs Ed25519) not yet decided
+# PRE-04: vocabulary contract (SP-003) not yet produced
+# PRE-08: crypto profile (SP-004) not yet produced
+
+schema_version: "v1-PENDING-SP003"  # BLOCKED: PRE-04
+
+# Evidence persistence
+evidence_store_path: "/var/assurance/evidence-store/evidence.db"  # CONDITIONAL: PRE-01
+audit_trail_path: "/var/assurance/audit-trail/audit.log"          # CONDITIONAL: PRE-01
+references_path: "/var/assurance/references/"                      # CONDITIONAL: PRE-01
+
+# Cryptographic configuration — BLOCKED until PRE-02 + PRE-08 resolved
+signing_key_path: "/var/assurance/keys/signing.key"               # BLOCKED: PRE-02
+signing_algorithm: "PENDING-XREG002"                              # BLOCKED: PRE-02 + PRE-08
+canonicalization_algorithm: "json-canonical-utf8-sort-keys-v1"   # PENDING: SP-003
+
+# Trusted clock
+trusted_clock_source: "UNAVAILABLE"  # AF-003 open; system timestamp used
+
+# Analyst identity — OQ-017 unresolved
+default_analyst_id: "UNAVAILABLE"
+
+# Dashboard
+dashboard_host: "127.0.0.1"
+dashboard_port: 8080

@@ -1,0 +1,31 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "evidence_record_v1",
+  "_status": "STUB — field-level detail pending PRE-04 (SP-003 vocabulary contract)",
+  "_authority": "10_TECHNICAL_SPECIFICATION_SIH26228.md §4",
+  "_implementation_task": "TASK-008",
+  "_note": "UNAVAILABLE is the correct default for unassessed fields. NOT_ASSESSED != CLEAN.",
+  "type": "object",
+  "properties": {
+    "schema_version": { "type": "string" },
+    "record_id": { "type": "string" },
+    "asset_id": { "type": "string" },
+    "method_id": { "type": "string" },
+    "status": { "type": "string" },
+    "is_synthetic": { "type": "integer", "enum": [0, 1] },
+    "coverage_gap_clean_label": {
+      "type": "integer", "enum": [0, 1],
+      "_note": "Must be 1 (true) on all C2 and C3 records — AR-010"
+    },
+    "limitations": { "type": "array", "items": { "type": "string" } },
+    "non_claims": { "type": "array", "items": { "type": "string" } },
+    "timestamp_utc": { "type": "string" },
+    "trusted_clock": { "type": "string" }
+  },
+  "required": [
+    "schema_version", "record_id", "asset_id", "method_id",
+    "status", "is_synthetic", "coverage_gap_clean_label",
+    "limitations", "non_claims", "timestamp_utc"
+  ],
+  "_prohibited_fields": ["risk_score", "compromise_probability", "overall_assurance_score"]
+}

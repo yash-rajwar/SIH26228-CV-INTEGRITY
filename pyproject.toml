@@ -1,0 +1,23 @@
+[build-system]
+requires = ["setuptools>=68"]
+build-backend = "setuptools.backends.legacy:build"
+
+[project]
+name = "sih26228-cv-integrity"
+version = "0.0.0-skeleton"
+description = "Trustworthy CV Integrity Assurance for Data, Models and Inference Outputs in Multi-Contributor Pipelines — SIH 2026 PS 26228"
+requires-python = ">=3.9"   # Target version CONDITIONAL: pending PRE-01
+
+# Runtime dependencies — STUB; pin list frozen after PRE-01 confirmed.
+# Only stdlib-safe entries listed here; external packages added after PRE-01.
+dependencies = []
+
+[project.scripts]
+cv-integrity = "cli:main"
+
+[tool.setuptools.packages.find]
+where = ["."]
+include = ["assurance_system*"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]

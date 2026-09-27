@@ -1,0 +1,22 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "deferred_record_v1",
+  "_status": "STUB — pending PRE-04 (vocabulary contract)",
+  "_authority": "10_TECHNICAL_SPECIFICATION_SIH26228.md §4; §09 §6 COMP-CAP",
+  "_implementation_task": "TASK-020",
+  "_note": "DEFERRED_IN_SCOPE != CLEAN. Deferred records are mandatory for every out-of-scope method so analysts see what was NOT assessed.",
+  "type": "object",
+  "properties": {
+    "schema_version": { "type": "string" },
+    "deferred_record_id": { "type": "string" },
+    "asset_id": { "type": "string" },
+    "method_id": { "type": "string" },
+    "status": { "type": "string", "const": "DEFERRED_IN_SCOPE" },
+    "reason": { "type": "string" },
+    "timestamp_utc": { "type": "string" }
+  },
+  "required": [
+    "schema_version", "deferred_record_id", "asset_id",
+    "method_id", "status", "reason", "timestamp_utc"
+  ]
+}
