@@ -12,7 +12,7 @@ Update this file at the end of every coding session before committing.
 ## PROJECT
 
 **Name:** Trustworthy Computer Vision Integrity Assurance — SIH 2026 PS 26228  
-**Current stage:** Stage 9 TASK-021 COMP-C5 `TESTED`; Stage 9 exit and next-task authorization require a separate review
+**Current stage:** Stage 10 TASK-022 Part A COMP-SUP `IMPLEMENTED`; validation is pending Part B
 **Repository created:** [DATE TO BE FILLED ON REPO INIT]  
 **Five-day window start:** [DATE — begins after P1 conditions resolved]
 
@@ -57,7 +57,7 @@ Status codes: `NOT STARTED` | `IN PROGRESS` | `IMPLEMENTED` | `TESTED` | `VALIDA
 | COMP-C4 operational signing | TASK-019 Part B | `DEFERRED` | PRE-08 target-specific key-path/ACL provisioning remains unresolved. PRE-02, PRE-04, and PRE-09 remain resolved; no signing key material, runtime signing, or fake signature is present. |
 | COMP-CAP (capability declaration) | TASK-020 | `TESTED` | Component acceptance: fail-closed bounded method declarations, fixed non-claims, schema-gated persistence of 15 coverage-gap records, architecture-specific unavailable states, and mandatory audit events pass 53 tests; UT-CAP-003 list-deferred CLI acceptance remains explicitly blocked on TASK-023. No signing or worker changes. |
 | COMP-C5 (interpretation engine) | TASK-021 | `TESTED` | Part A rule engine uses the frozen `v1.0` vocabulary; Part B unit and FIX-013 negative validation passed 20/20 using the existing approved offline pytest 9.1.1 package source. |
-| COMP-SUP (orchestrator) | TASK-022 | `NOT STARTED` | Depends on all workers and supervisor components |
+| COMP-SUP (orchestrator) | TASK-022 Part A | `IMPLEMENTED` | Supervisor pipeline lifecycle, manifest gate, isolated named-file worker dispatch, C2/C3 sequencing, schema-before-persistence acceptance, audit/provenance/capability/C5 coordination, and operational run summary implemented; tests pending Part B. |
 | CLI entry points | TASK-023 | `NOT STARTED` | |
 | Dashboard (SHOULD BUILD) | TASK-024 | `NOT STARTED` | Antigravity — begins after GATE-2 |
 | Evidence bundle exporter | TASK-025 | `NOT STARTED` | |
@@ -69,18 +69,19 @@ Status codes: `NOT STARTED` | `IN PROGRESS` | `IMPLEMENTED` | `TESTED` | `VALIDA
 ## CURRENT TASK
 
 ```
-TASK: TASK-021 — COMP-C5 Assurance Interpretation Rule Engine
+TASK: TASK-022 Part A — COMP-SUP Supervisor Orchestrator
 Owner: Codex
-Branch: feature/interpretation
+Branch: feature/task-022-orchestrator
 Started: 2026-09-28
-Status: TESTED.
+Status: IMPLEMENTED — validation pending Part B.
 
 Validated behavior:
-  PART A: deterministic priority rules, finding construction, mandatory T05d/PF-002/dependency non-claims, C3 backdoor-absence marker, and optional schema validation implemented.
-  PART B: unit rule/schema/security coverage and FIX-013 negative propagation coverage passed 20/20 with 0 failures and 0 skips.
-  TEST ENVIRONMENT: system Python 3.13.12 used the existing approved offline pytest 9.1.1 package source at `C:\Users\master\AppData\Local\Temp\sih26228-task-tests` through `PYTHONPATH`; no package was downloaded or installed and no application dependency changed.
-  SECURITY SCANS: zero `weights_only=False` and `risk_score` matches under `assurance_system/`; zero prohibited C5 output-state literals in `assurance_system/supervisor/interpretation.py`.
-  SCOPE: TASK-022 and TASK-023 were not started; Stage 9 exit and next-task authorization remain separate reviews.
+  IMPLEMENTATION: manifest validation; pipeline lifecycle; isolated named-file subprocess dispatch; spawn-all/collect-all C2 scheduling; C3A then C3B with containment short-circuit; format-applicable C3 tail dispatch; worker schema validation; supervisor-assigned identifiers/digests; evidence, audit, provenance, capability, reference, and C5 integration.
+  RESOURCE CONTRACT: trusted configured timeout, memory, and file-descriptor limits are translated to `timeout_s`, `memory_mb`, and `max_fds`; missing or invalid values fail closed.
+  IMPORT/SYNTAX: passed with system Python 3.13.12.
+  SECURITY SCANS: zero `weights_only=False`, `risk_score`, and `shell=True` matches in `orchestrator.py`; worker environment excludes `ASSURANCE_KEY_PATH` and `ASSURANCE_DB_PATH`.
+  TESTS: NOT RUN by Part A instruction. Part B validation remains pending.
+  SCOPE: no worker, existing supervisor component, schema, constants, interface, or test file was modified; TASK-023 was not started.
 ```
 
 ---
@@ -168,6 +169,7 @@ Executed files: `tests/unit/test_interpretation.py`; `tests/negative/test_unavai
 Test tooling: `C:\Users\master\AppData\Local\Programs\Python\Python313\python.exe` (Python 3.13.12) with pytest 9.1.1 loaded from the existing approved offline package source `C:\Users\master\AppData\Local\Temp\sih26228-task-tests` through `PYTHONPATH`. No package was downloaded or installed.
 Latest full regression evidence: 385 passed, 0 failed, 28 expected task/dependency-gated skips, including UT-CAP-003 blocked on TASK-023. The full suite was not rerun for this targeted validation.
 Security checks: zero `weights_only=False` and `risk_score` matches under `assurance_system/`; zero prohibited C5 output-state literals in `assurance_system/supervisor/interpretation.py`.
+TASK-022 Part A: tests NOT RUN by execution-packet instruction. `orchestrator.py` syntax compilation and import validation passed; required file-level unsafe-load, prohibited-score, and subprocess-shell scans returned zero matches. Part B validation remains pending.
 
 Integration gates:
   GATE-1 (Foundation):       NOT PASSED
@@ -345,7 +347,7 @@ The Stage 6 rule permits exit when every requirement is either satisfied with ev
 
 ## NEXT TASK
 
-**Next task:** Perform the separate Stage 9 exit and next-task authorization review. TASK-022 and TASK-023 were not started by TASK-021 validation. TASK-019 Part B remains blocked on PRE-08 target-host key-path/ACL provisioning, and UT-CAP-003 must be resumed when TASK-023 implements list-deferred.
+**Next task:** TASK-022 Part B test implementation and validation under its own execution packet. TASK-023 was not started. TASK-019 Part B remains blocked on PRE-08 target-host key-path/ACL provisioning, and UT-CAP-003 must be resumed when TASK-023 implements list-deferred.
 
 Critical path reminder:
 ```
@@ -398,7 +400,7 @@ PRE-04 resolved
 
 *(To be filled by the agent ending a session — for the agent starting the next session)*
 
-**Current session:** TASK-021 validation completed on `feature/interpretation`. The existing approved offline pytest 9.1.1 package source at `C:\Users\master\AppData\Local\Temp\sih26228-task-tests` was loaded through `PYTHONPATH` with system Python 3.13.12; no package was downloaded or installed. The two authorized TASK-021 files passed 20/20 with no failures or skips, targeted security scans returned zero prohibited matches, and TASK-021 is now `TESTED`. TASK-022 and TASK-023 were not started; Stage 9 exit and next-task authorization require a separate review.
+**Current session:** TASK-022 Part A implemented COMP-SUP on `feature/task-022-orchestrator`. The orchestrator owns manifest validation, worker lifecycle, schema-gated evidence acceptance, C2/C3 scheduling, operational summaries, and coordination of the existing capability, provenance, reference, audit, store, and C5 contracts. Syntax and import validation passed; the three required file-level security scans returned zero matches. Per the Part A boundary, no tests were created or run, TASK-022 is not `TESTED`, and TASK-023 was not started.
 
 **TASK-020 specification reconciliation:** No separately saved Stage 8 packet was available in the repository or attachments; the current TASK-020 execution request and committed architecture/technical/MVP contracts supplied the scope. The MVP's §10 §3.17 citation points to COMP-FIX, so the concrete COMP-CAP API follows TASK-020 and the deferred persistence/audit contracts in §10 §§3.1, 3.15, 20.3. UT-CAP-001's generic deferred-count wording is met by enumerating drift/OOD and heavyweight methods separately while retaining M11=REFERENCE_UNAVAILABLE and tail=COMPLETENESS_UNAVAILABLE. T05d remains a permanent NON_CLAIM in persisted reason/non-claim text using the existing deferred-table envelope; no new assessment status was introduced.
 
