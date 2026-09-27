@@ -12,7 +12,7 @@ Update this file at the end of every coding session before committing.
 ## PROJECT
 
 **Name:** Trustworthy Computer Vision Integrity Assurance — SIH 2026 PS 26228  
-**Current stage:** Stage 10 TASK-022 Parts A-B COMP-SUP `TESTED`; Part C review is next
+**Current stage:** Stage 10 TASK-022 COMP-SUP final status `TESTED`; security review `PASS`
 **Repository created:** [DATE TO BE FILLED ON REPO INIT]  
 **Five-day window start:** [DATE — begins after P1 conditions resolved]
 
@@ -57,7 +57,7 @@ Status codes: `NOT STARTED` | `IN PROGRESS` | `IMPLEMENTED` | `TESTED` | `VALIDA
 | COMP-C4 operational signing | TASK-019 Part B | `DEFERRED` | PRE-08 target-specific key-path/ACL provisioning remains unresolved. PRE-02, PRE-04, and PRE-09 remain resolved; no signing key material, runtime signing, or fake signature is present. |
 | COMP-CAP (capability declaration) | TASK-020 | `TESTED` | Component acceptance: fail-closed bounded method declarations, fixed non-claims, schema-gated persistence of 15 coverage-gap records, architecture-specific unavailable states, and mandatory audit events pass 53 tests; UT-CAP-003 list-deferred CLI acceptance remains explicitly blocked on TASK-023. No signing or worker changes. |
 | COMP-C5 (interpretation engine) | TASK-021 | `TESTED` | Part A rule engine uses the frozen `v1.0` vocabulary; Part B unit and FIX-013 negative validation passed 20/20 using the existing approved offline pytest 9.1.1 package source. |
-| COMP-SUP (orchestrator) | TASK-022 | `TESTED` | Part A implementation plus Part B integration/security validation pass: 21 targeted tests and 149 relevant-regression tests pass with 9 expected dependency/task-gated skips; Part C review is pending. |
+| COMP-SUP (orchestrator) | TASK-022 | `TESTED` | Parts A-B implemented and validated COMP-SUP; Part C final trust-boundary, isolation, secret-access, evidence/schema/audit ownership, C5, failure-state, resource, import, and prohibited-field review passed. Part B: 21 targeted tests and 149 relevant-regression tests pass with 9 expected dependency/task-gated skips; Part C focused security tests pass 6/6. |
 | CLI entry points | TASK-023 | `NOT STARTED` | |
 | Dashboard (SHOULD BUILD) | TASK-024 | `NOT STARTED` | Antigravity — begins after GATE-2 |
 | Evidence bundle exporter | TASK-025 | `NOT STARTED` | |
@@ -69,21 +69,21 @@ Status codes: `NOT STARTED` | `IN PROGRESS` | `IMPLEMENTED` | `TESTED` | `VALIDA
 ## CURRENT TASK
 
 ```
-TASK: TASK-022 Part B — COMP-SUP Integration and Security Validation
+TASK: TASK-022 Part C — COMP-SUP Final Security Review
 Owner: Codex
 Branch: feature/task-022-orchestrator
 Started: 2026-09-28
-Status: TESTED — Part B complete; Part C review pending.
+Status: TESTED — final security review PASS.
 
 Validated behavior:
   IMPLEMENTATION: manifest validation; pipeline lifecycle; isolated named-file subprocess dispatch; spawn-all/collect-all C2 scheduling; C3A then C3B with containment short-circuit; format-applicable C3 tail dispatch; worker schema validation; supervisor-assigned identifiers/digests; evidence, audit, provenance, capability, reference, and C5 integration.
   RESOURCE CONTRACT: trusted configured timeout, memory, and file-descriptor limits are translated to `timeout_s`, `memory_mb`, and `max_fds`; missing or invalid values fail closed.
-  TEST ENVIRONMENT: repository-local Python 3.13.12 with pytest 9.1.1 from the approved existing offline package source; Git-for-Windows grep was added to the test-process PATH for legacy security tests, with no package installation.
-  TARGETED TESTS: `tests/integration/test_orchestrator.py` and `tests/security/test_supervisor_security.py` — 21 passed, 0 failed, 0 skipped.
-  RELEVANT REGRESSION: supervisor dependencies, worker base, schema/store/audit/reference/provenance/capability/C5, negative propagation, and full security directory — 149 passed, 0 failed, 9 expected skips.
-  SECURITY SCANS: zero `weights_only=False`, `risk_score`, and `shell=True` production matches; tests confirm no network/model/parser imports, no in-process worker analysis, no worker evidence-store write path, and secret environment paths are removed rather than read.
+  PART B TEST EVIDENCE: targeted integration/security tests — 21 passed, 0 failed, 0 skipped; relevant regression — 149 passed, 0 failed, 9 expected skips.
+  PART C SECURITY REVIEW: PASS — supervisor reads only the submission manifest and named worker-result JSON, never asset contents; fixed approved worker modules execute only through controlled `subprocess.Popen` named-file IPC; no shell, network, dynamic execution, model/parser imports, direct secret reads, or worker store writes; schema validation precedes evidence persistence; invalid output is audited and not persisted; audit failures propagate; finding generation remains delegated to C5; failure records remain fail-closed.
+  PART C RESOURCE/IMPORT REVIEW: PASS — trusted ConfigLoader values are validated as positive integers and copied to the worker `timeout_s`, `memory_mb`, and `max_fds` contract without orchestrator fallback values; imports are stdlib and approved internal supervisor/base contracts only.
+  PART C TEST/SCAN EVIDENCE: `tests/security/test_supervisor_security.py` — 6 passed; zero production matches for `weights_only=False`, `risk_score`, `confidence_score`, `trust_score`, `safety_score`, `malicious_probability`, prohibited positive assurance constants, direct environment secret reads, dynamic/shell execution, network imports, or model/parser imports.
   AUTHORITY RECONCILIATION: Technical Specification §7.1 limits C3C to ONNX and C3D to PyTorch; the orchestrator therefore uses a format-applicable tail batch. The batch primitive is separately verified to start all supplied tail workers before collection, without asserting that incompatible format workers run for one asset.
-  SCOPE: no production, worker, schema, constants, interface, or protected research documentation file was modified; TASK-023 was not started. TASK-017 SEC-002/SEC-003 remain explicitly unclaimed pending their real hostile-resource integration review.
+  SCOPE: Part C changed state documentation only; no production, worker, test, schema, constants, interface, or protected research documentation file was modified. TASK-023 was not started. PRE-08, E-2, HOST-CAP-003, HOST-CAP-002 deployment resource limitations, OS-level worker ACL/network enforcement, and TASK-017 SEC-002/SEC-003 remain carried without expanded claims.
 ```
 
 ---
@@ -113,7 +113,7 @@ Validated behavior:
 | TASK-019 Part A | Implemented the unsigned COMP-C4 provenance shell: frozen record contract and canonicalization, UUID4 replay nonces with duplicate rejection, store-backed monotonic sequence recovery and gap auditing, exact PF-002 non-claim, explicit SIGNING_UNAVAILABLE persistence, and mandatory audit events. No signing primitive or key access was implemented. | UT-C4-001/002/003/006 plus audit-failure and SEC-009 coverage: 7 passed, 2 expected conditional signing skips; relevant regression 26 passed, 2 skipped; security suite 23 passed, 6 skipped; full suite 332 passed, 27 expected skips; universal guards passed | This TASK-019 Part A completion commit |
 | TASK-020 | Implemented COMP-CAP fail-closed declarations, explicit bounded method scopes, immutable limitations/non-claims, all mandatory coverage-gap records with architecture-specific statuses, schema gating, and supervisor-only store/audit integration. No worker, provenance, signing, or schema changes. | UT-CAP-001/002 and supplementary unit/security tests: 53 passed; UT-CAP-003 skipped on TASK-023; security suite 61 passed, 6 expected skips; full suite 385 passed, 28 expected skips; imports and universal guards passed | This TASK-020 component acceptance commit |
 | TASK-021 | Implemented the deterministic COMP-C5 interpretation priority rules and finding contract, including fail-closed UNAVAILABLE propagation, C3B identity mapping, statistics-only handling, mandatory T05d/PF-002/dependency non-claims, and finding-v1 validation. | `tests/unit/test_interpretation.py` and `tests/negative/test_unavailable_propagation.py`: 20 passed, 0 failed, 0 skipped; targeted production security scans passed | This TASK-021 validation commit |
-| TASK-022 Parts A-B | Implemented COMP-SUP and added controlled integration/security validation for initialization, fail-closed configuration, isolated subprocess dispatch and cleanup, schema-gated supervisor-only persistence, fail-closed audit behavior, C2/C3 scheduling, C5 delegation, and complete ASSESSMENT_ERROR construction. | Targeted: 21 passed, 0 failed, 0 skipped; relevant regression: 149 passed, 0 failed, 9 expected skips; universal unsafe-load, prohibited-score, and shell guards passed | This TASK-022 Part B validation commit |
+| TASK-022 Parts A-C | Implemented COMP-SUP; validated initialization, fail-closed configuration, isolated subprocess dispatch and cleanup, schema-gated supervisor-only persistence, fail-closed audit behavior, C2/C3 scheduling, C5 delegation, and complete ASSESSMENT_ERROR construction; completed the final architecture/security compliance review without production changes. | Part B targeted: 21 passed, 0 failed, 0 skipped; relevant regression: 149 passed, 0 failed, 9 expected skips; Part C focused security: 6 passed; all required prohibited-field, dynamic-execution, network, parser/model, secret-read, and assurance-constant scans returned zero production matches | This TASK-022 final security review commit |
 
 ---
 
@@ -155,10 +155,10 @@ Validated behavior:
 ## LATEST VALIDATED COMMIT
 
 ```
-Commit: This TASK-022 Part B validation commit
+Commit: This TASK-022 final security review commit
 Branch: feature/task-022-orchestrator
 Date: 2026-09-28
-Tests: TASK-022 targeted validation passed 21, failed 0, skipped 0. Relevant regression passed 149, failed 0, with 9 expected dependency/task-gated skips. No full-suite rerun is claimed by this task-scoped validation.
+Tests: Part C focused security review passed 6, failed 0, skipped 0. Part B evidence remains 21 targeted passes and 149 relevant-regression passes with 9 expected dependency/task-gated skips. No full-suite rerun is claimed by this review-only step.
 ```
 
 ---
@@ -167,11 +167,11 @@ Tests: TASK-022 targeted validation passed 21, failed 0, skipped 0. Relevant reg
 
 ```
 Date: 2026-09-28
-Latest targeted tests: TASK-022 Part B passed 21, failed 0, skipped 0
-Executed files: `tests/integration/test_orchestrator.py`; `tests/security/test_supervisor_security.py`
+Latest focused tests: TASK-022 Part C security review passed 6, failed 0, skipped 0
+Executed file: `tests/security/test_supervisor_security.py`
 Test tooling: `C:\Users\master\Desktop\SIH26228-CV-INTEGRITY\.venv-torch-test\Scripts\python.exe` (Python 3.13.12) with pytest 9.1.1 loaded from the existing approved offline package source `C:\Users\master\AppData\Local\Temp\sih26228-task-tests` through `PYTHONPATH`. Git-for-Windows `grep.exe` was added to the pytest process PATH for legacy scan tests. No package was downloaded or installed.
-Relevant regression: 149 passed, 0 failed, 9 expected task/dependency-gated skips across config, worker base, schema, evidence store, audit, reference, provenance, capability, interpretation, negative propagation, and security tests. The full suite was not rerun for this task-scoped validation.
-Security checks: zero production matches for `weights_only=False`, `risk_score`, and `shell=True` under `assurance_system/`; TASK-022 static and controlled-dispatch checks passed.
+Part B evidence reviewed: targeted integration/security tests passed 21/21; relevant regression passed 149 with 9 expected task/dependency-gated skips across config, worker base, schema, evidence store, audit, reference, provenance, capability, interpretation, negative propagation, and security tests.
+Security checks: zero production matches for all six requested unsafe/prohibited fields; positive assurance constants, direct environment reads, dynamic/shell execution, network imports, and model/parser imports also returned zero matches. The full suite was not rerun for this review-only step.
 
 Integration gates:
   GATE-1 (Foundation):       NOT PASSED
@@ -349,7 +349,7 @@ The Stage 6 rule permits exit when every requirement is either satisfied with ev
 
 ## NEXT TASK
 
-**Next task:** TASK-022 Part C review under its own execution packet. TASK-023 was not started. TASK-019 Part B remains blocked on PRE-08 target-host key-path/ACL provisioning, and UT-CAP-003 must be resumed when TASK-023 implements list-deferred.
+**Next task:** TASK-023 entry/implementation requires its own authoritative execution packet. TASK-023 was not started by TASK-022 Part C. TASK-019 Part B remains blocked on PRE-08 target-host key-path/ACL provisioning, and UT-CAP-003 must be resumed when TASK-023 implements list-deferred.
 
 Critical path reminder:
 ```
@@ -402,7 +402,7 @@ PRE-04 resolved
 
 *(To be filled by the agent ending a session — for the agent starting the next session)*
 
-**Current session:** TASK-022 Part B validated COMP-SUP on `feature/task-022-orchestrator`. The new integration/security tests cover fail-closed initialization, isolated controlled subprocess dispatch, environment stripping and cleanup, schema-before-write, supervisor-only persistence, accepted/rejected/failure audit paths, spawn-all-before-collect C2 behavior, C3 containment short-circuit and format-applicable tail scheduling, C5 delegation, and complete fail-closed ASSESSMENT_ERROR records. Targeted tests passed 21/21; the relevant regression passed 149 with 9 expected skips. Universal production guards returned zero matches. No production or worker file changed, TASK-017's real hostile-resource SEC-002/SEC-003 claims remain unrelabeled, and TASK-023 was not started.
+**Current session:** TASK-022 Part C completed the final COMP-SUP security, architecture, and compliance review on `feature/task-022-orchestrator` with no production changes. All requested review areas passed. The focused supervisor security suite passed 6/6, all requested prohibited production scans returned zero matches, and the Part B evidence (21 targeted passes; 149 relevant-regression passes with 9 expected skips) was confirmed. The review does not expand deployment claims: OS ACL/network isolation, HOST-CAP-002 Windows resource-limit limitations, PRE-08 operational signing, E-2, HOST-CAP-003, and TASK-017 SEC-002/SEC-003 remain carried. TASK-023 was not started.
 
 **TASK-020 specification reconciliation:** No separately saved Stage 8 packet was available in the repository or attachments; the current TASK-020 execution request and committed architecture/technical/MVP contracts supplied the scope. The MVP's §10 §3.17 citation points to COMP-FIX, so the concrete COMP-CAP API follows TASK-020 and the deferred persistence/audit contracts in §10 §§3.1, 3.15, 20.3. UT-CAP-001's generic deferred-count wording is met by enumerating drift/OOD and heavyweight methods separately while retaining M11=REFERENCE_UNAVAILABLE and tail=COMPLETENESS_UNAVAILABLE. T05d remains a permanent NON_CLAIM in persisted reason/non-claim text using the existing deferred-table envelope; no new assessment status was introduced.
 
