@@ -12,7 +12,7 @@ Update this file at the end of every coding session before committing.
 ## PROJECT
 
 **Name:** Trustworthy Computer Vision Integrity Assurance — SIH 2026 PS 26228  
-**Current stage:** Stage 8 TASK-019 Part A `TESTED`; operational signing remains blocked on PRE-08 and TASK-020 remains not started
+**Current stage:** Stage 8 TASK-020 COMP-CAP component `TESTED`; TASK-019 Part A remains `TESTED`, operational signing remains blocked on PRE-08, and CLI integration awaits TASK-023
 **Repository created:** [DATE TO BE FILLED ON REPO INIT]  
 **Five-day window start:** [DATE — begins after P1 conditions resolved]
 
@@ -54,7 +54,7 @@ Status codes: `NOT STARTED` | `IN PROGRESS` | `IMPLEMENTED` | `TESTED` | `VALIDA
 | COMP-W-C3D (PyTorch safe-load gate) | TASK-017 | `TESTED` | Worker-level implementation and runtime/security validation complete with repository-local Torch 2.10.0+cpu; SEC-002 OOM dispatch and SEC-003 timeout dispatch remain explicitly deferred to TASK-022 |
 | COMP-REF (reference manager) | TASK-018 | `TESTED` | Approved SP-001 all-of R0–R7 gate enforcement, fail-closed default, FORMAT_ASSET boundary, audited transitions, staleness downgrade, and AuditWriteError rollback verified; 7 targeted tests and full regression pass |
 | COMP-C4 (provenance + signing) | TASK-019 | `IMPLEMENTED` | Part A provenance structure, canonicalization, replay rejection, durable sequence recovery, PF-002 binding, and explicit SIGNING_UNAVAILABLE behavior are TESTED; Part B operational signing remains BLOCKED on PRE-08 target-specific key-path/ACL provisioning. PRE-02, PRE-04, and PRE-09 remain resolved. |
-| COMP-CAP (capability declaration) | TASK-020 | `NOT STARTED` | |
+| COMP-CAP (capability declaration) | TASK-020 | `TESTED` | Component acceptance: fail-closed bounded method declarations, fixed non-claims, schema-gated persistence of 15 coverage-gap records, architecture-specific unavailable states, and mandatory audit events pass 53 tests; UT-CAP-003 list-deferred CLI acceptance remains explicitly blocked on TASK-023. No signing or worker changes. |
 | COMP-C5 (interpretation engine) | TASK-021 | `NOT STARTED` | PRE-04 resolved; awaits evidence components |
 | COMP-SUP (orchestrator) | TASK-022 | `NOT STARTED` | Depends on all workers and supervisor components |
 | CLI entry points | TASK-023 | `NOT STARTED` | |
@@ -68,24 +68,23 @@ Status codes: `NOT STARTED` | `IN PROGRESS` | `IMPLEMENTED` | `TESTED` | `VALIDA
 ## CURRENT TASK
 
 ```
-TASK: TASK-019 Part A — COMP-C4 Provenance Record Builder
+TASK: TASK-020 — COMP-CAP Capability Declaration
 Owner: Codex
-Branch: feature/task-019-provenance
+Branch: feature/capability-declaration
 Started: 2026-09-27
-Status: TESTED — Part A implementation and validation complete; Part B signing not started.
+Status: TESTED — component acceptance complete; UT-CAP-003 CLI integration remains blocked on TASK-023.
 
 Validated behavior:
-  RECORD: frozen v1.0 provenance structure carries artifact/evidence digests and exact PF_002_NON_CLAIM.
-  CANONICALIZATION: deterministic json-canonical-utf8-sort-keys-v1 bytes.
-  REPLAY: UUID4 nonce generation; duplicate nonce rejected with ReplayAttemptError and REPLAY_ATTEMPT_DETECTED.
-  SEQUENCE: store-backed next sequence; supplied gaps emit SEQUENCE_GAP_DETECTED and recover monotonically.
-  SIGNING: _sign() is the required Part A SIGNING_UNAVAILABLE stub; no key access or signing algorithm implementation.
-  AUDIT: SIGNING_UNAVAILABLE and PROVENANCE_RECORD_WRITTEN emitted; AuditWriteError propagates.
-  PRE CONDITIONS: PRE-02 and PRE-09 remain resolved; PRE-08 key-path/ACL provisioning remains the operational signing blocker.
-  TASK-019 PART A TESTS: 7 passed, 0 failed, 2 expected conditional signing skips.
-  STORE/AUDIT/SCHEMA/PROVENANCE REGRESSION: 26 passed, 0 failed, 2 expected skips.
-  SECURITY SUITE: 23 passed, 0 failed, 6 expected dependency/task-gated skips.
-  FULL REGRESSION: 332 passed, 0 failed, 27 expected skips.
+  DEFAULT: assessment_status=UNAVAILABLE and no supported capabilities advertised unless explicitly requested.
+  SUPPORTED SCOPE: only bounded M01/M02/M06/M15/C3A/C3B/C3D operations; requests for C3C, deferred methods, unknown variants, or broader guarantees are rejected.
+  COVERAGE GAPS: 15 schema-compliant records, including separately enumerated drift/OOD and heavyweight methods; M11=REFERENCE_UNAVAILABLE and tail=COMPLETENESS_UNAVAILABLE.
+  NON-CLAIMS: permanent T05d gap and SYBIL_UNRELIABLE semantics survive persistence; no malware, model-safety, or complete-integrity claim.
+  SCHEMA GATE: immutable record scopes, non-empty limitations/non-claims, exact boolean flags, UUID4 identifiers, asset bindings, and complete gap coverage verified before persistence.
+  AUDIT: CAPABILITY_DECLARATION_EMITTED and DEFERRED_IN_SCOPE_EMITTED events; AuditWriteError and StorageWriteError propagate without a success result.
+  TASK-020 TESTS: 53 passed, 0 failed, 1 expected TASK-023 CLI skip (UT-CAP-003).
+  PREREQUISITE REGRESSION: constants/store/schema 21 passed, 0 failed.
+  SECURITY SUITE: 61 passed, 0 failed, 6 expected dependency/task-gated skips.
+  FULL REGRESSION: 385 passed, 0 failed, 28 expected skips.
   SECURITY SCANS: zero matches for weights_only=False, risk_score, aggregate_assurance, compromise_probability, and prohibited positive-assurance constants.
 ```
 
@@ -114,6 +113,7 @@ Validated behavior:
 | TASK-017 | Implemented COMP-W-C3D restricted PyTorch safe-loading with lazy Torch import, exactly one `torch.load(..., weights_only=True, map_location="cpu")` path, no fallback, path containment, mandatory resource-limit input, fail-closed output, PF-002 disclosures, and the frozen three-way exception classification | Unit: 29 passed; security: 9 passed, 2 TASK-022 skips; SEC-007: 3 passed; full suite: 318 passed, 25 expected skips; universal guards and 24/25 immediately executable security-review items passed | This TASK-017 completion commit |
 | TASK-018 | Implemented COMP-REF reference registration and health state management under approved SP-001: fail-closed UNAVAILABLE default, HEALTH_UNVERIFIED registration, all-of R0–R7 promotion, FORMAT_ASSET category enforcement, audited state transitions, staleness downgrade, and fail-closed audit rollback | UT-REF-001..003 plus 4 supplementary gate, rollback, and isolation tests: 7 passed; store/audit/reference regression: 19 passed; full suite: 325 passed, 25 expected skips; mandatory security scans passed | This TASK-018 completion commit |
 | TASK-019 Part A | Implemented the unsigned COMP-C4 provenance shell: frozen record contract and canonicalization, UUID4 replay nonces with duplicate rejection, store-backed monotonic sequence recovery and gap auditing, exact PF-002 non-claim, explicit SIGNING_UNAVAILABLE persistence, and mandatory audit events. No signing primitive or key access was implemented. | UT-C4-001/002/003/006 plus audit-failure and SEC-009 coverage: 7 passed, 2 expected conditional signing skips; relevant regression 26 passed, 2 skipped; security suite 23 passed, 6 skipped; full suite 332 passed, 27 expected skips; universal guards passed | This TASK-019 Part A completion commit |
+| TASK-020 | Implemented COMP-CAP fail-closed declarations, explicit bounded method scopes, immutable limitations/non-claims, all mandatory coverage-gap records with architecture-specific statuses, schema gating, and supervisor-only store/audit integration. No worker, provenance, signing, or schema changes. | UT-CAP-001/002 and supplementary unit/security tests: 53 passed; UT-CAP-003 skipped on TASK-023; security suite 61 passed, 6 expected skips; full suite 385 passed, 28 expected skips; imports and universal guards passed | This TASK-020 component acceptance commit |
 
 ---
 
@@ -128,6 +128,7 @@ Validated behavior:
 | E-2 / SP-002-ONNX | No frozen ONNX artifact-unit definition ID exists. C3A returns the resolved manifest as `ARTIFACT_UNIT_AMBIGUOUS` with definition ID `UNAVAILABLE`; no ID is inferred from PyTorch. | Final ONNX C3A acceptance and TASK-015 ONNX hashing | Project owner / architecture owner |
 | HOST-CAP-003 / TASK-014 packet E-3 | `onnx` is not installed in the repository-local Python runtime; FIX-004/005/006/016, the genuine C3A ONNX tests, and UT-C3C-001 through UT-C3C-004 plus SEC-006 cannot receive protobuf-backed runtime verification | TASK-014 ONNX validation, conditional ONNX fixtures, and TASK-016 runtime acceptance | Dependency / deployment owner |
 | TASK-022-C3D-INTEGRATION | SEC-002 OOM termination/continuation and SEC-003 timeout/responsiveness require the real supervisor dispatch/orchestrator; worker-level C3D validation is complete and these integration claims remain explicitly unverified | TASK-017 supervisor-level integration evidence | TASK-022 implementation owner |
+| TASK-023-CAP-CLI | UT-CAP-003 list-deferred CLI acceptance cannot execute until TASK-023 implements the analyst CLI; TASK-020 component persistence and audit tests pass, but CLI display is not claimed | TASK-020 downstream CLI integration acceptance | TASK-023 implementation owner |
 
 ---
 
@@ -144,6 +145,9 @@ Validated behavior:
 - TorchScript loading is DEFERRED_IN_SCOPE — isolated worker not yet demonstrated on any target.
 - TASK-017 SEC-002 and SEC-003 supervisor OOM/timeout behavior remains deferred until TASK-022 provides the real dispatcher; neither test is recorded as passed.
 - C4 signing will ship as SIGNING_UNAVAILABLE shell until PRE-08 target-host key-path provisioning is resolved. PRE-02, PRE-04, and PRE-09 are resolved.
+- COMP-CAP declares scope without executing assessments. C3C is excluded from declared support while HOST-CAP-003 is open; supported model operations are bounded to the resolved PyTorch path.
+- TASK-020 uses the existing deferred-store and audit APIs, which commit separately. On failure, errors propagate and earlier committed rows remain; no batch-level atomicity is claimed.
+- UT-CAP-003 list-deferred CLI display remains unverified until TASK-023; no CLI files were implemented by TASK-020.
 - Analyst authentication is UNAVAILABLE — `analyst_id = 'UNAVAILABLE'` on all analyst disposition events until OQ-017 is resolved.
 
 ---
@@ -151,10 +155,10 @@ Validated behavior:
 ## LATEST VALIDATED COMMIT
 
 ```
-Commit: This TASK-019 Part A completion commit
-Branch: feature/task-019-provenance
+Commit: This TASK-020 component acceptance commit
+Branch: feature/capability-declaration
 Date: 2026-09-27
-Tests: TASK-019 Part A targeted 7 passed, 2 expected signing skips; store/audit/schema/provenance regression 26 passed, 2 skipped; security suite 23 passed, 6 skipped; full suite 332 passed, 0 failed, 27 expected skips; mandatory production security scans passed
+Tests: TASK-020 targeted 53 passed, 1 expected TASK-023 CLI skip; prerequisite regression 21 passed; security suite 61 passed, 6 skipped; full suite 385 passed, 0 failed, 28 expected skips; mandatory production security scans passed
 ```
 
 ---
@@ -163,8 +167,8 @@ Tests: TASK-019 Part A targeted 7 passed, 2 expected signing skips; store/audit/
 
 ```
 Date: 2026-09-27
-Tests passed: 332
-Tests skipped: 27 expected task/dependency-gated tests
+Tests passed: 385
+Tests skipped: 28 expected task/dependency-gated tests, including UT-CAP-003 blocked on TASK-023
 Test tooling: repository-local Python 3.13.12 with Torch 2.10.0+cpu; pytest 9.1.1 and PyYAML 6.0.3 loaded from a temporary non-repository directory
 Security checks: SEC-007 3/3 passed; `weights_only=False`, broad `weights_only.*False`, `risk_score`, `aggregate_assurance`, `compromise_probability`, prohibited positive-assurance constants, network access, `onnxruntime`, signing-key worker access, and evidence/audit-store worker writes have 0 prohibited production matches
 
@@ -326,7 +330,7 @@ The Stage 6 rule permits exit when every requirement is either satisfied with ev
 
 ## NEXT TASK
 
-**Next task:** TASK-019 Part B remains blocked on PRE-08 target-host key-path/ACL provisioning. TASK-020 requires its own entry/dependency review and execution packet. Neither was started by TASK-019 Part A.
+**Next task:** TASK-021 requires its own entry/dependency review and execution packet. TASK-019 Part B remains blocked on PRE-08 target-host key-path/ACL provisioning. UT-CAP-003 must be resumed when TASK-023 implements list-deferred. No later task was started by TASK-020.
 
 Critical path reminder:
 ```
@@ -379,7 +383,9 @@ PRE-04 resolved
 
 *(To be filled by the agent ending a session — for the agent starting the next session)*
 
-**Current session:** TASK-019 Part A completed on `feature/task-019-provenance` with status `TESTED`. COMP-C4 now builds and persists the unsigned provenance contract, canonicalizes deterministically, generates and rejects replay nonces with audited detection, recovers monotonic sequence state with audited gap detection, includes the exact PF-002 non-claim, and emits both signing-unavailable and record-written audit events. Seven executable Part A tests pass; UT-C4-004 and UT-C4-005 remain correctly skipped because signing is outside Part A and PRE-02 selected HMAC-SHA256 rather than Ed25519. The relevant regression passed 26 tests, the security suite passed 23 tests, and the full suite passed 332 tests; 27 expected dependency/task-gated skips remain. PRE-02 and PRE-09 remain resolved, while PRE-08 continues to block operational signing. TASK-019 Part B and TASK-020 were not started.
+**Current session:** TASK-020 COMP-CAP component acceptance completed on `feature/capability-declaration`. `declare_capabilities(asset_id, supported_capabilities=None)` defaults to UNAVAILABLE with an empty supported list, rejects unknown or inflated requests, and audits bounded declarations. `emit_deferred_records(asset_id)` validates all 15 records before using the existing store write API and auditing each emission. Architecture-specific M11/tail states and persisted permanent T05d/Sybil non-claims are preserved. Targeted tests passed 53 with UT-CAP-003 explicitly skipped on TASK-023; security tests passed 61 with 6 existing skips; full regression passed 385 with 28 expected skips. Public status documentation was synchronized under the standing documentation policy; protected research content was unchanged. TASK-019 Part B, signing, workers, provenance, and later implementation tasks were not modified.
+
+**TASK-020 specification reconciliation:** No separately saved Stage 8 packet was available in the repository or attachments; the current TASK-020 execution request and committed architecture/technical/MVP contracts supplied the scope. The MVP's §10 §3.17 citation points to COMP-FIX, so the concrete COMP-CAP API follows TASK-020 and the deferred persistence/audit contracts in §10 §§3.1, 3.15, 20.3. UT-CAP-001's generic deferred-count wording is met by enumerating drift/OOD and heavyweight methods separately while retaining M11=REFERENCE_UNAVAILABLE and tail=COMPLETENESS_UNAVAILABLE. T05d remains a permanent NON_CLAIM in persisted reason/non-claim text using the existing deferred-table envelope; no new assessment status was introduced.
 
 **What the next agent needs to know:**
 - TASK-006 unit tests passed 5/5 and SEC-010 passed; the full current suite passed 154 with 11 expected skips.

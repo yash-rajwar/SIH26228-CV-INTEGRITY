@@ -1,5 +1,37 @@
 # Changelog
 
+## Stage 8 — Supervisor Component Milestones
+
+### Added
+
+- TASK-020 COMP-CAP bounded scope declarations with an `UNAVAILABLE` default, explicit method selection, immutable limitations/non-claims, and unsupported-request rejection.
+- Schema-gated persistence of 15 coverage-gap records through the existing store API, with capability-declaration and per-record audit events.
+- TASK-020 unit/security coverage for schema conformance, permanent T05d non-claims, unavailable states, unsupported assurance claims, and write/audit failures.
+- Public documentation of previously committed TASK-018 reference management and TASK-019 Part A unsigned provenance acceptance.
+
+### Changed
+
+- Synchronized public status with the current Stage 8 component evidence.
+- Preserved architecture-specific reference/tail unavailable states and permanent T05d semantics in the existing deferred-record schema.
+- Workers, provenance, signing, schemas, constants, and protected research documentation were unchanged by TASK-020.
+
+### Validation
+
+- TASK-020 unit/security tests: 53 passed, 0 failed, 1 named TASK-023 CLI skip.
+- Prerequisite constants/store/schema regression: 21 passed.
+- Full security suite: 61 passed, 0 failed, 6 expected skips.
+- Full regression: 385 passed, 0 failed, 28 expected skips.
+- Universal production security scans, import audit, and protected-file scope checks passed.
+
+### Remaining
+
+- UT-CAP-003 `list-deferred` integration requires TASK-023 and is not counted as passed.
+- TASK-019 Part B operational signing remains blocked on PRE-08; TASK-020 implemented no signing logic.
+- TASK-021 interpretation, TASK-022 orchestration, CLI/export, end-to-end integration, and offline acceptance remain pending.
+- E-2 and HOST-CAP-003 retain their ONNX identity/runtime blockers; C3C is excluded from declared supported capabilities.
+- Existing store/audit commit boundaries are unchanged; write failures propagate without claiming batch atomicity.
+- The complete Stage 8 exit gate remains unaccepted.
+
 ## Stage 7 — C3D PyTorch Safe-Loading Gate
 
 ### Added
