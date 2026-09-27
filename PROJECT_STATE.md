@@ -12,7 +12,7 @@ Update this file at the end of every coding session before committing.
 ## PROJECT
 
 **Name:** Trustworthy Computer Vision Integrity Assurance — SIH 2026 PS 26228  
-**Current stage:** Stage 10 TASK-022 COMP-SUP final status `TESTED`; security review `PASS`
+**Current stage:** TASK-023 COMP-IFACE CLI status `TESTED`
 **Repository created:** [DATE TO BE FILLED ON REPO INIT]  
 **Five-day window start:** [DATE — begins after P1 conditions resolved]
 
@@ -55,10 +55,10 @@ Status codes: `NOT STARTED` | `IN PROGRESS` | `IMPLEMENTED` | `TESTED` | `VALIDA
 | COMP-REF (reference manager) | TASK-018 | `TESTED` | Approved SP-001 all-of R0–R7 gate enforcement, fail-closed default, FORMAT_ASSET boundary, audited transitions, staleness downgrade, and AuditWriteError rollback verified; 7 targeted tests and full regression pass |
 | COMP-C4 provenance record builder | TASK-019 Part A | `TESTED` | Provenance structure, canonicalization, replay rejection, durable sequence recovery, PF-002 binding, and explicit SIGNING_UNAVAILABLE behavior are tested. No signing primitive or key access is implemented. |
 | COMP-C4 operational signing | TASK-019 Part B | `DEFERRED` | PRE-08 target-specific key-path/ACL provisioning remains unresolved. PRE-02, PRE-04, and PRE-09 remain resolved; no signing key material, runtime signing, or fake signature is present. |
-| COMP-CAP (capability declaration) | TASK-020 | `TESTED` | Component acceptance: fail-closed bounded method declarations, fixed non-claims, schema-gated persistence of 15 coverage-gap records, architecture-specific unavailable states, and mandatory audit events pass 53 tests; UT-CAP-003 list-deferred CLI acceptance remains explicitly blocked on TASK-023. No signing or worker changes. |
+| COMP-CAP (capability declaration) | TASK-020 | `TESTED` | Component acceptance: fail-closed bounded method declarations, fixed non-claims, schema-gated persistence of 15 coverage-gap records, architecture-specific unavailable states, and mandatory audit events pass 53 tests; downstream list-deferred display is accepted by TASK-023 INT-CLI-003. No signing or worker changes. |
 | COMP-C5 (interpretation engine) | TASK-021 | `TESTED` | Part A rule engine uses the frozen `v1.0` vocabulary; Part B unit and FIX-013 negative validation passed 20/20 using the existing approved offline pytest 9.1.1 package source. |
 | COMP-SUP (orchestrator) | TASK-022 | `TESTED` | Parts A-B implemented and validated COMP-SUP; Part C final trust-boundary, isolation, secret-access, evidence/schema/audit ownership, C5, failure-state, resource, import, and prohibited-field review passed. Part B: 21 targeted tests and 149 relevant-regression tests pass with 9 expected dependency/task-gated skips; Part C focused security tests pass 6/6. |
-| CLI entry points | TASK-023 | `NOT STARTED` | |
+| CLI entry points | TASK-023 | `TESTED` | Seven argparse entry points implemented; complete stored findings/evidence/deferred records remain visible, audit corruption is surfaced before events, assessment execution delegates to COMP-SUP, and unavailable TASK-024/TASK-025 commands fail explicitly. Nine targeted tests and the full regression pass. |
 | Dashboard (SHOULD BUILD) | TASK-024 | `NOT STARTED` | Antigravity — begins after GATE-2 |
 | Evidence bundle exporter | TASK-025 | `NOT STARTED` | |
 | End-to-end integration test | TASK-026 | `NOT STARTED` | Gate task |
@@ -69,21 +69,20 @@ Status codes: `NOT STARTED` | `IN PROGRESS` | `IMPLEMENTED` | `TESTED` | `VALIDA
 ## CURRENT TASK
 
 ```
-TASK: TASK-022 Part C — COMP-SUP Final Security Review
+TASK: TASK-023 — COMP-IFACE Analyst CLI
 Owner: Codex
-Branch: feature/task-022-orchestrator
+Branch: feature/cli
 Started: 2026-09-28
-Status: TESTED — final security review PASS.
+Status: TESTED.
 
 Validated behavior:
-  IMPLEMENTATION: manifest validation; pipeline lifecycle; isolated named-file subprocess dispatch; spawn-all/collect-all C2 scheduling; C3A then C3B with containment short-circuit; format-applicable C3 tail dispatch; worker schema validation; supervisor-assigned identifiers/digests; evidence, audit, provenance, capability, reference, and C5 integration.
-  RESOURCE CONTRACT: trusted configured timeout, memory, and file-descriptor limits are translated to `timeout_s`, `memory_mb`, and `max_fds`; missing or invalid values fail closed.
-  PART B TEST EVIDENCE: targeted integration/security tests — 21 passed, 0 failed, 0 skipped; relevant regression — 149 passed, 0 failed, 9 expected skips.
-  PART C SECURITY REVIEW: PASS — supervisor reads only the submission manifest and named worker-result JSON, never asset contents; fixed approved worker modules execute only through controlled `subprocess.Popen` named-file IPC; no shell, network, dynamic execution, model/parser imports, direct secret reads, or worker store writes; schema validation precedes evidence persistence; invalid output is audited and not persisted; audit failures propagate; finding generation remains delegated to C5; failure records remain fail-closed.
-  PART C RESOURCE/IMPORT REVIEW: PASS — trusted ConfigLoader values are validated as positive integers and copied to the worker `timeout_s`, `memory_mb`, and `max_fds` contract without orchestrator fallback values; imports are stdlib and approved internal supervisor/base contracts only.
-  PART C TEST/SCAN EVIDENCE: `tests/security/test_supervisor_security.py` — 6 passed; zero production matches for `weights_only=False`, `risk_score`, `confidence_score`, `trust_score`, `safety_score`, `malicious_probability`, prohibited positive assurance constants, direct environment secret reads, dynamic/shell execution, network imports, or model/parser imports.
-  AUTHORITY RECONCILIATION: Technical Specification §7.1 limits C3C to ONNX and C3D to PyTorch; the orchestrator therefore uses a format-applicable tail batch. The batch primitive is separately verified to start all supplied tail workers before collection, without asserting that incompatible format workers run for one asset.
-  SCOPE: Part C changed state documentation only; no production, worker, test, schema, constants, interface, or protected research documentation file was modified. TASK-023 was not started. PRE-08, E-2, HOST-CAP-003, HOST-CAP-002 deployment resource limitations, OS-level worker ACL/network enforcement, and TASK-017 SEC-002/SEC-003 remain carried without expanded claims.
+  IMPLEMENTATION: stdlib argparse exposes assess, show-finding, show-evidence, show-audit-trail, export-bundle, list-deferred, and dashboard. Assessment delegates the manifest path unchanged to SupervisorOrchestrator; all store access in the CLI uses approved query methods.
+  DISPLAY CONTRACT: complete stored records are emitted as JSON with UNAVAILABLE, NOT_ASSESSED, DEFERRED_IN_SCOPE, limitations, and non-claims intact. Missing records fail closed with UNAVAILABLE. Audit corruption prints CHAIN_CORRUPT before event output.
+  DOWNSTREAM BOUNDARIES: export-bundle and dashboard return the exact TASK-025/TASK-024 dependency messages and nonzero exit codes; neither downstream component was implemented.
+  CONTRACT RECONCILIATION: the approved deferred-store record uses `deferral_reason`, `limitations`, and `non_claims`; TASK-023 prints that complete stored contract without introducing the packet-only `deferred_reason` or `scope_note` names.
+  TEST EVIDENCE: `tests/integration/test_cli.py` — 9 passed, 0 failed, 0 skipped; full suite — 435 passed, 0 failed, 28 expected skips.
+  SECURITY EVIDENCE: zero matches for `weights_only=False` in production, `risk_score` in the CLI, direct evidence/finding/audit mutation calls in the CLI, and prohibited positive assurance constants. CLI source has no network or subprocess imports.
+  SCOPE: only `assurance_system/interfaces/cli.py`, top-level `cli.py`, `tests/integration/test_cli.py`, and this state file changed. Workers, supervisor components, schemas, security tests, exporter, dashboard, and protected research documentation remain unchanged.
 ```
 
 ---
@@ -114,6 +113,7 @@ Validated behavior:
 | TASK-020 | Implemented COMP-CAP fail-closed declarations, explicit bounded method scopes, immutable limitations/non-claims, all mandatory coverage-gap records with architecture-specific statuses, schema gating, and supervisor-only store/audit integration. No worker, provenance, signing, or schema changes. | UT-CAP-001/002 and supplementary unit/security tests: 53 passed; UT-CAP-003 skipped on TASK-023; security suite 61 passed, 6 expected skips; full suite 385 passed, 28 expected skips; imports and universal guards passed | This TASK-020 component acceptance commit |
 | TASK-021 | Implemented the deterministic COMP-C5 interpretation priority rules and finding contract, including fail-closed UNAVAILABLE propagation, C3B identity mapping, statistics-only handling, mandatory T05d/PF-002/dependency non-claims, and finding-v1 validation. | `tests/unit/test_interpretation.py` and `tests/negative/test_unavailable_propagation.py`: 20 passed, 0 failed, 0 skipped; targeted production security scans passed | This TASK-021 validation commit |
 | TASK-022 Parts A-C | Implemented COMP-SUP; validated initialization, fail-closed configuration, isolated subprocess dispatch and cleanup, schema-gated supervisor-only persistence, fail-closed audit behavior, C2/C3 scheduling, C5 delegation, and complete ASSESSMENT_ERROR construction; completed the final architecture/security compliance review without production changes. | Part B targeted: 21 passed, 0 failed, 0 skipped; relevant regression: 149 passed, 0 failed, 9 expected skips; Part C focused security: 6 passed; all required prohibited-field, dynamic-execution, network, parser/model, secret-read, and assurance-constant scans returned zero production matches | This TASK-022 final security review commit |
+| TASK-023 | Implemented the read-only COMP-IFACE analyst CLI and root entry point with seven stdlib argparse commands, orchestrator-only assessment execution, complete finding/evidence/deferred display, fail-closed missing-record output, audit-corruption visibility, and explicit TASK-024/TASK-025 dependency responses. | INT-CLI-001..004 plus contract/boundary checks: 9 passed; full suite: 435 passed, 28 expected skips; imports, compilation, help output, and universal security guards passed | This TASK-023 completion commit |
 
 ---
 
@@ -128,7 +128,6 @@ Validated behavior:
 | E-2 / SP-002-ONNX | No frozen ONNX artifact-unit definition ID exists. C3A returns the resolved manifest as `ARTIFACT_UNIT_AMBIGUOUS` with definition ID `UNAVAILABLE`; no ID is inferred from PyTorch. | Final ONNX C3A acceptance and TASK-015 ONNX hashing | Project owner / architecture owner |
 | HOST-CAP-003 / TASK-014 packet E-3 | `onnx` is not installed in the repository-local Python runtime; FIX-004/005/006/016, the genuine C3A ONNX tests, and UT-C3C-001 through UT-C3C-004 plus SEC-006 cannot receive protobuf-backed runtime verification | TASK-014 ONNX validation, conditional ONNX fixtures, and TASK-016 runtime acceptance | Dependency / deployment owner |
 | TASK-022-C3D-INTEGRATION | SEC-002 OOM termination/continuation and SEC-003 timeout/responsiveness require the real supervisor dispatch/orchestrator; worker-level C3D validation is complete and these integration claims remain explicitly unverified | TASK-017 supervisor-level integration evidence | TASK-022 implementation owner |
-| TASK-023-CAP-CLI | UT-CAP-003 list-deferred CLI acceptance cannot execute until TASK-023 implements the analyst CLI; TASK-020 component persistence and audit tests pass, but CLI display is not claimed | TASK-020 downstream CLI integration acceptance | TASK-023 implementation owner |
 
 ---
 
@@ -147,7 +146,7 @@ Validated behavior:
 - C4 signing will ship as SIGNING_UNAVAILABLE shell until PRE-08 target-host key-path provisioning is resolved. PRE-02, PRE-04, and PRE-09 are resolved.
 - COMP-CAP declares scope without executing assessments. C3C is excluded from declared support while HOST-CAP-003 is open; supported model operations are bounded to the resolved PyTorch path.
 - TASK-020 uses the existing deferred-store and audit APIs, which commit separately. On failure, errors propagate and earlier committed rows remain; no batch-level atomicity is claimed.
-- UT-CAP-003 list-deferred CLI display remains unverified until TASK-023; no CLI files were implemented by TASK-020.
+- TASK-023 INT-CLI-003 verifies list-deferred display with all nine explicit DEFERRED_IN_SCOPE records. The historical TASK-020 UT-CAP-003 placeholder remains skipped because that out-of-scope unit file was not modified; downstream acceptance is now covered by the TASK-023 integration test.
 - Analyst authentication is UNAVAILABLE — `analyst_id = 'UNAVAILABLE'` on all analyst disposition events until OQ-017 is resolved.
 
 ---
@@ -155,10 +154,10 @@ Validated behavior:
 ## LATEST VALIDATED COMMIT
 
 ```
-Commit: This TASK-022 final security review commit
-Branch: feature/task-022-orchestrator
+Commit: This TASK-023 completion commit
+Branch: feature/cli
 Date: 2026-09-28
-Tests: Part C focused security review passed 6, failed 0, skipped 0. Part B evidence remains 21 targeted passes and 149 relevant-regression passes with 9 expected dependency/task-gated skips. No full-suite rerun is claimed by this review-only step.
+Tests: TASK-023 integration suite passed 9, failed 0, skipped 0. Full regression passed 435, failed 0, with 28 expected dependency/task-gated skips.
 ```
 
 ---
@@ -167,11 +166,11 @@ Tests: Part C focused security review passed 6, failed 0, skipped 0. Part B evid
 
 ```
 Date: 2026-09-28
-Latest focused tests: TASK-022 Part C security review passed 6, failed 0, skipped 0
-Executed file: `tests/security/test_supervisor_security.py`
+Latest focused tests: TASK-023 CLI integration passed 9, failed 0, skipped 0
+Executed file: `tests/integration/test_cli.py`
 Test tooling: `C:\Users\master\Desktop\SIH26228-CV-INTEGRITY\.venv-torch-test\Scripts\python.exe` (Python 3.13.12) with pytest 9.1.1 loaded from the existing approved offline package source `C:\Users\master\AppData\Local\Temp\sih26228-task-tests` through `PYTHONPATH`. Git-for-Windows `grep.exe` was added to the pytest process PATH for legacy scan tests. No package was downloaded or installed.
-Part B evidence reviewed: targeted integration/security tests passed 21/21; relevant regression passed 149 with 9 expected task/dependency-gated skips across config, worker base, schema, evidence store, audit, reference, provenance, capability, interpretation, negative propagation, and security tests.
-Security checks: zero production matches for all six requested unsafe/prohibited fields; positive assurance constants, direct environment reads, dynamic/shell execution, network imports, and model/parser imports also returned zero matches. The full suite was not rerun for this review-only step.
+Full regression: 435 passed, 0 failed, 28 expected dependency/task-gated skips; one non-failing Torch warning reported unavailable NumPy initialization.
+Security checks: zero production matches for `weights_only=False`; zero CLI matches for `risk_score` and direct evidence/finding/audit mutation methods; zero prohibited positive assurance constants. CLI source has no network or subprocess imports.
 
 Integration gates:
   GATE-1 (Foundation):       NOT PASSED
@@ -193,11 +192,11 @@ Integration gates:
 | TASK-018 / COMP-REF | `TESTED` | 7 targeted tests passed; approved SP-001 R0-R7 rules, FORMAT_ASSET separation, audited transitions, and fail-closed audit behavior are implemented. |
 | TASK-019 Part A / COMP-C4 provenance | `TESTED` | 7 tests passed and 2 conditional signing tests skipped; canonical unsigned records, replay/sequence controls, PF-002, and SIGNING_UNAVAILABLE behavior are implemented. |
 | TASK-019 Part B / operational signing | `DEFERRED` | PRE-08 target-host key-path and supervisor-only ACL provisioning remain unresolved. No HMAC/Ed25519 runtime, key material, key read, or synthetic signature is present. |
-| TASK-020 / COMP-CAP | `TESTED` | 53 tests passed and UT-CAP-003 remains the named TASK-023 CLI skip; declarations and persisted coverage-gap records are component-tested. |
+| TASK-020 / COMP-CAP | `TESTED` | 53 component tests passed; TASK-023 INT-CLI-003 now supplies the downstream list-deferred acceptance evidence while the historical UT-CAP-003 placeholder remains skipped. |
 
 The final review found the three implementation/test modules and their tests at the pushed commits `2612eee`, `a921564`, and `fb0bbc2`. All six tracked `docs/research/*.md` dossiers remain unchanged. Mandatory production scans returned zero matches for unrestricted loading, prohibited risk output, prohibited positive-assurance constants, signing primitives/key access, and tracked key material. The latest committed regression remains 385 passed and 28 expected skips. A fresh pytest rerun was not possible because pytest is absent from both accessible Python 3.13 environments and from the offline wheelhouse; no package was downloaded or installed. Fresh imports and bytecode compilation passed.
 
-Carried blockers remain PRE-08, E-2, HOST-CAP-003, TASK-022-C3D-INTEGRATION, and TASK-023-CAP-CLI. Stage 8 component completion does not mark those deferred or downstream items complete.
+Carried blockers remain PRE-08, E-2, HOST-CAP-003, and TASK-022-C3D-INTEGRATION. TASK-023-CAP-CLI is resolved by TASK-023 INT-CLI-003; Stage 8 component completion itself did not make that later claim.
 
 ---
 
@@ -349,7 +348,7 @@ The Stage 6 rule permits exit when every requirement is either satisfied with ev
 
 ## NEXT TASK
 
-**Next task:** TASK-023 entry/implementation requires its own authoritative execution packet. TASK-023 was not started by TASK-022 Part C. TASK-019 Part B remains blocked on PRE-08 target-host key-path/ACL provisioning, and UT-CAP-003 must be resumed when TASK-023 implements list-deferred.
+**Next task:** TASK-025 requires its own authoritative execution packet and was not started here. TASK-024 remains the post-GATE-2 Antigravity dashboard task and was not started. TASK-019 Part B remains blocked on PRE-08 target-host key-path/ACL provisioning.
 
 Critical path reminder:
 ```
@@ -402,7 +401,7 @@ PRE-04 resolved
 
 *(To be filled by the agent ending a session — for the agent starting the next session)*
 
-**Current session:** TASK-022 Part C completed the final COMP-SUP security, architecture, and compliance review on `feature/task-022-orchestrator` with no production changes. All requested review areas passed. The focused supervisor security suite passed 6/6, all requested prohibited production scans returned zero matches, and the Part B evidence (21 targeted passes; 149 relevant-regression passes with 9 expected skips) was confirmed. The review does not expand deployment claims: OS ACL/network isolation, HOST-CAP-002 Windows resource-limit limitations, PRE-08 operational signing, E-2, HOST-CAP-003, and TASK-017 SEC-002/SEC-003 remain carried. TASK-023 was not started.
+**Current session:** TASK-023 implemented and validated the read-only COMP-IFACE analyst CLI on `feature/cli`. All seven argparse commands are present; assessment delegates to COMP-SUP, stored results remain complete and unaltered, CHAIN_CORRUPT is visible before events, and unavailable TASK-024/TASK-025 integrations fail explicitly. The targeted CLI suite passed 9/9 and the full regression passed 435 with 28 expected skips. Universal security guards passed. No worker, supervisor component, schema, security-test, exporter, dashboard, or protected `docs/research/**` file changed. PRE-08, E-2, HOST-CAP-003, HOST-CAP-002 deployment limitations, and TASK-017 SEC-002/SEC-003 remain carried without expanded claims.
 
 **TASK-020 specification reconciliation:** No separately saved Stage 8 packet was available in the repository or attachments; the current TASK-020 execution request and committed architecture/technical/MVP contracts supplied the scope. The MVP's §10 §3.17 citation points to COMP-FIX, so the concrete COMP-CAP API follows TASK-020 and the deferred persistence/audit contracts in §10 §§3.1, 3.15, 20.3. UT-CAP-001's generic deferred-count wording is met by enumerating drift/OOD and heavyweight methods separately while retaining M11=REFERENCE_UNAVAILABLE and tail=COMPLETENESS_UNAVAILABLE. T05d remains a permanent NON_CLAIM in persisted reason/non-claim text using the existing deferred-table envelope; no new assessment status was introduced.
 

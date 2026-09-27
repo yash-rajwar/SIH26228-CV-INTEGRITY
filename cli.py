@@ -1,3 +1,8 @@
-# Top-level CLI entry point — STUB
-# Implemented in TASK-023 (interfaces/cli.py)
-# DO NOT add logic here until TASK-023
+from assurance_system.interfaces.cli import AssuranceCLI
+import sys
+
+
+if __name__ == "__main__":
+    sys.exit(
+        AssuranceCLI().run()
+    )
