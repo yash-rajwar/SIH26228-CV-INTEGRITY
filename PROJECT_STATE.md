@@ -12,7 +12,7 @@ Update this file at the end of every coding session before committing.
 ## PROJECT
 
 **Name:** Trustworthy Computer Vision Integrity Assurance — SIH 2026 PS 26228  
-**Current stage:** Stage 8 entry `BLOCKED`; TASK-018 implementation has not started
+**Current stage:** Stage 8 entry `READY`; prerequisite reconciliation complete and TASK-018 implementation has not started
 **Repository created:** [DATE TO BE FILLED ON REPO INIT]  
 **Five-day window start:** [DATE — begins after P1 conditions resolved]
 
@@ -39,8 +39,8 @@ Status codes: `NOT STARTED` | `IN PROGRESS` | `IMPLEMENTED` | `TESTED` | `VALIDA
 | Repository skeleton | TASK-002 | `TESTED` | Full §2.2 skeleton committed at `1d5225c`; structure and import tests pass |
 | exceptions.py + constants.py | TASK-003 | `TESTED` | Full hierarchy and PRE-04-aligned vocabulary committed at `699a74b` |
 | Config system | TASK-004 | `TESTED` | Fail-closed loader and populated YAML configuration committed at `03bc988` |
-| Evidence store (SQLite, WAL) | TASK-005 | `IMPLEMENTED` | Seven-table §3.15 schema, WAL, supervisor-only connection, guarded writes, and read/export API committed at `eb49e18` |
-| Audit chain writer | TASK-006 | `IMPLEMENTED` | Fail-closed atomic hash chain, corruption diagnostics, sequence-gap detection, and no reset path committed at `0f671ca` |
+| Evidence store (SQLite, WAL) | TASK-005 | `TESTED` | UT-STORE-001..006 pass in the current Stage 8 prerequisite reconciliation; seven-table §3.15 schema, WAL, supervisor-only connection, guarded writes, and read/export API committed at `eb49e18` |
+| Audit chain writer | TASK-006 | `TESTED` | UT-AUD-001..005 and the dedicated SEC-010 corruption test pass in the current Stage 8 prerequisite reconciliation; fail-closed atomic hash chain, corruption diagnostics, sequence-gap detection, and no reset path committed at `0f671ca` |
 | Worker base (IPC, resource limits) | TASK-007 | `TESTED` | Worker-side named-file IPC, fail-closed output builder, path containment, crash handling, and timeout test harness committed at `793950a`; Windows RLIMIT limitations remain explicit |
 | Schema validator + JSON schemas | TASK-008 | `TESTED` | Custom fail-closed validator and six `v1.0` schema documents committed at `a78e5c4`; SEC-011 and SEC-012 confirmed |
 | Hostile fixture suite (P0) | TASK-009 | `TESTED` | Part A non-torch families implemented at `5af987f`; Part B FIX-001/002/003/015 and FIX-009-S implemented and tested in the current completion commit with repository-local Torch 2.10.0+cpu; YOLO pose/OBB remain outside PRE-05 scope; ONNX runtime verification remains conditionally skipped because `onnx` is not installed |
@@ -52,7 +52,7 @@ Status codes: `NOT STARTED` | `IN PROGRESS` | `IMPLEMENTED` | `TESTED` | `VALIDA
 | COMP-W-C3B (model hasher) | TASK-015 | `IMPLEMENTED` | IMPLEMENTED WITH BLOCKER: deterministic whole-unit SHA-256, fail-closed ambiguity/containment/read-error handling, reference comparison, and PF-002 contract pass 18 targeted tests; ONNX identity path blocked pending ONNX artifact-unit definition ID (E-2) |
 | COMP-W-C3C (ONNX structural) | TASK-016 | `IMPLEMENTED` | IMPLEMENTED WITH BLOCKER: containment-first lazy ONNX loading, C3A external-reference helper reuse, in-memory checker validation, architecture-authoritative malformed-protobuf mapping, metadata, PF-002, and EF-004 contracts are implemented; 12 executable targeted tests pass and 5 genuine ONNX tests remain blocked on HOST-CAP-003 |
 | COMP-W-C3D (PyTorch safe-load gate) | TASK-017 | `TESTED` | Worker-level implementation and runtime/security validation complete with repository-local Torch 2.10.0+cpu; SEC-002 OOM dispatch and SEC-003 timeout dispatch remain explicitly deferred to TASK-022 |
-| COMP-REF (reference manager) | TASK-018 | `BLOCKED` | Stage 8 hard gate failed because TASK-005 and TASK-006 are recorded as `IMPLEMENTED`, not `TESTED`; PRE-06 packet/repository authority conflict also requires explicit reconciliation before implementation |
+| COMP-REF (reference manager) | TASK-018 | `NOT STARTED` | Stage 8 prerequisites TASK-003, TASK-005, and TASK-006 are `TESTED`; PRE-06 is resolved by the approved SP-001 decision record; all references remain `UNAVAILABLE` at MVP start |
 | COMP-C4 (provenance + signing) | TASK-019 | `NOT STARTED` | PRE-02, PRE-04, and PRE-09 resolved; operational signing remains BLOCKED on PRE-08 target-specific key-path provisioning |
 | COMP-CAP (capability declaration) | TASK-020 | `NOT STARTED` | |
 | COMP-C5 (interpretation engine) | TASK-021 | `NOT STARTED` | PRE-04 resolved; awaits evidence components |
@@ -68,21 +68,19 @@ Status codes: `NOT STARTED` | `IN PROGRESS` | `IMPLEMENTED` | `TESTED` | `VALIDA
 ## CURRENT TASK
 
 ```
-TASK: STAGE 8 ENTRY / TASK-018 — COMP-REF Reference Manager
+TASK: STAGE 8 PREREQUISITE RECONCILIATION
 Owner: Codex
 Branch: feature/task-018-reference-manager
 Started: 2026-09-27
-Status: BLOCKED — no implementation or test files created.
+Status: PASS — documentation/state reconciliation only; TASK-018, TASK-019, and TASK-020 were not implemented.
 
-Entry evidence:
+Reconciled evidence:
   TASK-003: TESTED — dependency satisfied.
-  TASK-005: IMPLEMENTED — hard gate requires TESTED.
-  TASK-006: IMPLEMENTED — hard gate requires TESTED.
-  PRE-06: committed repository decision record says RESOLVED, while the Stage 8 packet says UNRESOLVED and requires an MVP blocked shell.
-
-Required resolution:
-  Record TASK-005 and TASK-006 as TESTED only through an authorized acceptance/state-reconciliation step.
-  Reconcile the Stage 8 PRE-06 instruction with docs/sp001_reference_health_gates.md and the existing resolved PROJECT_STATE entry.
+  TASK-005: TESTED — UT-STORE-001..006 passed 6/6 on the current repository.
+  TASK-006: TESTED — UT-AUD-001..005 and SEC-010 passed 6/6 on the current repository.
+  PRE-06: RESOLVED — docs/sp001_reference_health_gates.md is the approved committed decision record, corroborated by docs/p1_decisions.md.
+  STALE PACKET NOTE: the Stage 8 statement that PRE-06 is unresolved is superseded by the approved repository decision record.
+  TASK-018 ENTRY GATE: SATISFIED.
 ```
 
 ---
@@ -122,8 +120,6 @@ Required resolution:
 | E-2 / SP-002-ONNX | No frozen ONNX artifact-unit definition ID exists. C3A returns the resolved manifest as `ARTIFACT_UNIT_AMBIGUOUS` with definition ID `UNAVAILABLE`; no ID is inferred from PyTorch. | Final ONNX C3A acceptance and TASK-015 ONNX hashing | Project owner / architecture owner |
 | HOST-CAP-003 / TASK-014 packet E-3 | `onnx` is not installed in the repository-local Python runtime; FIX-004/005/006/016, the genuine C3A ONNX tests, and UT-C3C-001 through UT-C3C-004 plus SEC-006 cannot receive protobuf-backed runtime verification | TASK-014 ONNX validation, conditional ONNX fixtures, and TASK-016 runtime acceptance | Dependency / deployment owner |
 | TASK-022-C3D-INTEGRATION | SEC-002 OOM termination/continuation and SEC-003 timeout/responsiveness require the real supervisor dispatch/orchestrator; worker-level C3D validation is complete and these integration claims remain explicitly unverified | TASK-017 supervisor-level integration evidence | TASK-022 implementation owner |
-| S8-ENTRY-D1 | Stage 8 requires TASK-003, TASK-005, and TASK-006 to be `TESTED`; TASK-005 and TASK-006 are currently recorded as `IMPLEMENTED` despite historical passing test evidence | TASK-018 entry authorization | Project owner / acceptance owner |
-| S8-PRE06-CONFLICT | The Stage 8 execution packet says PRE-06 remains unresolved and R0–R7 must not be implemented, but committed `docs/sp001_reference_health_gates.md` explicitly resolves PRE-06 and `PROJECT_STATE.md` records it closed | TASK-018 promotion contract | Project owner / architecture owner |
 
 ---
 
@@ -147,10 +143,10 @@ Required resolution:
 ## LATEST VALIDATED COMMIT
 
 ```
-Commit: This TASK-017 completion commit
-Branch: feature/task-017-c3d-safe-load
+Commit: This Stage 8 prerequisite-reconciliation commit
+Branch: feature/task-018-reference-manager
 Date: 2026-09-27
-Tests: TASK-017 combined regression 41 passed, 2 named TASK-022 skips; full suite 318 passed, 0 failed, 25 expected skips; SEC-007 and universal production guards passed
+Tests: TASK-005 UT-STORE-001..006 and TASK-006 UT-AUD-001..005 plus SEC-010: 12 passed, 0 failed, 0 skipped; implementation code and tests unchanged
 ```
 
 ---
@@ -159,8 +155,8 @@ Tests: TASK-017 combined regression 41 passed, 2 named TASK-022 skips; full suit
 
 ```
 Date: 2026-09-27
-Tests passed: 318
-Tests skipped: 25 expected task/dependency-gated tests, including 2 TASK-017 supervisor-integration skips for TASK-022
+Tests passed: 12 targeted Stage 8 prerequisite tests; prior full regression remains 318 passed
+Tests skipped: 0 in the targeted prerequisite run; prior full regression retains 25 expected task/dependency-gated skips
 Test tooling: repository-local Python 3.13.12 with Torch 2.10.0+cpu; pytest 9.1.1 and PyYAML 6.0.3 loaded from a temporary non-repository directory
 Security checks: SEC-007 3/3 passed; `weights_only=False`, broad `weights_only.*False`, `risk_score`, `aggregate_assurance`, `compromise_probability`, prohibited positive-assurance constants, network access, `onnxruntime`, signing-key worker access, and evidence/audit-store worker writes have 0 prohibited production matches
 
@@ -322,7 +318,7 @@ The Stage 6 rule permits exit when every requirement is either satisfied with ev
 
 ## NEXT TASK
 
-**Next task:** Resolve the Stage 8 TASK-005/TASK-006 acceptance gate and PRE-06 authority conflict before TASK-018 implementation. TASK-019 and TASK-020 are not authorized by this blocked entry check.
+**Next task:** TASK-018 entry prerequisites are satisfied. TASK-018 may begin only under its implementation execution packet; TASK-019 and TASK-020 were not started by this reconciliation.
 
 Critical path reminder:
 ```
@@ -355,7 +351,7 @@ PRE-04 resolved
 | PRE-03 / SP-002 | **RESOLVED 2026-09-27:** `pytorch-single-file-v1` | Project team | Closed |
 | PRE-04 / SP-003 | **RESOLVED 2026-09-27:** vocabulary, schema version, active ID, and canonicalization frozen | Project team | Closed |
 | PRE-05 / GAP-013 | **RESOLVED 2026-09-27:** mandatory MVP format list frozen | Project owner / organizer | Closed |
-| PRE-06 / SP-001 | **RESOLVED 2026-09-27:** R0–R7 procedure recorded | Project team | Closed |
+| PRE-06 / SP-001 | **RESOLVED 2026-09-27:** R0–R7 procedure recorded in approved `docs/sp001_reference_health_gates.md`; the Stage 8 packet's unresolved statement is stale | Project team | Closed |
 | PRE-07 / GAP-011 | **RESOLVED 2026-09-27:** ingestion excluded from MVP because no organizer source is established | Organizer | Closed for MVP |
 | PRE-08 / SP-004 | **PARTIAL 2026-09-27:** algorithm/key/encoding frozen; Windows target-host absolute path and supervisor-only ACL provisioning remain pending | Project team / deployment owner | P1 blocker for operational signing |
 | PRE-09 / SP-006 | **RESOLVED 2026-09-27:** C3→C4 field mapping frozen | Project team | Closed |
@@ -363,7 +359,7 @@ PRE-04 resolved
 | E-3 / HOST-CAP-003 | Repository-local Python cannot import ONNX; no compatible ONNX/protobuf wheel is staged. Preserve fail-closed behavior and named skips until the dependency is available offline. | Dependency / deployment owner | Blocks genuine C3A/C3C ONNX runtime acceptance; does not block TASK-017 |
 | E-5 | **RESOLVED BY AUTHORITY 2026-09-27:** malformed ONNX maps to `STRUCTURAL_INVALID`; Architecture and Technical Specification override the lower-ranked MVP test wording | Project team | Closed as a semantic decision; runtime test remains under HOST-CAP-003 |
 | E-6 identifier reconciliation | Preflight E-6 is the PF-002 explicit-injection constraint and is satisfied by C3A/C3B/C3C. The Stage 6 exit packet separately labels full external-reference traversal as E-6; implementation is reviewed, but genuine protobuf traversal remains blocked by HOST-CAP-003. The two meanings are recorded without silently renumbering either. | Project owner / architecture owner | Naming reconciliation pending; runtime traversal evidence remains blocked by HOST-CAP-003 |
-| S8-PRE06-CONFLICT | Decide whether TASK-018 follows the committed SP-001 R0–R7 procedure that resolves PRE-06 or a revised authority that reopens PRE-06 and limits TASK-018 to an all-UNAVAILABLE shell. No repository decision record was changed during the blocked entry check. | Project owner / architecture owner | Blocks TASK-018 implementation |
+| S8-PRE06-CONFLICT | **RESOLVED 2026-09-27:** `docs/sp001_reference_health_gates.md` is the approved committed PRE-06 decision record, corroborated by `docs/p1_decisions.md`; the Stage 8 packet's unresolved statement is stale and does not reopen PRE-06 | Project team | Closed |
 | OQ-017 | Analyst authentication and authority hierarchy | Project owner | Post-MVP |
 | OQ-018 | Evidence retention policy | Project owner | Post-MVP |
 | AF-003 | Trusted clock source | Deployment environment | Post-MVP |
@@ -375,7 +371,7 @@ PRE-04 resolved
 
 *(To be filled by the agent ending a session — for the agent starting the next session)*
 
-**Current session:** Stage 8 TASK-018 entry validation on `feature/task-018-reference-manager` stopped before implementation. TASK-003 is `TESTED`, but TASK-005 and TASK-006 are only `IMPLEMENTED`, so the packet's hard dependency gate failed. The packet also conflicts with the committed PRE-06 authority: `docs/sp001_reference_health_gates.md` resolves PRE-06 and defines R0–R7, while the packet says PRE-06 remains unresolved and forbids gate logic. No reference-manager source or tests were created, no prior task status was promoted, and no resolved PRE-06 record was silently reverted.
+**Current session:** Stage 8 prerequisite reconciliation completed on `feature/task-018-reference-manager` without modifying implementation code, tests, or architecture files. TASK-005 UT-STORE-001..006 passed 6/6. TASK-006 UT-AUD-001..005 plus the dedicated SEC-010 corruption test passed 6/6. TASK-005 and TASK-006 are therefore promoted from `IMPLEMENTED` to `TESTED`. The approved committed SP-001 decision record and P1 registry both resolve PRE-06; the Stage 8 packet's unresolved statement is recorded as stale. TASK-018's entry gate is now satisfied, but TASK-018, TASK-019, and TASK-020 were not implemented during this reconciliation.
 
 **What the next agent needs to know:**
 - TASK-006 unit tests passed 5/5 and SEC-010 passed; the full current suite passed 154 with 11 expected skips.
