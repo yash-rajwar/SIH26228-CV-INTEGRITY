@@ -12,7 +12,7 @@ Update this file at the end of every coding session before committing.
 ## PROJECT
 
 **Name:** Trustworthy Computer Vision Integrity Assurance — SIH 2026 PS 26228  
-**Current stage:** Stage 6 model-integrity workers — TASK-014 implemented with ONNX validation blocked by E-2 / HOST-CAP-003
+**Current stage:** Stage 6 model-integrity workers — TASK-015 implemented with the ONNX identity path blocked by E-2
 **Repository created:** [DATE TO BE FILLED ON REPO INIT]  
 **Five-day window start:** [DATE — begins after P1 conditions resolved]
 
@@ -49,7 +49,7 @@ Status codes: `NOT STARTED` | `IN PROGRESS` | `IMPLEMENTED` | `TESTED` | `VALIDA
 | COMP-W-C2C (concentration) | TASK-012 | `TESTED` | Exact §3.5 HHI/entropy statistics, source shares/counts, UNTRUSTED-default SYBIL_UNRELIABLE behavior, fail-closed missing/prohibited input handling, and FIX-012 integration implemented in the current TASK-012 commit; 8 targeted tests and full regression pass |
 | COMP-W-C2D (image hash) | TASK-013 | `TESTED` | Stdlib-only streaming SHA-256, byte-identical image grouping, path containment, per-file error handling, mandatory PDQ deferral, and permanent T05d non-claims implemented in the current TASK-013 commit; 6 targeted tests and full regression pass |
 | COMP-W-C3A (artifact-unit resolver) | TASK-014 | `BLOCKED` | Implementation and adversarial security review complete; 23 targeted checks pass, while UT-C3A-001 through UT-C3A-005 plus the missing-external-file integration check remain blocked on HOST-CAP-003; E-2 keeps the ONNX definition ID `UNAVAILABLE` |
-| COMP-W-C3B (model hasher) | TASK-015 | `NOT STARTED` | Depends on TASK-014 |
+| COMP-W-C3B (model hasher) | TASK-015 | `IMPLEMENTED` | IMPLEMENTED WITH BLOCKER: deterministic whole-unit SHA-256, fail-closed ambiguity/containment/read-error handling, reference comparison, and PF-002 contract pass 18 targeted tests; ONNX identity path blocked pending ONNX artifact-unit definition ID (E-2) |
 | COMP-W-C3C (ONNX structural) | TASK-016 | `NOT STARTED` | |
 | COMP-W-C3D (PyTorch safe-load gate) | TASK-017 | `NOT STARTED` | PRE-05 resolved; repository-local Windows AMD64 / Python 3.13.12 Torch 2.10.0+cpu environment is verified; worker implementation remains future scope |
 | COMP-REF (reference manager) | TASK-018 | `NOT STARTED` | All references UNAVAILABLE at MVP start |
@@ -68,21 +68,21 @@ Status codes: `NOT STARTED` | `IN PROGRESS` | `IMPLEMENTED` | `TESTED` | `VALIDA
 ## CURRENT TASK
 
 ```
-TASK: TASK-014 — COMP-W-C3A Artifact-Unit Resolver
+TASK: TASK-015 — COMP-W-C3B Model SHA-256 Identity Hasher
 Owner: Codex
-Branch: feature/task-014-c3a-artifact-unit
+Branch: feature/task-015-c3b-model-hash
 Started: 2026-09-27
-Status: BLOCKED — implementation is present; genuine ONNX integration validation is blocked on HOST-CAP-003 and final ONNX success remains blocked on E-2.
+Status: IMPLEMENTED WITH BLOCKER — core C3B hashing contract and tests pass; ONNX identity path blocked pending ONNX artifact-unit definition ID (E-2).
 
 Satisfied conditions:
   TASK-007: TESTED — worker output, named-file IPC, and containment utility available.
-  TASK-008: TESTED — C3 output schema validation available.
-  TASK-009: TESTED — FIX-004/005/006/016 generators exist.
-  PRE-03 / TASK-014 packet E-4: RESOLVED — pytorch-single-file-v1 is implemented without importing Torch.
-  TASK-014 EXECUTABLE TESTS: 23 passed; 6 genuine ONNX tests skipped with
-                             "BLOCKED: HOST-CAP-003 — onnx not installed".
-  FULL REGRESSION: 247 passed, 18 expected conditional skips.
+  TASK-014: IMPLEMENTED WITH BLOCKER — stable artifact_unit contract is available.
+  TASK-015 TARGETED TESTS: 18 passed (UT-C3B-001..004, REPRO-003, and 13 supplementary cases).
+  SCHEMA VALIDATION: valid C3B COMPLETED output accepted.
+  FULL REGRESSION: 265 passed, 18 expected conditional skips.
   REUSE-008: HARDENED / REIMPLEMENTED — no R01 source copied.
+  E-2: OPEN — test-only definition IDs validate only the input/hash contract.
+  E-3: OPEN — does not block C3B core hashing or tests; no ONNX import exists in C3B.
 ```
 
 ---
@@ -105,6 +105,7 @@ Satisfied conditions:
 | TASK-011 | Implemented COMP-W-C2B deterministic SHA-256 streaming, exact-duplicate grouping, path containment and read-error isolation, all-failed ASSESSMENT_ERROR handling, and non-suppressible DEFERRED_IN_SCOPE PDQ disclosure | UT-C2B-001..006, REPRO-002, empty-corpus boundary, and SEC-C2B-001..002: 10 passed; full suite: 210 passed, 12 expected skips; stdlib-only import and universal security guards passed | This TASK-011 completion commit |
 | TASK-012 | Implemented COMP-W-C2C HHI, Shannon entropy, per-source shares/counts, UNTRUSTED-default SYBIL_UNRELIABLE semantics, fail-closed missing/prohibited input handling, and FIX-012 integration | UT-C2C-001..006 plus FIX-012 and prohibited-input checks: 8 passed; CLI/schema acceptance passed; full suite: 218 passed, 12 expected skips; stdlib-only import and universal security guards passed | This TASK-012 completion commit |
 | TASK-013 | Implemented COMP-W-C2D streaming SHA-256 image identity, byte-identical duplicate grouping, containment/read-error handling, non-suppressible PDQ deferral, and permanent T05d disclosure without image decoding | UT-C2D-001..004 plus containment and prohibited-input checks: 6 passed; CLI/schema acceptance passed; full suite: 224 passed, 12 expected skips; stdlib-only import and universal security guards passed | This TASK-013 completion commit |
+| TASK-015 | Implemented COMP-W-C3B streaming whole-artifact SHA-256, frozen lexicographic digest composition, fail-closed ambiguity/containment/read-error handling, byte-only reference comparison, and mandatory PF-002 disclosures without model parsing | UT-C3B-001..004: 4 passed; REPRO-003: 1 passed; supplementary: 13 passed; schema validation passed; full suite: 265 passed, 18 expected skips; stdlib-only import and universal security guards passed | This TASK-015 completion commit |
 
 ---
 
@@ -125,7 +126,7 @@ Satisfied conditions:
 
 *(At repository creation — to be updated as implementation progresses)*
 
-- Foundation components through TASK-009 and all four data workers TASK-010 through TASK-013 are implemented. TASK-014 code is implemented with partial validation; final ONNX acceptance remains blocked by E-2 and HOST-CAP-003.
+- Foundation components through TASK-009, all four data workers TASK-010 through TASK-013, and the core TASK-015 C3B hashing contract are implemented. TASK-014 retains partial ONNX validation; final ONNX C3A/C3B identity acceptance remains blocked by E-2 and HOST-CAP-003.
 - Offline capability claim is not permissible until TASK-027 passes on the confirmed Windows AMD64 / Python 3.13.12 target host.
 - The target has no detected C compiler; native-extension dependencies remain unverified.
 - Python `resource.setrlimit` and Unix `RLIMIT_AS`, `RLIMIT_NOFILE`, and `RLIMIT_NPROC` are unavailable. `subprocess.Popen(..., close_fds=True)` is verified working.
@@ -140,10 +141,10 @@ Satisfied conditions:
 ## LATEST VALIDATED COMMIT
 
 ```
-Commit: This TASK-014 security-review commit
-Branch: feature/task-014-c3a-artifact-unit
+Commit: This TASK-015 completion commit
+Branch: feature/task-015-c3b-model-hash
 Date: 2026-09-27
-Tests: TASK-014 targeted suite 23 passed, 6 HOST-CAP-003 skips; security suite 9 passed, 4 pre-existing task-gated skips; full suite 247 passed, 18 expected skips; compile, schema acceptance, import audit, Windows-path review, and universal literal guards passed
+Tests: TASK-015 targeted suite 18 passed; UT-C3B-001..004 passed; REPRO-003 passed; 13 supplementary cases passed; schema acceptance passed; full suite 265 passed, 18 expected skips; compile, import audit, and universal security guards passed
 ```
 
 ---
@@ -152,10 +153,10 @@ Tests: TASK-014 targeted suite 23 passed, 6 HOST-CAP-003 skips; security suite 9
 
 ```
 Date: 2026-09-27
-Tests passed: 247
+Tests passed: 265
 Tests skipped: 18 expected task/dependency-gated tests, including 6 TASK-014 ONNX skips for HOST-CAP-003
 Test tooling: repository-local Python 3.13.12 with Torch 2.10.0+cpu; pytest 9.1.1 and PyYAML 6.0.3 loaded from a temporary non-repository directory
-Security checks: `weights_only=False`, `risk_score`, `aggregate_assurance`, `compromise_probability`, `onnxruntime`, and `load_external_data=True` each have 0 production Python matches; COMP-W-C3A has no Torch or ONNX Runtime import, no direct `open()` call, and imports ONNX only inside its post-containment loader
+Security checks: `weights_only=False`, `risk_score`, `aggregate_assurance`, `compromise_probability`, and `onnxruntime` each have 0 production Python matches; COMP-W-C3B has no ONNX, Torch, network, persistence, audit-store, or signing-key reference and re-checks the complete artifact unit before opening its first member
 
 Integration gates:
   GATE-1 (Foundation):       NOT PASSED
@@ -248,13 +249,13 @@ Integration gates:
 2. Unexpected resolver exceptions could reach the generic base IPC fallback and omit C3A-specific PF-002 fields. The C3A dispatch boundary now converts them to its own fail-closed output contract.
 3. ONNX load exception text could expose absolute host paths in `error_detail`. Only the exception type is now retained, with the existing 512-character bound.
 
-TASK-014 remains `BLOCKED / IMPLEMENTED WITH BLOCKER`. Do not mark it `TESTED`, and do not authorize TASK-015 while E-2 and required ONNX runtime tests remain open.
+TASK-014 remains `BLOCKED / IMPLEMENTED WITH BLOCKER` and is not marked `TESTED`. The later TASK-015 execution packet authorized the bounded C3B core implementation with fail-closed `UNAVAILABLE` handling; E-2 still blocks the real ONNX identity path.
 
 ---
 
 ## NEXT TASK
 
-**Next task:** Resolve E-2 and stage a verified compatible ONNX/protobuf dependency set under the offline policy, then rerun the six blocked TASK-014 ONNX tests. Do not begin TASK-015 from this blocked handoff.
+**Next task:** TASK-016 — COMP-W-C3C ONNX Structural Validator, after its HOST-CAP-003 dependency gate is satisfied. Do not install ONNX from the network or treat the unavailable dependency as a passing runtime check.
 
 Critical path reminder:
 ```
@@ -303,7 +304,7 @@ PRE-04 resolved
 
 *(To be filled by the agent ending a session — for the agent starting the next session)*
 
-**Current session:** TASK-014 implementation received an adversarial security review on `feature/task-014-c3a-artifact-unit`. Windows drive-relative references, exception-to-output containment, and error-path disclosure defects were fixed. PyTorch single-file resolution, TorchScript deferral, containment ordering, Windows path handling, non-ONNX determinism, schema acceptance, and mandatory C3/PF-002 output fields pass. Genuine ONNX protobuf-backed tests remain blocked on HOST-CAP-003, and E-2 keeps ONNX manifests fail-closed as `ARTIFACT_UNIT_AMBIGUOUS` with definition ID `UNAVAILABLE`.
+**Current session:** TASK-015 implemented COMP-W-C3B on `feature/task-015-c3b-model-hash` using only stdlib SHA-256 and the stable C3A artifact-unit dictionary. The complete unit is containment-checked before any member is opened; ambiguity and read failure emit no digest; comparison results remain byte-identity-only; and all outputs carry PF-002. E-2 remains open, so the real ONNX identity path is blocked even though the core input-contract/hash-logic tests pass. E-3 does not affect C3B core execution because C3B imports no ONNX package.
 
 **What the next agent needs to know:**
 - TASK-006 unit tests passed 5/5 and SEC-010 passed; the full current suite passed 154 with 11 expected skips.
@@ -340,6 +341,10 @@ PRE-04 resolved
 - ONNX TensorProto references are discovered recursively through the protobuf message tree, covering initializers, sparse tensors, tensor attributes, subgraphs, and functions supported by the installed protobuf schema. Every external path is checked before file access.
 - E-2 remains open: ONNX manifests cannot produce final success without a frozen definition ID. E-3/HOST-CAP-003 remains open: ONNX is absent. TASK-014 packet E-4 is resolved: `pytorch-single-file-v1` is active and tested without deserialization.
 - Every C3A output uses the existing builder, carries non-empty limitations/non-claims, non-null `access_mode`, `coverage_gap_clean_label=True`, the `PF_002_NON_CLAIM` text, and all three hash-match boolean non-claims.
+- TASK-015 targeted tests passed 18/18: UT-C3B-001..004, REPRO-003, and 13 supplementary cases. The full suite passed 265 with 18 expected skips, and valid C3B output passed the schema validator.
+- REPRO-003 confirms repeat determinism and confirms that a moved-directory copy with identical member names/bytes retains the same combined digest under the frozen lexicographic path-order algorithm. The test-only artifact-unit definition ID exists only in `tests/unit/test_c3b_model_hash.py` and is not an ONNX identity definition.
+- COMP-W-C3B consumes but never resolves the C3A artifact-unit contract. `UNAVAILABLE` or malformed units return `ARTIFACT_UNIT_AMBIGUOUS` without digest fields; any member read failure returns `ASSESSMENT_ERROR` without partial digest; and containment failure returns `ONNX_PATH_CONTAINMENT_VIOLATION` before any member is opened.
+- ONNX identity path blocked pending ONNX artifact-unit definition ID (E-2). E-3 does not block C3B core tests; C3B imports only stdlib `hashlib`/typing and existing internal modules.
 - The weights_only=False grep check (SEC-007) must be set up in CI from Day 1 and must never pass with a match.
 - Signing (TASK-019) will ship as SIGNING_UNAVAILABLE shell until the remaining PRE-08 provisioning condition is resolved. This is expected and does not block non-signing pipeline work.
 - Antigravity begins AFTER GATE-2 passes — not before.
