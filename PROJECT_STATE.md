@@ -12,7 +12,7 @@ Update this file at the end of every coding session before committing.
 ## PROJECT
 
 **Name:** Trustworthy Computer Vision Integrity Assurance — SIH 2026 PS 26228  
-**Current stage:** Stage 7 exit `PASS-WITH-DEFERRED-TASK-022`; TASK-017 worker-level implementation and validation are complete
+**Current stage:** Stage 8 entry `BLOCKED`; TASK-018 implementation has not started
 **Repository created:** [DATE TO BE FILLED ON REPO INIT]  
 **Five-day window start:** [DATE — begins after P1 conditions resolved]
 
@@ -52,7 +52,7 @@ Status codes: `NOT STARTED` | `IN PROGRESS` | `IMPLEMENTED` | `TESTED` | `VALIDA
 | COMP-W-C3B (model hasher) | TASK-015 | `IMPLEMENTED` | IMPLEMENTED WITH BLOCKER: deterministic whole-unit SHA-256, fail-closed ambiguity/containment/read-error handling, reference comparison, and PF-002 contract pass 18 targeted tests; ONNX identity path blocked pending ONNX artifact-unit definition ID (E-2) |
 | COMP-W-C3C (ONNX structural) | TASK-016 | `IMPLEMENTED` | IMPLEMENTED WITH BLOCKER: containment-first lazy ONNX loading, C3A external-reference helper reuse, in-memory checker validation, architecture-authoritative malformed-protobuf mapping, metadata, PF-002, and EF-004 contracts are implemented; 12 executable targeted tests pass and 5 genuine ONNX tests remain blocked on HOST-CAP-003 |
 | COMP-W-C3D (PyTorch safe-load gate) | TASK-017 | `TESTED` | Worker-level implementation and runtime/security validation complete with repository-local Torch 2.10.0+cpu; SEC-002 OOM dispatch and SEC-003 timeout dispatch remain explicitly deferred to TASK-022 |
-| COMP-REF (reference manager) | TASK-018 | `NOT STARTED` | All references UNAVAILABLE at MVP start |
+| COMP-REF (reference manager) | TASK-018 | `BLOCKED` | Stage 8 hard gate failed because TASK-005 and TASK-006 are recorded as `IMPLEMENTED`, not `TESTED`; PRE-06 packet/repository authority conflict also requires explicit reconciliation before implementation |
 | COMP-C4 (provenance + signing) | TASK-019 | `NOT STARTED` | PRE-02, PRE-04, and PRE-09 resolved; operational signing remains BLOCKED on PRE-08 target-specific key-path provisioning |
 | COMP-CAP (capability declaration) | TASK-020 | `NOT STARTED` | |
 | COMP-C5 (interpretation engine) | TASK-021 | `NOT STARTED` | PRE-04 resolved; awaits evidence components |
@@ -68,25 +68,21 @@ Status codes: `NOT STARTED` | `IN PROGRESS` | `IMPLEMENTED` | `TESTED` | `VALIDA
 ## CURRENT TASK
 
 ```
-TASK: TASK-017 — COMP-W-C3D PyTorch Safe-Loading Gate
+TASK: STAGE 8 ENTRY / TASK-018 — COMP-REF Reference Manager
 Owner: Codex
-Branch: feature/task-017-c3d-safe-load
+Branch: feature/task-018-reference-manager
 Started: 2026-09-27
-Status: TESTED — worker-level implementation and runtime/security validation complete; supervisor integration remains deferred to TASK-022.
+Status: BLOCKED — no implementation or test files created.
 
-Validated conditions:
-  HOST: Windows build 22631 / AMD64 / Python 3.13.12.
-  DEVELOPMENT/TEST ENVIRONMENT: repository-local .venv-torch-test with Torch 2.10.0+cpu; this is development/test qualification only.
-  FIX-001: PASS — LOAD_BLOCKED through the real restricted worker path.
-  FIX-015: PASS — LOAD_SUCCESS through the real restricted worker path.
-  LOAD_ERROR: PASS — deterministic empty-file case.
-  SEC-001: PASS.
-  SEC-007: PASS — 3 passed, 0 failed.
-  SEC-002 / SEC-003: BLOCKED / DEFERRED — TASK-022 supervisor dispatch/orchestrator required.
-  TASK-017 UNIT: 29 passed, 0 failed, 0 skipped.
-  TASK-017 SECURITY: 9 passed, 0 failed, 2 TASK-022 skips.
-  FULL REGRESSION: 318 passed, 0 failed, 25 expected skips.
-  SECURITY REVIEW: 24 PASS, 1 BLOCKED TASK-022.
+Entry evidence:
+  TASK-003: TESTED — dependency satisfied.
+  TASK-005: IMPLEMENTED — hard gate requires TESTED.
+  TASK-006: IMPLEMENTED — hard gate requires TESTED.
+  PRE-06: committed repository decision record says RESOLVED, while the Stage 8 packet says UNRESOLVED and requires an MVP blocked shell.
+
+Required resolution:
+  Record TASK-005 and TASK-006 as TESTED only through an authorized acceptance/state-reconciliation step.
+  Reconcile the Stage 8 PRE-06 instruction with docs/sp001_reference_health_gates.md and the existing resolved PROJECT_STATE entry.
 ```
 
 ---
@@ -126,6 +122,8 @@ Validated conditions:
 | E-2 / SP-002-ONNX | No frozen ONNX artifact-unit definition ID exists. C3A returns the resolved manifest as `ARTIFACT_UNIT_AMBIGUOUS` with definition ID `UNAVAILABLE`; no ID is inferred from PyTorch. | Final ONNX C3A acceptance and TASK-015 ONNX hashing | Project owner / architecture owner |
 | HOST-CAP-003 / TASK-014 packet E-3 | `onnx` is not installed in the repository-local Python runtime; FIX-004/005/006/016, the genuine C3A ONNX tests, and UT-C3C-001 through UT-C3C-004 plus SEC-006 cannot receive protobuf-backed runtime verification | TASK-014 ONNX validation, conditional ONNX fixtures, and TASK-016 runtime acceptance | Dependency / deployment owner |
 | TASK-022-C3D-INTEGRATION | SEC-002 OOM termination/continuation and SEC-003 timeout/responsiveness require the real supervisor dispatch/orchestrator; worker-level C3D validation is complete and these integration claims remain explicitly unverified | TASK-017 supervisor-level integration evidence | TASK-022 implementation owner |
+| S8-ENTRY-D1 | Stage 8 requires TASK-003, TASK-005, and TASK-006 to be `TESTED`; TASK-005 and TASK-006 are currently recorded as `IMPLEMENTED` despite historical passing test evidence | TASK-018 entry authorization | Project owner / acceptance owner |
+| S8-PRE06-CONFLICT | The Stage 8 execution packet says PRE-06 remains unresolved and R0–R7 must not be implemented, but committed `docs/sp001_reference_health_gates.md` explicitly resolves PRE-06 and `PROJECT_STATE.md` records it closed | TASK-018 promotion contract | Project owner / architecture owner |
 
 ---
 
@@ -324,7 +322,7 @@ The Stage 6 rule permits exit when every requirement is either satisfied with ev
 
 ## NEXT TASK
 
-**Next task:** Next stage/task requires review of the next authoritative execution packet.
+**Next task:** Resolve the Stage 8 TASK-005/TASK-006 acceptance gate and PRE-06 authority conflict before TASK-018 implementation. TASK-019 and TASK-020 are not authorized by this blocked entry check.
 
 Critical path reminder:
 ```
@@ -365,6 +363,7 @@ PRE-04 resolved
 | E-3 / HOST-CAP-003 | Repository-local Python cannot import ONNX; no compatible ONNX/protobuf wheel is staged. Preserve fail-closed behavior and named skips until the dependency is available offline. | Dependency / deployment owner | Blocks genuine C3A/C3C ONNX runtime acceptance; does not block TASK-017 |
 | E-5 | **RESOLVED BY AUTHORITY 2026-09-27:** malformed ONNX maps to `STRUCTURAL_INVALID`; Architecture and Technical Specification override the lower-ranked MVP test wording | Project team | Closed as a semantic decision; runtime test remains under HOST-CAP-003 |
 | E-6 identifier reconciliation | Preflight E-6 is the PF-002 explicit-injection constraint and is satisfied by C3A/C3B/C3C. The Stage 6 exit packet separately labels full external-reference traversal as E-6; implementation is reviewed, but genuine protobuf traversal remains blocked by HOST-CAP-003. The two meanings are recorded without silently renumbering either. | Project owner / architecture owner | Naming reconciliation pending; runtime traversal evidence remains blocked by HOST-CAP-003 |
+| S8-PRE06-CONFLICT | Decide whether TASK-018 follows the committed SP-001 R0–R7 procedure that resolves PRE-06 or a revised authority that reopens PRE-06 and limits TASK-018 to an all-UNAVAILABLE shell. No repository decision record was changed during the blocked entry check. | Project owner / architecture owner | Blocks TASK-018 implementation |
 | OQ-017 | Analyst authentication and authority hierarchy | Project owner | Post-MVP |
 | OQ-018 | Evidence retention policy | Project owner | Post-MVP |
 | AF-003 | Trusted clock source | Deployment environment | Post-MVP |
@@ -376,7 +375,7 @@ PRE-04 resolved
 
 *(To be filled by the agent ending a session — for the agent starting the next session)*
 
-**Current session:** TASK-017 completed on `feature/task-017-c3d-safe-load` with worker-level status `TESTED` and Stage 7 exit `PASS-WITH-DEFERRED-TASK-022`. The repository-local `.venv-torch-test` uses Python 3.13.12 and Torch 2.10.0+cpu on Windows build 22631 / AMD64; this is development/test qualification only. FIX-001 produced `LOAD_BLOCKED`, FIX-015 produced `LOAD_SUCCESS`, deterministic empty-file input produced `LOAD_ERROR`, SEC-001 passed, and SEC-007 passed 3/3. SEC-002 and SEC-003 remain explicitly blocked/deferred until TASK-022 supplies the real supervisor dispatcher. Full regression passed 318 with 25 expected skips and no failures. E-2, HOST-CAP-003, PRE-08, and all other unrelated blockers remain open and unchanged.
+**Current session:** Stage 8 TASK-018 entry validation on `feature/task-018-reference-manager` stopped before implementation. TASK-003 is `TESTED`, but TASK-005 and TASK-006 are only `IMPLEMENTED`, so the packet's hard dependency gate failed. The packet also conflicts with the committed PRE-06 authority: `docs/sp001_reference_health_gates.md` resolves PRE-06 and defines R0–R7, while the packet says PRE-06 remains unresolved and forbids gate logic. No reference-manager source or tests were created, no prior task status was promoted, and no resolved PRE-06 record was silently reverted.
 
 **What the next agent needs to know:**
 - TASK-006 unit tests passed 5/5 and SEC-010 passed; the full current suite passed 154 with 11 expected skips.
