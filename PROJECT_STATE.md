@@ -12,7 +12,7 @@ Update this file at the end of every coding session before committing.
 ## PROJECT
 
 **Name:** Trustworthy Computer Vision Integrity Assurance — SIH 2026 PS 26228  
-**Current stage:** TASK-023 COMP-IFACE CLI status `TESTED`
+**Current stage:** TASK-025 Part A COMP-EXPORT status `IMPLEMENTED`; Part B validation pending
 **Repository created:** [DATE TO BE FILLED ON REPO INIT]  
 **Five-day window start:** [DATE — begins after P1 conditions resolved]
 
@@ -60,7 +60,7 @@ Status codes: `NOT STARTED` | `IN PROGRESS` | `IMPLEMENTED` | `TESTED` | `VALIDA
 | COMP-SUP (orchestrator) | TASK-022 | `TESTED` | Parts A-B implemented and validated COMP-SUP; Part C final trust-boundary, isolation, secret-access, evidence/schema/audit ownership, C5, failure-state, resource, import, and prohibited-field review passed. Part B: 21 targeted tests and 149 relevant-regression tests pass with 9 expected dependency/task-gated skips; Part C focused security tests pass 6/6. |
 | CLI entry points | TASK-023 | `TESTED` | Seven argparse entry points implemented; complete stored findings/evidence/deferred records remain visible, audit corruption is surfaced before events, assessment execution delegates to COMP-SUP, and unavailable TASK-024/TASK-025 commands fail explicitly. Nine targeted tests and the full regression pass. |
 | Dashboard (SHOULD BUILD) | TASK-024 | `NOT STARTED` | Antigravity — begins after GATE-2 |
-| Evidence bundle exporter | TASK-025 | `NOT STARTED` | |
+| Evidence bundle exporter | TASK-025 | `IMPLEMENTED` | Part A implements the packet-authorized deterministic, read-only six-document ZIP packager at `assurance_system/export/exporter.py`; syntax, import, and static security validation pass. Tests and CLI integration remain pending Part B. |
 | End-to-end integration test | TASK-026 | `NOT STARTED` | Gate task |
 | Offline validation (target host) | TASK-027 | `NOT STARTED` | Target identified; still awaits completed system, Windows AMD64 / Python 3.13.12 wheelhouse verification, and zero-egress validation |
 
@@ -69,20 +69,20 @@ Status codes: `NOT STARTED` | `IN PROGRESS` | `IMPLEMENTED` | `TESTED` | `VALIDA
 ## CURRENT TASK
 
 ```
-TASK: TASK-023 — COMP-IFACE Analyst CLI
+TASK: TASK-025 Part A — COMP-EXPORT Evidence Bundle Exporter
 Owner: Codex
-Branch: feature/cli
+Branch: feature/exporter
 Started: 2026-09-28
-Status: TESTED.
+Status: IMPLEMENTED — tests not run; validation pending Part B.
 
 Validated behavior:
-  IMPLEMENTATION: stdlib argparse exposes assess, show-finding, show-evidence, show-audit-trail, export-bundle, list-deferred, and dashboard. Assessment delegates the manifest path unchanged to SupervisorOrchestrator; all store access in the CLI uses approved query methods.
-  DISPLAY CONTRACT: complete stored records are emitted as JSON with UNAVAILABLE, NOT_ASSESSED, DEFERRED_IN_SCOPE, limitations, and non-claims intact. Missing records fail closed with UNAVAILABLE. Audit corruption prints CHAIN_CORRUPT before event output.
-  DOWNSTREAM BOUNDARIES: export-bundle and dashboard return the exact TASK-025/TASK-024 dependency messages and nonzero exit codes; neither downstream component was implemented.
-  CONTRACT RECONCILIATION: the approved deferred-store record uses `deferral_reason`, `limitations`, and `non_claims`; TASK-023 prints that complete stored contract without introducing the packet-only `deferred_reason` or `scope_note` names.
-  TEST EVIDENCE: `tests/integration/test_cli.py` — 9 passed, 0 failed, 0 skipped; full suite — 435 passed, 0 failed, 28 expected skips.
-  SECURITY EVIDENCE: zero matches for `weights_only=False` in production, `risk_score` in the CLI, direct evidence/finding/audit mutation calls in the CLI, and prohibited positive assurance constants. CLI source has no network or subprocess imports.
-  SCOPE: only `assurance_system/interfaces/cli.py`, top-level `cli.py`, `tests/integration/test_cli.py`, and this state file changed. Workers, supervisor components, schemas, security tests, exporter, dashboard, and protected research documentation remain unchanged.
+  IMPLEMENTATION: EvidenceExporter packages exactly `manifest.json`, `findings.json`, `evidence_records.json`, `audit_trail.json`, `provenance.json`, and `capabilities.json` using stable JSON serialization, sorted entry order, fixed ZIP metadata, and UTF-8 bytes.
+  READ BOUNDARY: source evidence/findings/provenance/audit data comes from the approved `EvidenceStore.export_bundle()` read API; capability coverage comes from `query_deferred()` and is asset-filtered. The exporter has no store mutation path.
+  AUDIT CONTRACT: exported events receive read-only link/hash verification. Corruption is represented by `CHAIN_CORRUPT`; the mutating AuditChainWriter corruption-report method is not called by the exporter.
+  PATH/FAILURE CONTRACT: the output must be a new `.zip` contained by the configured exporter output directory (current working directory by default); traversal, missing parent directories, non-ZIP targets, and overwrites fail closed with bounded errors. Generated documents are rejected if prohibited assurance or secret-bearing fields are present.
+  CONTRACT RECONCILIATION: the current approved Part A packet requires `assurance_system/export/exporter.py` and the six packet-named documents. Older Technical/MVP text and TASK-023 still reference `assurance_system/interfaces/exporter.py` with different filenames. Part A follows the explicit packet and does not modify the forbidden CLI adapter; wiring remains pending Part B direction.
+  VALIDATION: bytecode compilation passed; exact import validation printed `IMPORT_OK`; required exporter scans returned zero matches. No pytest or regression suite was run, as required by the Part A packet.
+  SCOPE: only `assurance_system/export/exporter.py` and this state file changed. CLI, dashboard, workers, supervisor components, schemas, audit implementation, tests, constants, and protected research documentation remain unchanged.
 ```
 
 ---
@@ -114,6 +114,7 @@ Validated behavior:
 | TASK-021 | Implemented the deterministic COMP-C5 interpretation priority rules and finding contract, including fail-closed UNAVAILABLE propagation, C3B identity mapping, statistics-only handling, mandatory T05d/PF-002/dependency non-claims, and finding-v1 validation. | `tests/unit/test_interpretation.py` and `tests/negative/test_unavailable_propagation.py`: 20 passed, 0 failed, 0 skipped; targeted production security scans passed | This TASK-021 validation commit |
 | TASK-022 Parts A-C | Implemented COMP-SUP; validated initialization, fail-closed configuration, isolated subprocess dispatch and cleanup, schema-gated supervisor-only persistence, fail-closed audit behavior, C2/C3 scheduling, C5 delegation, and complete ASSESSMENT_ERROR construction; completed the final architecture/security compliance review without production changes. | Part B targeted: 21 passed, 0 failed, 0 skipped; relevant regression: 149 passed, 0 failed, 9 expected skips; Part C focused security: 6 passed; all required prohibited-field, dynamic-execution, network, parser/model, secret-read, and assurance-constant scans returned zero production matches | This TASK-022 final security review commit |
 | TASK-023 | Implemented the read-only COMP-IFACE analyst CLI and root entry point with seven stdlib argparse commands, orchestrator-only assessment execution, complete finding/evidence/deferred display, fail-closed missing-record output, audit-corruption visibility, and explicit TASK-024/TASK-025 dependency responses. | INT-CLI-001..004 plus contract/boundary checks: 9 passed; full suite: 435 passed, 28 expected skips; imports, compilation, help output, and universal security guards passed | This TASK-023 completion commit |
+| TASK-025 Part A | Implemented the packet-authorized COMP-EXPORT packager with exact six-file output, stable JSON/ZIP encoding, read-only store access, non-mutating exported-chain verification, explicit corruption visibility, secret/prohibited-field rejection, contained new-file output, and bounded failures. CLI integration is intentionally unchanged pending Part B. | Tests: NOT RUN. Syntax compilation passed; import printed `IMPORT_OK`; exporter prohibited-field and unsafe-load scans plus the universal positive-constant guard returned zero matches. | This TASK-025 Part A commit |
 
 ---
 
@@ -148,16 +149,17 @@ Validated behavior:
 - TASK-020 uses the existing deferred-store and audit APIs, which commit separately. On failure, errors propagate and earlier committed rows remain; no batch-level atomicity is claimed.
 - TASK-023 INT-CLI-003 verifies list-deferred display with all nine explicit DEFERRED_IN_SCOPE records. The historical TASK-020 UT-CAP-003 placeholder remains skipped because that out-of-scope unit file was not modified; downstream acceptance is now covered by the TASK-023 integration test.
 - Analyst authentication is UNAVAILABLE — `analyst_id = 'UNAVAILABLE'` on all analyst disposition events until OQ-017 is resolved.
+- TASK-025 Part A is not yet CLI-reachable because its explicit packet path differs from the older CLI/MVP module path and CLI modification was forbidden. Part B must resolve the adapter contract before integration acceptance; no wiring is implied by `IMPLEMENTED`.
 
 ---
 
 ## LATEST VALIDATED COMMIT
 
 ```
-Commit: This TASK-023 completion commit
-Branch: feature/cli
+Commit: This TASK-025 Part A commit
+Branch: feature/exporter
 Date: 2026-09-28
-Tests: TASK-023 integration suite passed 9, failed 0, skipped 0. Full regression passed 435, failed 0, with 28 expected dependency/task-gated skips.
+Tests: NOT RUN per the Part A execution packet. Syntax compilation passed; import validation printed `IMPORT_OK`; required static security scans returned zero matches.
 ```
 
 ---
@@ -166,11 +168,11 @@ Tests: TASK-023 integration suite passed 9, failed 0, skipped 0. Full regression
 
 ```
 Date: 2026-09-28
-Latest focused tests: TASK-023 CLI integration passed 9, failed 0, skipped 0
-Executed file: `tests/integration/test_cli.py`
-Test tooling: `C:\Users\master\Desktop\SIH26228-CV-INTEGRITY\.venv-torch-test\Scripts\python.exe` (Python 3.13.12) with pytest 9.1.1 loaded from the existing approved offline package source `C:\Users\master\AppData\Local\Temp\sih26228-task-tests` through `PYTHONPATH`. Git-for-Windows `grep.exe` was added to the pytest process PATH for legacy scan tests. No package was downloaded or installed.
-Full regression: 435 passed, 0 failed, 28 expected dependency/task-gated skips; one non-failing Torch warning reported unavailable NumPy initialization.
-Security checks: zero production matches for `weights_only=False`; zero CLI matches for `risk_score` and direct evidence/finding/audit mutation methods; zero prohibited positive assurance constants. CLI source has no network or subprocess imports.
+Latest focused tests: NOT RUN — TASK-025 Part A permits import, compilation, and static scans only
+Executed file: no pytest file; `assurance_system/export/exporter.py` compiled and imported successfully
+Test tooling: `C:\Users\master\Desktop\SIH26228-CV-INTEGRITY\.venv-torch-test\Scripts\python.exe` (Python 3.13.12). No package was downloaded or installed.
+Validation: exact import command printed `IMPORT_OK`; bytecode compilation passed.
+Security checks: zero exporter matches for `risk_score` and `weights_only=False`; zero prohibited positive assurance constants in `constants.py`.
 
 Integration gates:
   GATE-1 (Foundation):       NOT PASSED
@@ -348,7 +350,7 @@ The Stage 6 rule permits exit when every requirement is either satisfied with ev
 
 ## NEXT TASK
 
-**Next task:** TASK-025 requires its own authoritative execution packet and was not started here. TASK-024 remains the post-GATE-2 Antigravity dashboard task and was not started. TASK-019 Part B remains blocked on PRE-08 target-host key-path/ACL provisioning.
+**Next task:** TASK-025 Part B test, deterministic-output, path-security, read-only, corruption-visibility, and CLI-adapter validation requires its own authoritative packet. TASK-024 was not started. TASK-019 Part B remains blocked on PRE-08 target-host key-path/ACL provisioning.
 
 Critical path reminder:
 ```
@@ -389,6 +391,7 @@ PRE-04 resolved
 | E-3 / HOST-CAP-003 | Repository-local Python cannot import ONNX; no compatible ONNX/protobuf wheel is staged. Preserve fail-closed behavior and named skips until the dependency is available offline. | Dependency / deployment owner | Blocks genuine C3A/C3C ONNX runtime acceptance; does not block TASK-017 |
 | E-5 | **RESOLVED BY AUTHORITY 2026-09-27:** malformed ONNX maps to `STRUCTURAL_INVALID`; Architecture and Technical Specification override the lower-ranked MVP test wording | Project team | Closed as a semantic decision; runtime test remains under HOST-CAP-003 |
 | E-6 identifier reconciliation | Preflight E-6 is the PF-002 explicit-injection constraint and is satisfied by C3A/C3B/C3C. The Stage 6 exit packet separately labels full external-reference traversal as E-6; implementation is reviewed, but genuine protobuf traversal remains blocked by HOST-CAP-003. The two meanings are recorded without silently renumbering either. | Project owner / architecture owner | Naming reconciliation pending; runtime traversal evidence remains blocked by HOST-CAP-003 |
+| TASK-025 module/bundle contract | The current Part A packet authorizes `assurance_system/export/exporter.py` and packet-specific names including `audit_trail.json` and `capabilities.json`; older Technical/MVP text and TASK-023 reference `interfaces/exporter.py` and different filenames. Part A follows the current packet without changing CLI. | TASK-025 Part B owner / project owner | Resolve adapter and final filename authority before CLI integration acceptance |
 | S8-PRE06-CONFLICT | **RESOLVED 2026-09-27:** `docs/sp001_reference_health_gates.md` is the approved committed PRE-06 decision record, corroborated by `docs/p1_decisions.md`; the Stage 8 packet's unresolved statement is stale and does not reopen PRE-06 | Project team | Closed |
 | OQ-017 | Analyst authentication and authority hierarchy | Project owner | Post-MVP |
 | OQ-018 | Evidence retention policy | Project owner | Post-MVP |
@@ -401,7 +404,7 @@ PRE-04 resolved
 
 *(To be filled by the agent ending a session — for the agent starting the next session)*
 
-**Current session:** TASK-023 implemented and validated the read-only COMP-IFACE analyst CLI on `feature/cli`. All seven argparse commands are present; assessment delegates to COMP-SUP, stored results remain complete and unaltered, CHAIN_CORRUPT is visible before events, and unavailable TASK-024/TASK-025 integrations fail explicitly. The targeted CLI suite passed 9/9 and the full regression passed 435 with 28 expected skips. Universal security guards passed. No worker, supervisor component, schema, security-test, exporter, dashboard, or protected `docs/research/**` file changed. PRE-08, E-2, HOST-CAP-003, HOST-CAP-002 deployment limitations, and TASK-017 SEC-002/SEC-003 remain carried without expanded claims.
+**Current session:** TASK-025 Part A implemented the standalone COMP-EXPORT packager on `feature/exporter` at the explicit packet path. It creates the exact six packet-named entries with stable serialization and ZIP metadata, consumes only existing store read APIs, verifies the exported audit event chain without mutating it, rejects prohibited/secret-bearing fields, and writes only new contained ZIP paths. Compilation/import/static security validation passed; tests were not run and status remains `IMPLEMENTED`, not `TESTED`. The older CLI/MVP module-path and filename mismatch is recorded for Part B; CLI, dashboard, workers, supervisor components, tests, and protected `docs/research/**` remain unchanged. PRE-08, E-2, HOST-CAP-003, HOST-CAP-002 deployment limitations, and TASK-017 SEC-002/SEC-003 remain carried without expanded claims.
 
 **TASK-020 specification reconciliation:** No separately saved Stage 8 packet was available in the repository or attachments; the current TASK-020 execution request and committed architecture/technical/MVP contracts supplied the scope. The MVP's §10 §3.17 citation points to COMP-FIX, so the concrete COMP-CAP API follows TASK-020 and the deferred persistence/audit contracts in §10 §§3.1, 3.15, 20.3. UT-CAP-001's generic deferred-count wording is met by enumerating drift/OOD and heavyweight methods separately while retaining M11=REFERENCE_UNAVAILABLE and tail=COMPLETENESS_UNAVAILABLE. T05d remains a permanent NON_CLAIM in persisted reason/non-claim text using the existing deferred-table envelope; no new assessment status was introduced.
 
