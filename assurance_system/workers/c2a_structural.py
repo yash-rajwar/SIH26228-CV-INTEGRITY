@@ -7,6 +7,7 @@
 from __future__ import annotations
 
 from collections import Counter
+import json
 import math
 import os
 from typing import Any
@@ -152,7 +153,13 @@ def _is_finite_number(value: Any) -> bool:
 
 
 def _validate_coco(coco: Any) -> tuple[list[dict[str, Any]], int]:
-    data = coco.dataset
+    if isinstance(coco, dict):
+        data = coco
+        annotations = data.get("annotations", [])
+    else:
+        data = coco.dataset
+        annotations = coco.anns.values()
+
     violations: list[dict[str, Any]] = []
 
     for field in _COCO_REQUIRED_ROOT_FIELDS:
@@ -171,7 +178,7 @@ def _validate_coco(coco: Any) -> tuple[list[dict[str, Any]], int]:
     }
 
     total_checked = 0
-    for annotation_index, annotation in enumerate(coco.anns.values()):
+    for annotation_index, annotation in enumerate(annotations):
         total_checked += 1
         annotation_id = annotation.get("id", f"index_{annotation_index}")
         location = {
@@ -438,12 +445,39 @@ def run_assessment(task: dict[str, Any]) -> dict[str, Any]:
         for path in asset_paths:
             try:
                 coco = _COCO_CLASS(path)
+            except KeyError as exc:
+                if exc.args != ("id",):
+                    return _error_output(
+                        f"COCO_LOAD_ERROR: {type(exc).__name__}: {exc}",
+                        format_name="COCO",
+                    )
+
+                try:
+                    with open(path, "r", encoding="utf-8") as annotation_file:
+                        raw_data = json.load(annotation_file)
+                except Exception as raw_exc:
+                    return _error_output(
+                        f"COCO_LOAD_ERROR: {type(raw_exc).__name__}: {raw_exc}",
+                        format_name="COCO",
+                    )
+
+                if not isinstance(raw_data, dict):
+                    return _error_output(
+                        "COCO_LOAD_ERROR: ROOT_NOT_OBJECT",
+                        format_name="COCO",
+                    )
+
+                violations, checked = _validate_coco(raw_data)
+
             except Exception as exc:
                 return _error_output(
                     f"COCO_LOAD_ERROR: {type(exc).__name__}: {exc}",
                     format_name="COCO",
                 )
-            violations, checked = _validate_coco(coco)
+
+            else:
+                violations, checked = _validate_coco(coco)
+
             all_violations.extend(violations)
             total_checked += checked
         task_variant = None
