@@ -12,7 +12,7 @@ Update this file at the end of every coding session before committing.
 ## PROJECT
 
 **Name:** Trustworthy Computer Vision Integrity Assurance — SIH 2026 PS 26228  
-**Current stage:** TASK-027-H command-contract closure `BLOCKED`; the approved durable interpreter lacks pytest and the frozen OFF-002 submission path does not exist
+**Current stage:** TASK-026 Gate-2 reconciliation complete; GATE-2 `PASS`; TASK-026 full validation acceptance and GATE-3/GATE-4 remain open
 **Repository created:** [DATE TO BE FILLED ON REPO INIT]  
 **Five-day window start:** [DATE — begins after P1 conditions resolved]
 
@@ -44,46 +44,45 @@ Status codes: `NOT STARTED` | `IN PROGRESS` | `IMPLEMENTED` | `TESTED` | `VALIDA
 | Worker base (IPC, resource limits) | TASK-007 | `TESTED` | Worker-side named-file IPC, fail-closed output builder, path containment, crash handling, and timeout test harness committed at `793950a`; Windows RLIMIT limitations remain explicit |
 | Schema validator + JSON schemas | TASK-008 | `TESTED` | Custom fail-closed validator and six `v1.0` schema documents committed at `a78e5c4`; SEC-011 and SEC-012 confirmed |
 | Hostile fixture suite (P0) | TASK-009 | `TESTED` | Part A non-torch families implemented at `5af987f`; Part B FIX-001/002/003/015 and FIX-009-S tested with Torch 2.10.0+cpu; YOLO pose/OBB remain outside PRE-05 scope. FIX-004/005/006 and benign FIX-016 now execute successfully in the C3A/C3C ONNX 1.23.0 compatibility suites. |
-| COMP-W-C2A (all-box structural) | TASK-010 | `IMPLEMENTED` | All-box COCO geometry layer and PRE-05-authorized YOLO detection/segmentation parser implemented at `65fef55`; 14 targeted tests and full regression pass; real `pycocotools` runtime remains conditional under HOST-CAP-001 and fails closed when unavailable |
+| COMP-W-C2A (all-box structural) | TASK-010 | `TESTED` | All-box COCO geometry layer and PRE-05-authorized YOLO detection/segmentation parser implemented at `65fef55`; the target-host pycocotools path now passes VS-001, and FIX-008 all-annotation validation passes at `cb6f0bc` with all 9 expected violations preserved |
 | COMP-W-C2B (exact hash) | TASK-011 | `IMPLEMENTED` | Stdlib-only streaming SHA-256 duplicate grouping, per-file error handling, fail-closed all-failed state, and mandatory deferred PDQ disclosure implemented in the current TASK-011 commit; 10 targeted tests and full regression pass |
 | COMP-W-C2C (concentration) | TASK-012 | `TESTED` | Exact §3.5 HHI/entropy statistics, source shares/counts, UNTRUSTED-default SYBIL_UNRELIABLE behavior, fail-closed missing/prohibited input handling, and FIX-012 integration implemented in the current TASK-012 commit; 8 targeted tests and full regression pass |
 | COMP-W-C2D (image hash) | TASK-013 | `TESTED` | Stdlib-only streaming SHA-256, byte-identical image grouping, path containment, per-file error handling, mandatory PDQ deferral, and permanent T05d non-claims implemented in the current TASK-013 commit; 6 targeted tests and full regression pass |
 | COMP-W-C3A (artifact-unit resolver) | TASK-014 | `IMPLEMENTED` | Runtime compatibility fixed for ONNX 1.23.0 / protobuf 7.36.2; all 30 C3A tests now pass, including genuine ONNX external-data containment. E-2 intentionally keeps the ONNX definition ID `UNAVAILABLE`, so final identity acceptance remains blocked. |
 | COMP-W-C3B (model hasher) | TASK-015 | `IMPLEMENTED` | IMPLEMENTED WITH BLOCKER: deterministic whole-unit SHA-256, fail-closed ambiguity/containment/read-error handling, reference comparison, and PF-002 contract pass 18 targeted tests; ONNX identity path blocked pending ONNX artifact-unit definition ID (E-2) |
 | COMP-W-C3C (ONNX structural) | TASK-016 | `TESTED` | ONNX 1.23.0 / protobuf 7.36.2 descriptor compatibility is fixed without narrowing traversal; all 18 C3C tests pass, including genuine valid/absolute/traversal/symlink/malformed ONNX cases, checker/schema behavior, PF-002, EF-004, and no-ORT/no-execution boundaries. |
-| COMP-W-C3D (PyTorch safe-load gate) | TASK-017 | `TESTED` | Worker-level implementation and runtime/security validation complete with repository-local Torch 2.10.0+cpu; SEC-002 OOM dispatch and SEC-003 timeout dispatch remain explicitly deferred to TASK-022 |
+| COMP-W-C3D (PyTorch safe-load gate) | TASK-017 | `TESTED` | Worker-level implementation and runtime/security validation complete with repository-local Torch 2.10.0+cpu; SEC-002 OOM dispatch and SEC-003 timeout dispatch remain unresolved supervisor-integration acceptance items |
 | COMP-REF (reference manager) | TASK-018 | `TESTED` | Approved SP-001 all-of R0–R7 gate enforcement, fail-closed default, FORMAT_ASSET boundary, audited transitions, staleness downgrade, and AuditWriteError rollback verified; 7 targeted tests and full regression pass |
 | COMP-C4 provenance record builder | TASK-019 Part A | `TESTED` | Provenance structure, canonicalization, replay rejection, durable sequence recovery, PF-002 binding, and explicit SIGNING_UNAVAILABLE behavior are tested. No signing primitive or key access is implemented. |
 | COMP-C4 operational signing | TASK-019 Part B | `DEFERRED` | PRE-08 target-specific key-path/ACL provisioning remains unresolved. PRE-02, PRE-04, and PRE-09 remain resolved; no signing key material, runtime signing, or fake signature is present. |
 | COMP-CAP (capability declaration) | TASK-020 | `TESTED` | Component acceptance: fail-closed bounded method declarations, fixed non-claims, schema-gated persistence of 15 coverage-gap records, architecture-specific unavailable states, and mandatory audit events pass 53 tests; downstream list-deferred display is accepted by TASK-023 INT-CLI-003. No signing or worker changes. |
 | COMP-C5 (interpretation engine) | TASK-021 | `TESTED` | Part A rule engine uses the frozen `v1.0` vocabulary; Part B unit and FIX-013 negative validation passed 20/20 using the existing approved offline pytest 9.1.1 package source. |
 | COMP-SUP (orchestrator) | TASK-022 | `TESTED` | Parts A-B implemented and validated COMP-SUP; Part C final trust-boundary, isolation, secret-access, evidence/schema/audit ownership, C5, failure-state, resource, import, and prohibited-field review passed. Part B: 21 targeted tests and 149 relevant-regression tests pass with 9 expected dependency/task-gated skips; Part C focused security tests pass 6/6. |
-| CLI entry points | TASK-023 | `TESTED` | Seven argparse entry points implemented; complete stored findings/evidence/deferred records remain visible, audit corruption is surfaced before events, assessment delegates to COMP-SUP, and export delegates to COMP-EXPORT. TASK-024 remains explicitly unavailable. Original TASK-023 acceptance and current TASK-025 CLI regression pass. |
-| Dashboard (SHOULD BUILD) | TASK-024 | `NOT STARTED` | `NOT AUTHORIZED` while GATE-2 remains blocked; Antigravity begins only after GATE-2 passes |
+| CLI entry points | TASK-023 | `TESTED` | Seven argparse entry points implemented; complete stored findings/evidence/deferred records remain visible, audit corruption is surfaced before events, assessment delegates to COMP-SUP, and export delegates to COMP-EXPORT. The unimplemented TASK-024 command remains explicitly unavailable. Original TASK-023 acceptance and current TASK-025 CLI regression pass. |
+| Dashboard (SHOULD BUILD) | TASK-024 | `NOT STARTED` | GATE-2 now passes, so the MVP dependency gate no longer blocks TASK-024; dashboard work was not started by this reconciliation and still requires its own execution packet |
 | Evidence bundle exporter | TASK-025 | `TESTED` | Deterministic read-only six-document ZIP packaging, complete field/state preservation, non-mutating audit verification, path and overwrite controls, secret/prohibited-field rejection, and CLI delegation are validated. Targeted: 27 passed; relevant regression: 107 passed, 3 expected skips. |
-| End-to-end integration test | TASK-026 | `BLOCKED` | Final TASK-026 status: `TESTED WITH BLOCKERS`. Five Gate-2 items pass; Gate-2.1 valid COCO and Gate-2.2 FIX-008 remain blocked by HOST-CAP-001. The all-of GATE-2 decision is `BLOCKED`. |
-| Offline validation (target host) | TASK-027 | `BLOCKED` | TASK-027-H authorizes OFF-001's disposable local-only wheelhouse install and freezes proposed OFF-002/OFF-004 commands, but its mandatory durable-pytest gate fails: `.venv-torch-test` has no pytest module/executable. The frozen `tests/fixtures/valid_coco_submission.json` path is also absent. No runner was created; OFF-001..004 were not run and no offline capability is claimed. |
+| End-to-end integration test | TASK-026 | `IN PROGRESS` | VS-001 through VS-007 pass and the narrower GATE-2 vertical-slice criteria are formally `PASS`. Full TASK-026 acceptance remains open: SEC-002/SEC-003 supervisor dispatch tests and §10 §18 observed-result records are unresolved, so GATE-3 and GATE-4 are not claimed. |
+| Offline validation (target host) | TASK-027 | `TESTED` | OFF-001, OFF-003, and OFF-004 have target-host exit-zero evidence from `task027-run-20260928-215709`; OFF-002 has a zero-byte non-loopback acceptance window from TASK-027-S. The original recovery marker remains `FAIL`, while independent post-run verification confirms exact restored host state. The offline result is bounded to the frozen Windows AMD64 / CPython 3.13.12 tuple. |
 
 ---
 
 ## CURRENT TASK
 
 ```
-TASK: TASK-027-H Command-Contract Closure + Runner Re-entry
+TASK: TASK-026 Formal Gate-2 State Reconciliation
 Owner: Codex
 Branch: feature/vertical-slice
-Started: 2026-09-28
-Status: BLOCKED — packet-mandated durable pytest checks failed; runner preparation stopped before creation.
+Started: 2026-09-29
+Status: COMPLETE — GATE-2 PASS; no production or test implementation changed.
 
 Validated behavior:
-  PRIOR STATE: TASK-027-G is superseded by TASK-027-H command-contract closure; H replaces the authority ambiguity but remains blocked on missing durable execution inputs.
-  PATHS: Actual approved interpreter is C:\Users\master\Desktop\SIH26228-CV-INTEGRITY\.venv-torch-test\Scripts\python.exe. The packet literal omits the separator before `.venv-torch-test` and does not exist; the prior committed/verified repository-local path is used for the required gate check.
-  PYTEST: Both `<approved-python> -m pytest --version` and `<approved-python> -c "import pytest, sys; ..."` exit 1 with `No module named pytest`; no pytest executable exists in the durable venv. No install or temporary-source substitution was attempted.
-  COMMANDS: TASK-027-H authorizes OFF-001's disposable, local-only verifier install. Static review confirms the existing verifier uses no-index/find-links/only-binary into a TemporaryDirectory target and cleans it; it was not executed. The packet freezes OFF-002 to `python cli.py assess --submission tests/fixtures/valid_coco_submission.json`, but that exact file is absent.
-  OFF-004: Existing CLI behavior would expose actual IDs through JSON stdout `asset_ids`; no ID is invented. The frozen assess command cannot execute against the absent submission file, and H stopped at the earlier durable-pytest hard gate.
-  SAFETY: Ethernet0 3 remained Up; PktMon remained stopped. Recovery task/script remain unchanged. No runner, validation scheduled task, OFF/Gate test, installation, or capture occurred.
-  DECISION: PYTEST DURABLE ENVIRONMENT BLOCKED; RUNNER NOT CREATED; RUNNER DRY-RUN NOT PERFORMED.
-  UNCHANGED: E-2 OPEN; PRE-08 PARTIAL; HOST-CAP-002 PARTIAL; historical OFF/Gate results unchanged; TASK-024 not authorized; protected research content unchanged.
+  BASELINE: HEAD `cb6f0bc`; VS-001 through VS-007 pass; full regression 483 passed, 20 skipped, 0 failed.
+  GATE-2: PASS. The Section 11 vertical-slice behaviors, hostile fixture/reproducibility prerequisite, deferred records, risk-score prohibition, and UNAVAILABLE propagation all have passing evidence.
+  SKIPS: 16 obsolete/stale placeholders remain untouched; SEC-002 and SEC-003 remain genuine unresolved supervisor acceptance items; the HMAC path remains PRE-08-gated; the Ed25519 path is not applicable under PRE-02.
+  OFF-002: Acceptance PASS with 0 non-loopback physical-NIC Tx packets/bytes and assess exit 0. Original recovery marker remains FAIL; independent final-state verification passes with zero binding mismatches, adapter Up, temporary firewall absent, recovery task absent, and PktMon stopped.
+  TASK-026: Full task acceptance remains IN PROGRESS because SEC-002/SEC-003 and §10 §18 observed-result records remain open. GATE-3 and GATE-4 are not claimed.
+  SAFETY: No production code, tests, fixtures, network state, firewall policy, PktMon state, recovery tasks, or historical evidence were changed by this reconciliation.
+  UNCHANGED: E-2 OPEN; PRE-08 PARTIAL; HOST-CAP-002 PARTIAL; HOST-CAP-003 formal reconciliation pending; protected research content unchanged.
 ```
 
 ---
@@ -131,6 +130,8 @@ Validated behavior:
 | TASK-027-F OFF-002 procedure | Defined the strict host-boundary zero-egress contract, target network boundary, conservative PktMon capture, acceptance rules, evidence package, reproducibility steps, and false-positive/negative controls. Performed a bounded ICMP dry run proving capture/conversion mechanics without running OFF-002. | PktMon dry run: start/stop PASS; ETL/text/PCAPNG PASS; 106 packet appearances, 0 drops, 0 lost ETL events; controlled local/remote packets visible. Continuous unattributed background Tx makes readiness `NOT READY`; no OFF/Gate tests run. | This TASK-027-F procedure commit |
 | TASK-027-G runner preparation preflight | Verified exact repository/runtime paths, existing recovery mechanism, SYSTEM ACLs, and actual SYSTEM execution of the approved Python plus approved pytest package source. Stopped before runner creation because OFF-001's verifier installation conflicts with the packet's no-install/no-pip rule and OFF-004/full-pipeline executable contracts are not frozen. | SYSTEM preflight exit 0 / SYSTEM_ACCESS_PASS; repository read, Python/import execution, and evidence write pass. Adapter stayed Up; PktMon stayed stopped; OFF/Gate tests not run. | This TASK-027-G blocker-record commit |
 | TASK-027-H command-contract closure attempt | Applied the packet's authority clarifications by reviewing the verifier, durable runtime, frozen CLI command, fixture path, and CLI asset-ID output contract. Stopped at the mandatory durable-pytest gate and recorded the independently observed missing frozen fixture path without substituting another environment or fixture. | Approved Python 3.13.12 passes; both required pytest checks exit 1 (`No module named pytest`); durable pytest executable absent; frozen submission path absent. No runner/OFF/Gate execution. | This TASK-027-H blocker-record commit |
+| TASK-027-S + FIX-008 | Reconciled the authoritative OFF-002 acceptance window separately from recovery status, froze the repository COCO submission, and corrected the narrowly scoped pycocotools `KeyError("id")` malformed-annotation path without broad fallback or architecture changes. | OFF-002: 0 non-loopback Tx packets/bytes and assess exit 0; independent recovery state exact; VS-001–VS-007: 7 passed; full regression: 483 passed, 20 skipped, 0 failed. | `431f140`, `acb5b1e`, `cb6f0bc` |
+| TASK-026 Gate-2 formal reconciliation | Re-evaluated current evidence against the authoritative Section 11 and GATE-2 criteria, preserved every historical blocked record, documented the 20 skip classifications, and formally recorded GATE-2 PASS without claiming GATE-3/GATE-4 or resolving SEC-002/SEC-003. | Documentation-only reconciliation; targeted VS regression remains 7 passed and the established full regression remains 483 passed, 20 skipped, 0 failed. | This TASK-026 reconciliation commit |
 
 ---
 
@@ -139,12 +140,11 @@ Validated behavior:
 | Blocker ID | Description | Affects | Resolution owner |
 |---|---|---|---|
 | PRE-08 | HMAC-SHA256 parameters are frozen, but a Windows target-host absolute key path and supervisor-only ACL verification are not yet provisioned | TASK-019 operational signing | Project owner / deployment owner |
-| HOST-CAP-001 | REVALIDATION PENDING: pycocotools and PyYAML now import in the repository-local CPython 3.13 environment, ConfigLoader passes, and the declared wheelhouse closes. Valid COCO/FIX-008 and Gate-2 were not rerun in TASK-027-E. | TASK-010 COCO runtime claims; TASK-026 VS-001/VS-002; GATE-2 | Dependency / deployment owner |
 | HOST-CAP-002 | `close_fds=True` subprocess isolation passes, but Python `resource`/Unix RLIMIT controls are unavailable and no authorized Windows replacement exists; capability remains PARTIAL | Resource-limit enforcement claims; later isolation hardening if required | Architecture / deployment owner |
-| OFFLINE-001 | TASK-027-H resolves the temporary OFF-001 install authority and names OFF-002/OFF-004 CLI commands, but runner preparation remains blocked: pytest is absent from the exact durable approved venv and automatic installation/substitution is forbidden; additionally, the frozen `tests/fixtures/valid_coco_submission.json` path does not exist. Historical OFF-001..004 were not rerun. | TASK-027 and every offline deployment claim | Project owner / dependency-deployment owner |
 | E-2 / SP-002-ONNX | No frozen ONNX artifact-unit definition ID exists. C3A returns the resolved manifest as `ARTIFACT_UNIT_AMBIGUOUS` with definition ID `UNAVAILABLE`; no ID is inferred from PyTorch. | Final ONNX C3A acceptance and TASK-015 ONNX hashing | Project owner / architecture owner |
 | HOST-CAP-003 / TASK-014 packet E-3 | FORMAL RECONCILIATION PENDING: the protobuf 7.36.2 descriptor compatibility defect is fixed; real ONNX C3A/C3C tests pass without ONNX Runtime, with full containment traversal preserved. TASK-027-C itself has not been rerun, so this task does not silently close the recorded host-capability blocker. | TASK-027-C state reconciliation; E-2 remains separate for C3A identity | Dependency / deployment owner |
-| TASK-022-C3D-INTEGRATION | SEC-002 OOM termination/continuation and SEC-003 timeout/responsiveness require the real supervisor dispatch/orchestrator; worker-level C3D validation is complete and these integration claims remain explicitly unverified | TASK-017 supervisor-level integration evidence | TASK-022 implementation owner |
+| TASK-022-C3D-INTEGRATION | SEC-002 OOM termination/continuation and SEC-003 timeout/responsiveness remain unimplemented against the existing real supervisor dispatcher; worker-level C3D validation is complete, but these integration claims remain explicitly unverified | GATE-3 security acceptance and full TASK-026 acceptance | TASK-026 / supervisor-integration owner |
+| TASK-026-VALIDATION-EVIDENCE | Technical Specification §18.1–§18.5 still says `NOT YET OBTAINED`; named observed-result records and the remaining GATE-4 reproducibility/integration evidence have not been formally reconciled | Full TASK-026 acceptance, capability claims, and GATE-4 | TASK-026 validation owner |
 
 ---
 
@@ -152,14 +152,14 @@ Validated behavior:
 
 *(At repository creation — to be updated as implementation progresses)*
 
-- Foundation components through TASK-009, all four data workers TASK-010 through TASK-013, and TASK-016/C3C plus TASK-017/C3D are tested at worker level. TASK-014 genuine ONNX containment now passes, but final C3A/C3B ONNX identity acceptance remains blocked by E-2.
-- Offline capability claim is not permissible until TASK-027 passes on the confirmed Windows AMD64 / Python 3.13.12 target host.
-- The target has no detected C compiler. The declared binary wheelhouse, including PyYAML 6.0.3, installs and imports without a source build; full offline validation still requires a separately authorized OFF run with approved zero-egress evidence.
+- Foundation and vertical-slice components through TASK-025 are implemented; VS-001 through VS-007 pass. TASK-014 genuine ONNX containment passes, but final C3A/C3B ONNX identity acceptance remains blocked by E-2.
+- TASK-027 offline validation is established only for the confirmed Windows AMD64 / CPython 3.13.12 target tuple and the exact staged binary set; it is not a portable or broader offline claim.
+- The target has no detected C compiler. The declared binary wheelhouse, including PyYAML 6.0.3, installs and imports without a source build; OFF-001 and OFF-003 have exit-zero target-host evidence, OFF-002 has zero-egress acceptance evidence, and OFF-004 has exit-zero SQLite-backed assess/show evidence.
 - Python `resource.setrlimit` and Unix `RLIMIT_AS`, `RLIMIT_NOFILE`, and `RLIMIT_NPROC` are unavailable. `subprocess.Popen(..., close_fds=True)` is verified working.
 - T05d clean-label poisoning coverage gap is a **permanent** non-claim. This will never change under the current baseline.
 - All references are UNAVAILABLE at MVP start. No reference-relative assessments are possible.
 - TorchScript loading is DEFERRED_IN_SCOPE — isolated worker not yet demonstrated on any target.
-- TASK-017 SEC-002 and SEC-003 supervisor OOM/timeout behavior remains deferred until TASK-022 provides the real dispatcher; neither test is recorded as passed.
+- TASK-017 SEC-002 and SEC-003 supervisor OOM/timeout behavior remains unresolved against the now-existing TASK-022 dispatcher; neither test is recorded as passed.
 - C4 signing will ship as SIGNING_UNAVAILABLE shell until PRE-08 target-host key-path provisioning is resolved. PRE-02, PRE-04, and PRE-09 are resolved.
 - COMP-CAP declares scope without executing assessments. C3C is excluded from declared support while HOST-CAP-003 is open; supported model operations are bounded to the resolved PyTorch path.
 - TASK-020 uses the existing deferred-store and audit APIs, which commit separately. On failure, errors propagate and earlier committed rows remain; no batch-level atomicity is claimed.
@@ -171,10 +171,10 @@ Validated behavior:
 ## LATEST VALIDATED COMMIT
 
 ```
-Commit: This TASK-027-H blocker-record commit
+Commit: cb6f0bc — FIX-008: validate malformed COCO annotations
 Branch: feature/vertical-slice
-Date: 2026-09-28
-Tests: No product/OFF/Gate tests run. Required durable-pytest checks both exit 1 with `No module named pytest`; `.venv-torch-test\Scripts\pytest.exe` is absent. Frozen valid-COCO submission path is absent. Adapter remained Up; PktMon remained stopped. Runner status: BLOCKED / NOT CREATED.
+Date: 2026-09-29
+Tests: VS-001 through VS-007 pass; full regression 483 passed, 20 skipped, 0 failed. Security scans report zero production `weights_only=False` and `risk_score` matches. OFF-002 acceptance records 0 non-loopback Tx bytes with assess exit 0; historical recovery FAIL and independent restored-state PASS remain separate.
 ```
 
 ---
@@ -182,17 +182,17 @@ Tests: No product/OFF/Gate tests run. Required durable-pytest checks both exit 1
 ## LAST TEST STATUS
 
 ```
-Date: 2026-09-28
-Latest validation: TASK-027-H mandatory durable-pytest and frozen-command compatibility preflight; prior TASK-027-E remains the latest product/dependency validation.
-Executed checks: exact approved interpreter/version; both packet-required pytest invocations; durable pytest executable presence; frozen submission-file presence; verifier/CLI/test contract inspection; recovery/PktMon/network safety state.
-Focused coverage: durable pytest availability, exact OFF-002 input compatibility, OFF-001 verifier containment, and deterministic CLI asset-ID exposure.
-Result: BLOCKED. Durable pytest is absent and the frozen submission path is absent. OFF-001..004 remain NOT EXECUTED; OFF-002 remains BLOCKED.
+Date: 2026-09-29
+Latest validation: TASK-027-S / FIX-008 re-entry regression and formal Gate-2 evidence reconciliation.
+Executed checks: approved CPython 3.13.12 / pytest 9.1.1 full suite; VS-001 through VS-007; production prohibited-field scans; actual git history and frozen fixture inspection; TASK-027-S acceptance/recovery evidence review.
+Focused coverage: valid COCO vertical slice, FIX-008 all-annotation geometry detection, hostile PyTorch handling, UNAVAILABLE propagation, deferred records, CLI display/export, audit lifecycle, and zero-egress evidence boundaries.
+Result: 483 passed, 20 skipped, 0 failed. Sixteen skips are obsolete/stale placeholders and remain unchanged; SEC-002/SEC-003 remain open; HMAC signing remains PRE-08-gated; Ed25519 is not applicable under PRE-02.
 
 Integration gates:
-  GATE-1 (Foundation):       NOT PASSED
-  GATE-2 (Vertical Slice):   BLOCKED — HOST-CAP-001 (VS-001, VS-002)
-  GATE-3 (Capability):       NOT PASSED
-  GATE-4 (Validation):       NOT PASSED
+  GATE-1 (Foundation):       prerequisite components TESTED; not re-adjudicated in this reconciliation
+  GATE-2 (Vertical Slice):   PASS
+  GATE-3 (Capability):       NOT PASSED — SEC-002 and SEC-003 remain open
+  GATE-4 (Validation):       NOT PASSED — full TASK-026/§18 evidence remains open
   GATE-5 (Demo):             NOT PASSED
 ```
 
@@ -260,6 +260,64 @@ The committed TASK-026-B evidence records zero prohibited production matches for
 ### Next authorized action
 
 The dependency / deployment owner may resolve HOST-CAP-001 using an approved compatible offline pycocotools package for the frozen Windows AMD64 / Python 3.13.12 target. After that capability is verified, a separately authorized revalidation may execute the two blocked scenarios and reconsider Gate-2. TASK-024 remains unauthorized until Gate-2 actually passes.
+
+---
+
+## TASK-026 GATE-2 FORMAL RECONCILIATION
+
+**Date:** 2026-09-29
+**Validated commit:** `cb6f0bc`
+**GATE-2 decision:** `PASS`
+**Full TASK-026 status:** `IN PROGRESS` — broader task-specific and GATE-4 acceptance remains open
+
+This section supersedes the current-state decision in TASK-026-C/D without
+rewriting those historical records. After the original blocked decision,
+HOST-CAP-001 was closed by approved dependency staging and target-runtime
+validation, the frozen COCO submission was committed, and FIX-008 was corrected
+at `cb6f0bc`.
+
+| GATE-2 criterion | Status | Current evidence |
+|---|---|---|
+| Vertical-slice behaviors | `PASS` | VS-001 through VS-007: 7 passed; valid COCO, FIX-008, hostile pickle, four-layer UNAVAILABLE propagation, deferred persistence/display, export, and audit lifecycle are covered |
+| Hostile fixture suite and reproducibility | `PASS` | TASK-009 is TESTED; in-scope fixture families exist and the seed-pinned reproducibility test passes |
+| DEFERRED_IN_SCOPE visibility | `PASS` | VS-005 and VS-006 preserve and display the complete deferred records with reasons, limitations, and non-claims |
+| No aggregate risk score | `PASS` | Production scan returns zero `risk_score` matches; schema rejection remains active |
+| UNAVAILABLE propagation | `PASS` | VS-004 confirms propagation at all four declared injection layers, exceeding the GATE-2 minimum of one |
+
+The full regression result is 483 passed, 20 skipped, 0 failed. The skips are
+classified as 16 obsolete/stale placeholders, 2 genuine unresolved supervisor
+acceptance items (SEC-002 and SEC-003), 1 PRE-08-gated HMAC signing path, and
+1 Ed25519 path that is not applicable under the selected PRE-02 profile. No
+test was deleted, weakened, or newly skipped by this reconciliation.
+
+GATE-2 does not establish GATE-3 or GATE-4. SEC-002/SEC-003 remain open, and
+Technical Specification §18.1–§18.5 observed-result records plus the remaining
+named GATE-4 evidence still require separate acceptance work.
+
+---
+
+## TASK-027 CURRENT EVIDENCE RECONCILIATION
+
+**Date:** 2026-09-29
+**TASK-027 status:** `TESTED` for the frozen Windows AMD64 / CPython 3.13.12 target tuple
+
+| Offline acceptance | Status | Evidence |
+|---|---|---|
+| OFF-001 wheelhouse installation | `PASS` | `task027-run-20260928-215709/off001.stdout.txt`: all declared packages staged; install/import status PASS; exit 0 while the network was disabled |
+| OFF-002 zero egress | `PASS` | TASK-027-S acceptance window: 0 non-loopback physical-NIC Tx packets, 0 bytes, assess exit 0 |
+| OFF-003 offline imports | `PASS` | `task027-run-20260928-215709/off003.stdout.txt`: `OK`; exit 0 while the network was disabled |
+| OFF-004 SQLite operation | `PASS` | `task027-run-20260928-215709`: assess exit 0, show-finding exit 0, actual asset ID `off-002-valid-coco`, and the configured evidence-store database exists |
+
+OFF-002 recovery evidence remains deliberately separate from OFF-002 acceptance.
+The original recovery marker is preserved as `FAIL` with transient query errors
+for `ms_netbios` and `ms_netbt`. Independent final-state verification records
+adapter Up, zero binding mismatches, temporary firewall rule absent, recovery
+task absent, and PktMon stopped. No historical evidence was rewritten and no
+offline run was repeated for this reconciliation.
+
+TASK-027 has no remaining OFF-001–OFF-004 execution item for this frozen tuple.
+This does not resolve PRE-08, E-2, HOST-CAP-002, or the separately recorded
+HOST-CAP-003 procedural reconciliation, and it does not by itself pass GATE-4.
 
 ---
 
@@ -572,7 +630,7 @@ The Stage 6 rule permits exit when every requirement is either satisfied with ev
 
 ## NEXT TASK
 
-**Next authorized action:** Provide a separately authorized, approved offline installation/staging procedure for pytest into the exact durable `.venv-torch-test` interpreter; TASK-027-H explicitly forbids automatic installation or temporary-source substitution. Also provide the frozen `tests/fixtures/valid_coco_submission.json` artifact at the exact committed path or explicitly revise the frozen command through authority—do not substitute the dynamically generated fixture silently. Then rerun TASK-027-H runner preparation. OFF-001 through OFF-004 and Gate-2 remain unexecuted; TASK-024 remains `NOT AUTHORIZED`; PRE-08 and E-2 remain unchanged.
+**Next authorized action:** Issue a focused TASK-026 security-acceptance packet for SEC-002 (C3D OOM termination/continuation) and SEC-003 (C3D timeout/responsiveness) against the existing TASK-022 supervisor dispatcher. Do not infer their acceptance from worker-level tests. Separately record the §10 §18.1–§18.5 observed results and remaining named GATE-4 evidence before claiming full TASK-026 or GATE-4 completion. GATE-2 makes TASK-024 dependency-eligible, but the dashboard was not started here and requires its own explicit execution packet. PRE-08, E-2, and HOST-CAP-002 remain unchanged.
 
 Critical path reminder:
 ```
@@ -612,7 +670,7 @@ PRE-04 resolved
 | E-2 / SP-002-ONNX | Freeze the ONNX artifact-unit definition and its `artifact_unit_definition_id`; the PyTorch ID must not be reused or inferred | Project owner / architecture owner | Blocks final TASK-014 ONNX acceptance and TASK-015 ONNX hashing |
 | E-3 / HOST-CAP-003 | **IMPLEMENTATION DEFECT RESOLVED 2026-09-28:** ONNX 1.23.0 / protobuf 7.36.2 C3A/C3C component tests pass using modern `is_repeated` descriptor cardinality with a legacy fallback; no ONNX Runtime or execution path was introduced. Formal host-capability status remains pending TASK-027-C re-entry. | Dependency / deployment owner | Component runtime acceptance passes; procedural re-entry reconciliation remains |
 | TASK-027-C PyYAML closure | **RESOLVED 2026-09-28 by TASK-027-E:** PyYAML 6.0.3 is declared, its official cp313 Windows AMD64 wheel is staged with matching SHA-256, the verifier exits 0, and production config/YAML manifest paths pass. Historical OFF/Gate results remain unchanged pending revalidation. | Dependency / deployment owner | Dependency blocker closed; OFF-002 evidence procedure and formal revalidation remain |
-| TASK-027-G/H runner command contract | **PARTIALLY RESOLVED / BLOCKED 2026-09-28:** H authorizes OFF-001's disposable local-only install, freezes a CLI command, and defines CLI-based OFF-004 retrieval. Execution inputs fail H's hard gates: pytest is absent from the approved durable venv, and the exact frozen valid-COCO submission file is absent. CLI assess exposes actual IDs through JSON `asset_ids`, but no command was run and no runner was created. | Project owner / dependency-deployment owner | Approve offline durable pytest provisioning and provide/authorize the exact frozen submission artifact/command |
+| TASK-027-G/H runner command contract | **RESOLVED BY LATER AUTHORIZED WORK 2026-09-28:** pytest 9.1.1 was acquired into the approved wheelhouse and installed offline; the frozen COCO submission was generated through the repository fixture system and committed; autonomous runner evidence exists. The earlier missing-input state remains historical. | Project owner / dependency-deployment owner | Closed; final OFF evidence is reconciled under TASK-027-S |
 | E-5 | **RESOLVED BY AUTHORITY 2026-09-27:** malformed ONNX maps to `STRUCTURAL_INVALID`; Architecture and Technical Specification override the lower-ranked MVP test wording | Project team | Closed as a semantic decision; runtime test remains under HOST-CAP-003 |
 | E-6 identifier reconciliation | Preflight E-6 is the PF-002 explicit-injection constraint and is satisfied by C3A/C3B/C3C. The Stage 6 exit packet separately labels full external-reference traversal as E-6; implementation is reviewed, but genuine protobuf traversal remains blocked by HOST-CAP-003. The two meanings are recorded without silently renumbering either. | Project owner / architecture owner | Naming reconciliation pending; runtime traversal evidence remains blocked by HOST-CAP-003 |
 | TASK-025 module/bundle contract | **RESOLVED 2026-09-28 by the explicit TASK-025 packets:** implementation remains at `assurance_system/export/exporter.py` with the six packet-named documents; TASK-023 now delegates to that class. Older Technical/MVP module/filename text remains historical and was not silently used to change the packet contract. | TASK-025 Part B owner / project owner | Closed for implementation; documentation maintenance may reconcile older path text separately |
@@ -628,11 +686,11 @@ PRE-04 resolved
 
 *(To be filled by the agent ending a session — for the agent starting the next session)*
 
-**Current session:** TASK-027-H resolved the prior authority ambiguity for OFF-001's disposable local-only install and named the future CLI commands, but its mandatory durable-pytest gate failed. The actual approved interpreter is `C:\Users\master\Desktop\SIH26228-CV-INTEGRITY\.venv-torch-test\Scripts\python.exe` (the packet literal omitted the separator); it is Python 3.13.12, but both prescribed pytest checks exit 1 with `No module named pytest`, and no pytest executable exists in the venv. The frozen `tests/fixtures/valid_coco_submission.json` path is also absent; current valid COCO data/manifests are generated dynamically by tests, and no substitute was invented. Static CLI inspection confirms assess JSON exposes real IDs in `asset_ids`, which would be the OFF-004 source once the frozen assess command is executable. No runner, validation task, adapter change, OFF/Gate execution, installation, or capture occurred. Ethernet0 3 remains Up, PktMon stopped, recovery assets unchanged, OFF-002 BLOCKED, E-2 OPEN, PRE-08 PARTIAL, Gate-2 BLOCKED, TASK-024 unauthorized, and protected `docs/research/**` unchanged.
+**Current session:** TASK-026 Gate-2 state reconciliation is complete at validated commit `cb6f0bc`. VS-001 through VS-007 pass and the full regression is 483 passed, 20 skipped, 0 failed. GATE-2 is formally `PASS`; full TASK-026, GATE-3, and GATE-4 are not complete because SEC-002/SEC-003 and §10 §18 observed-result evidence remain open. Sixteen obsolete/stale skip-only tests were documented but not deleted or altered. OFF-002 acceptance is separately `PASS` with zero non-loopback physical-NIC Tx bytes and assess exit 0; the original recovery marker remains `FAIL` with its ms_netbios/ms_netbt query errors, while independent final-state verification records zero binding mismatches, adapter Up, firewall rule absent, recovery task absent, and PktMon stopped. OFF-001/OFF-003/OFF-004 have exit-zero target-host evidence from `task027-run-20260928-215709`, so TASK-027 is `TESTED` for the frozen Windows AMD64 / CPython 3.13.12 tuple. No production code, tests, fixtures, protected `docs/research/**`, network state, or historical evidence were changed. PRE-08 remains PARTIAL; E-2 remains OPEN; HOST-CAP-002 remains PARTIAL; HOST-CAP-003 formal reconciliation remains pending. TASK-024 is dependency-eligible after GATE-2 but was not started and requires its own packet.
 
 **TASK-020 specification reconciliation:** No separately saved Stage 8 packet was available in the repository or attachments; the current TASK-020 execution request and committed architecture/technical/MVP contracts supplied the scope. The MVP's §10 §3.17 citation points to COMP-FIX, so the concrete COMP-CAP API follows TASK-020 and the deferred persistence/audit contracts in §10 §§3.1, 3.15, 20.3. UT-CAP-001's generic deferred-count wording is met by enumerating drift/OOD and heavyweight methods separately while retaining M11=REFERENCE_UNAVAILABLE and tail=COMPLETENESS_UNAVAILABLE. T05d remains a permanent NON_CLAIM in persisted reason/non-claim text using the existing deferred-table envelope; no new assessment status was introduced.
 
-**What the next agent needs to know:**
+**Chronological implementation history:** The bullets below preserve historical checkpoints. The current-session paragraph above supersedes any older blocker or dependency wording that later evidence closed.
 - TASK-006 unit tests passed 5/5 and SEC-010 passed; the full current suite passed 154 with 11 expected skips.
 - TASK-006 made the permitted minimal amendment to `EvidenceStore.write_audit_event()`: audit insert and `chain_state` update now commit atomically in one transaction.
 - The authoritative §3.15 DDL has no separate audit-event sequence column. TASK-006 preserves that DDL, uses `event_id` as the persisted sequence, and cross-checks it against `chain_state.last_sequence_number` during verification.
