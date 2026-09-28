@@ -215,7 +215,7 @@ class AssuranceCLI:
 
     def _export_bundle(self, arguments: argparse.Namespace) -> int:
         try:
-            from assurance_system.interfaces.exporter import EvidenceExporter
+            from assurance_system.export.exporter import EvidenceExporter
         except ImportError:
             print("export-bundle requires TASK-025", file=self._stdout)
             return 1

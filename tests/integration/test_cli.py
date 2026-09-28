@@ -227,10 +227,6 @@ def test_show_evidence_displays_complete_stored_record(store: EvidenceStore) -> 
 @pytest.mark.parametrize(
     ("arguments", "message"),
     [
-        (
-            ["export-bundle", "--asset-id", "asset-1", "--output", "bundle.zip"],
-            "export-bundle requires TASK-025",
-        ),
         (["dashboard"], "dashboard requires TASK-024"),
     ],
 )
