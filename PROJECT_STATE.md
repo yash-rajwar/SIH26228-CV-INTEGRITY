@@ -12,7 +12,7 @@ Update this file at the end of every coding session before committing.
 ## PROJECT
 
 **Name:** Trustworthy Computer Vision Integrity Assurance — SIH 2026 PS 26228  
-**Current stage:** HOST-CAP blocker-resolution evaluation `BLOCKED`; no capability blocker closed
+**Current stage:** HOST-CAP dependency-closure preparation `BLOCKED`; execution stopped awaiting approved artifacts; no capability blocker closed
 **Repository created:** [DATE TO BE FILLED ON REPO INIT]  
 **Five-day window start:** [DATE — begins after P1 conditions resolved]
 
@@ -69,21 +69,22 @@ Status codes: `NOT STARTED` | `IN PROGRESS` | `IMPLEMENTED` | `TESTED` | `VALIDA
 ## CURRENT TASK
 
 ```
-TASK: HOST-CAP Resolution Phase — Blocker Closure and Validation Re-entry Review
+TASK: HOST-CAP Dependency Closure — Wheelhouse Provenance and Validation Preparation
 Owner: Codex
 Branch: feature/vertical-slice
 Started: 2026-09-28
-Status: BLOCKED — evidence review complete; no capability blocker satisfies closure criteria.
+Status: BLOCKED — owner confirmed no approved ONNX/pycocotools artifacts or provenance; dependency execution stopped.
 
 Validated behavior:
-  HOST-CAP-001: UNAVAILABLE. No pycocotools wheel is staged for CPython 3.13 / Windows AMD64; import fails with ModuleNotFoundError. GATE-2.1/GATE-2.2 were not rerun.
-  HOST-CAP-003: UNAVAILABLE. No ONNX wheel is staged; import fails with ModuleNotFoundError. ONNX Runtime is not required by the approved C3A/C3C implementation.
-  WHEELHOUSE: 10 existing wheels inventoried with SHA-256. Torch 2.10.0+cpu imports in the approved environment; the verifier still reports ONNX/pycocotools MISSING and exits 1.
+  HOST-CAP-001: REMAINS UNAVAILABLE / UNRESOLVED. No approved pycocotools wheel or provenance is provided for CPython 3.13 / Windows AMD64. Prior import failure is preserved, not rerun.
+  HOST-CAP-003: REMAINS UNAVAILABLE / UNRESOLVED. No approved ONNX wheel or provenance is provided. Prior import failure is preserved, not rerun. ONNX Runtime is not required.
+  WHEELHOUSE: The sole approved source is repository-relative wheelhouse/. The existing 10-wheel Torch CPU set is unchanged; its prior recorded hashes are carried forward, not freshly verified. No other artifact directory is approved.
   OFFLINE RE-ENTRY: NOT EXECUTED because complete wheelhouse closure is a mandatory prerequisite. TASK-027-B outcomes remain unchanged.
   HOST-CAP-002: PARTIAL. close_fds subprocess execution passes; Python resource/RLIMIT support is unavailable; no unsupported replacement was attempted.
-  SECURITY: zero production network imports, unsafe-load literals, risk-score fields, or pip-install logic. Raw requests matches are non-network local variable names.
+  SECURITY: documentation-commit guards found zero production network imports, unsafe-load literals, risk-score fields, prohibited positive constants, or scripts pip-install literals. Raw requests matches are non-network local variable names.
   BLOCKERS: HOST-CAP-001/002/003, OFFLINE-001, PRE-08, and E-2 remain open/unchanged. GATE-2 remains blocked and TASK-024 remains unauthorized.
-  SCOPE: no production/test code, dependency, wheel, dashboard file, or protected research dossier was modified.
+  SCOPE: only docs/wheelhouse_dependency_closure.md and PROJECT_STATE.md updated. No further dependency searches, downloads, installs, import tests, verifier, GATE-2, or TASK-027-B execution after the owner instructed stop.
+  EVIDENCE: docs/wheelhouse_dependency_closure.md; previous runtime evidence remains docs/host_cap_resolution_evidence.md at 6d3900e.
 ```
 
 ---
@@ -122,7 +123,8 @@ Validated behavior:
 | TASK-026-D | Finalized the all-of Gate-2 governance decision from the committed Part A/B/C evidence. Recorded TASK-026 as tested with blockers, retained the five passed and two blocked item outcomes, and withheld TASK-024 authorization. | Documentation-only final review; no tests or scans rerun and no new runtime evidence claimed. | This TASK-026-D decision commit |
 | TASK-027-A | Authored a stdlib-only local wheelhouse verifier and four skipped target-host offline validation contracts. Reconciled the packet's stale PRE-01 skip wording and the three pre-existing legacy offline stubs without altering either prior state or tests. | Script `--help` and compilation pass; new file collects 4 contracts; directory collects 7 including 3 preserved legacy stubs. OFF test bodies and installation/import simulation were not executed. | This TASK-027-A infrastructure commit |
 | TASK-027-B | Executed local-only wheelhouse resolution/install/import validation, direct dependency imports, the offline test directory, supporting SQLite round-trip, host-capability review, and production network/package-install scans. Recorded the incomplete wheel closure and absent zero-egress evidence without changing code or dependencies. | Verifier exit 1; offline suite 7 skipped / 0 passed; direct imports: Torch pass, ONNX/pycocotools fail; supporting UT-STORE-001 1 passed; security import/install scans clean. | This TASK-027-B evidence commit |
-| HOST-CAP resolution review | Evaluated the evidence-based closure criteria for HOST-CAP-001/002/003, inventoried and hashed all staged wheels, reconfirmed imports and local-only verifier behavior, and enforced prerequisite ordering by withholding GATE/OFF re-entry. | Torch import and `close_fds=True` pass; pycocotools/ONNX/`resource` imports fail; verifier exits 1; security scans clean; no GATE or OFF tests rerun. | This HOST-CAP evidence commit |
+| HOST-CAP resolution review | Evaluated the evidence-based closure criteria for HOST-CAP-001/002/003, inventoried and hashed all staged wheels, reconfirmed imports and local-only verifier behavior, and enforced prerequisite ordering by withholding GATE/OFF re-entry. | Torch import and `close_fds=True` pass; pycocotools/ONNX/`resource` imports fail; verifier exits 1; security scans clean; no GATE or OFF tests rerun. | `6d3900e` |
+| HOST-CAP preparation blocker record | Recorded the owner's confirmation that wheelhouse/ is the sole approved source and no ONNX/pycocotools wheels or provenance are available. Created the missing-artifact matrix and stopped dependency execution; closure itself remains BLOCKED. | Documentation/static guards only; no fresh dependency, import, installation, verifier, GATE, or OFF execution. | This dependency-closure evidence commit |
 
 ---
 
@@ -131,11 +133,11 @@ Validated behavior:
 | Blocker ID | Description | Affects | Resolution owner |
 |---|---|---|---|
 | PRE-08 | HMAC-SHA256 parameters are frozen, but a Windows target-host absolute key path and supervisor-only ACL verification are not yet provisioned | TASK-019 operational signing | Project owner / deployment owner |
-| HOST-CAP-001 | Resolution review reconfirmed that no pycocotools wheel is staged for CPython 3.13 / Windows AMD64 and import fails; no offline install or GATE rerun was permissible | TASK-010 COCO runtime claims; TASK-026 VS-001/VS-002; GATE-2 | Dependency / deployment owner |
+| HOST-CAP-001 | REMAINS UNAVAILABLE / UNRESOLVED: owner confirmed no approved pycocotools wheel or provenance; wheelhouse/ is the sole approved source. Prior import failure remains; execution stopped. Evidence: docs/wheelhouse_dependency_closure.md | TASK-010 COCO runtime claims; TASK-026 VS-001/VS-002; GATE-2 | Dependency / deployment owner |
 | HOST-CAP-002 | `close_fds=True` subprocess isolation passes, but Python `resource`/Unix RLIMIT controls are unavailable and no authorized Windows replacement exists; capability remains PARTIAL | Resource-limit enforcement claims; later isolation hardening if required | Architecture / deployment owner |
 | OFFLINE-001 | TASK-027-B failed to establish offline closure: ONNX and pycocotools wheels/imports are missing, the network adapter was active with no approved egress monitor, and dedicated OFF-001 through OFF-004 contracts remain skipped stubs | TASK-027 and every offline deployment claim | Dependency / deployment owner |
 | E-2 / SP-002-ONNX | No frozen ONNX artifact-unit definition ID exists. C3A returns the resolved manifest as `ARTIFACT_UNIT_AMBIGUOUS` with definition ID `UNAVAILABLE`; no ID is inferred from PyTorch. | Final ONNX C3A acceptance and TASK-015 ONNX hashing | Project owner / architecture owner |
-| HOST-CAP-003 / TASK-014 packet E-3 | Resolution review reconfirmed that no ONNX wheel is staged and import fails; FIX-004/005/006/016 and genuine C3A/C3C protobuf tests remain blocked. ONNX Runtime is not required by the approved implementation. | TASK-014 ONNX validation, conditional ONNX fixtures, and TASK-016 runtime acceptance | Dependency / deployment owner |
+| HOST-CAP-003 / TASK-014 packet E-3 | REMAINS UNAVAILABLE / UNRESOLVED: owner confirmed no approved ONNX wheel or provenance. Prior import failure, ONNX fixtures, and genuine C3A/C3C tests remain blocked. ONNX Runtime is not required. Evidence: docs/wheelhouse_dependency_closure.md | TASK-014 ONNX validation, conditional ONNX fixtures, and TASK-016 runtime acceptance | Dependency / deployment owner |
 | TASK-022-C3D-INTEGRATION | SEC-002 OOM termination/continuation and SEC-003 timeout/responsiveness require the real supervisor dispatch/orchestrator; worker-level C3D validation is complete and these integration claims remain explicitly unverified | TASK-017 supervisor-level integration evidence | TASK-022 implementation owner |
 
 ---
@@ -340,6 +342,25 @@ TASK-027 cannot be marked passed. OFFLINE-001 remains open. HOST-CAP-001, HOST-C
 The closure rule requires the dependency, verified compatibility, completed execution, recorded evidence, and clean regression. HOST-CAP-001 and HOST-CAP-003 fail at the first condition. No aggregate pass, partial closure, or capability upgrade is recorded. PRE-08 and E-2 remain open and unchanged.
 
 Security review found no production import of `requests`, `urllib`, or `socket`, no production pip-install logic, no `weights_only=False`, and no `risk_score`. Raw `requests` occurrences are local orchestrator variable names rather than network use.
+
+---
+
+## HOST-CAP DEPENDENCY CLOSURE PREPARATION
+
+**Date:** 2026-09-28
+**Status:** `BLOCKED — STOPPED AWAITING APPROVED ARTIFACTS`
+**Evidence record:** `docs/wheelhouse_dependency_closure.md`
+
+The project owner confirmed that repository-relative `wheelhouse/` is the only approved/documented source and contains the existing Torch CPU dependency set, but no ONNX or pycocotools wheels or provenance records. No alternate source is approved. Further dependency searching, acquisition, installation, and verification stopped on the owner's instruction.
+
+| Target | Previous | Current | Evidence |
+|---|---|---|---|
+| HOST-CAP-001 / pycocotools | `UNAVAILABLE` | `REMAINS UNAVAILABLE / UNRESOLVED` | Artifact and provenance missing; no new compatibility/install/import proof |
+| HOST-CAP-003 / ONNX | `UNAVAILABLE` | `REMAINS UNAVAILABLE / UNRESOLVED` | Artifact and provenance missing; no new compatibility/install/import proof |
+
+No wheels were added or changed. Existing hashes are carried from the committed `6d3900e` inventory without a new authenticity claim. Documentation-commit security guards passed; no tests, imports, wheelhouse verifier, GATE-2, or TASK-027-B were rerun. Closure acceptance is not satisfied. All previous runtime and gate outcomes remain authoritative; PRE-08, E-2, HOST-CAP-002, and OFFLINE-001 are unchanged.
+
+The owner/deployment process must provide approved, provenance-recorded, hash-verified CPython 3.13 / Windows AMD64 ONNX and pycocotools wheels plus their complete transitive closure. Once supplied, wheelhouse verification and authorized validation re-entry may resume. TASK-024 and Stage 13 were not started.
 
 ---
 
@@ -563,7 +584,7 @@ PRE-04 resolved
 
 *(To be filled by the agent ending a session — for the agent starting the next session)*
 
-**Current session:** The HOST-CAP resolution phase evaluated closure criteria on `feature/vertical-slice` without using a package index or changing dependencies/code. All 10 existing wheels were inventoried and hashed. Torch 2.10.0+cpu and `close_fds=True` pass; pycocotools, ONNX, and Python `resource` imports fail. The local verifier still exits 1 with ONNX/pycocotools missing. HOST-CAP-001 remains UNAVAILABLE, HOST-CAP-003 remains UNAVAILABLE, and HOST-CAP-002 remains PARTIAL. Because wheelhouse closure failed, Gate-2.1/Gate-2.2 and OFF-001 through OFF-004 were not rerun. No capability blocker closed; OFFLINE-001, PRE-08, E-2, blocked Gate-2, and TASK-024 non-authorization remain open. No wheel, production/test code, dependency, or protected `docs/research/**` content was changed.
+**Current session:** Dependency-closure preparation on `feature/vertical-slice` stopped after the owner confirmed that `wheelhouse/` is the sole approved source and no approved ONNX/pycocotools artifacts or provenance exist. HOST-CAP-001 and HOST-CAP-003 remain UNAVAILABLE / UNRESOLVED. Only `docs/wheelhouse_dependency_closure.md` and this state record were updated; static security guards pass. No further dependency search, download, installation, import probe, wheelhouse verifier, GATE-2, or TASK-027-B execution followed the stop instruction. Prior runtime evidence at `6d3900e` remains authoritative. HOST-CAP-002, OFFLINE-001, PRE-08, E-2, blocked Gate-2, and TASK-024 non-authorization are unchanged. No wheel, production/test code, dependency, or protected `docs/research/**` content was changed. Next action belongs to the owner/deployment process: provide approved provenance-recorded/hash-verified target wheels and their transitive closure before verification and authorized re-entry.
 
 **TASK-020 specification reconciliation:** No separately saved Stage 8 packet was available in the repository or attachments; the current TASK-020 execution request and committed architecture/technical/MVP contracts supplied the scope. The MVP's §10 §3.17 citation points to COMP-FIX, so the concrete COMP-CAP API follows TASK-020 and the deferred persistence/audit contracts in §10 §§3.1, 3.15, 20.3. UT-CAP-001's generic deferred-count wording is met by enumerating drift/OOD and heavyweight methods separately while retaining M11=REFERENCE_UNAVAILABLE and tail=COMPLETENESS_UNAVAILABLE. T05d remains a permanent NON_CLAIM in persisted reason/non-claim text using the existing deferred-table envelope; no new assessment status was introduced.
 
