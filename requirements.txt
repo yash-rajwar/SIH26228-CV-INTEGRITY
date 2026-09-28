@@ -1,7 +1,9 @@
-# requirements.txt — STUB
-# NOT PINNED until PRE-01 (target host) is confirmed and wheelhouse is verified.
+# requirements.txt — production dependency declarations
+# PyYAML is pinned from TASK-027-E target-host wheelhouse verification.
+# Remaining native package declarations retain their existing staged contract.
 # Hard constraint already established: torch >= 2.10.0 (XREG-005)
 # See docs/TECHNICAL_SPECIFICATION.md §12.3
+PyYAML==6.0.3
 # onnx
 # pycocotools
 # torch>=2.10.0

@@ -188,3 +188,59 @@ must explicitly authorize offline installation/import verification in the
 approved validation environment, affected regression, Gate-2.1/Gate-2.2, and
 OFF-001 through OFF-004 in prerequisite order. Artifact staging alone does not
 close either host capability blocker.
+
+---
+
+## TASK-027-E Subsequent Production Dependency Closure
+
+TASK-027-C subsequently proved that the implemented runtime requires PyYAML:
+`assurance_system/config/loader.py` parses the three mandatory configuration
+files, and `assurance_system/supervisor/orchestrator.py` parses YAML submission
+manifests. Both paths use `yaml.safe_load()`. The dependency had not been
+declared in `requirements.txt` or the architecture/technical dependency
+tables.
+
+TASK-027-E corrected that omission by declaring `PyYAML==6.0.3` through the
+existing `requirements.txt` mechanism and updating the authoritative
+dependency tables. No second dependency source was created.
+
+### Added artifact
+
+| Field | Value |
+|---|---|
+| Package | PyYAML 6.0.3 |
+| Wheel | `pyyaml-6.0.3-cp313-cp313-win_amd64.whl` |
+| Compatibility | CPython 3.13 / CPython 3.13 ABI / Windows AMD64 |
+| Requires-Python | `>=3.8` |
+| Required dependencies | none |
+| Bytes | 154,090 |
+| SHA-256 | `79005a0d97d5ddabfeeea4cf676af11e647e41d81c9a7722a193022accdb6b7c` |
+| Official digest | MATCH |
+| Provenance | PARTIAL — official PyPI source and digest verified; Integrity API returned no provenance object |
+
+The updated wheelhouse contains 16 package wheels. The verifier consumed the
+new requirement automatically from `requirements.txt` and reported:
+
+```text
+torch>=2.10.0: STAGED
+onnx: STAGED
+pycocotools: STAGED
+PyYAML==6.0.3: STAGED
+INSTALL STATUS: PASS
+onnx: PASS
+torch: PASS
+pycocotools: PASS
+WHEELHOUSE_VERIFIER_EXIT=0
+```
+
+The repository-local CPython 3.13.12 environment separately passed
+`import yaml`, `yaml.safe_load`, the committed `ConfigLoader` configuration
+set, and the supervisor YAML submission-manifest path. Complete evidence,
+including security and regression results, is recorded in
+`docs/task027e_dependency_contract_closure.md`.
+
+This update does not rewrite the historical TASK-027-C result. OFF-001 through
+OFF-004 and Gate-2 were not rerun. OFF-002 remains blocked because a candidate
+Windows Packet Monitor tool is present but no project-approved capture and
+acceptance procedure has been frozen. E-2 remains OPEN, PRE-08 remains
+PARTIAL, HOST-CAP-002 remains PARTIAL, and TASK-024 remains unauthorized.

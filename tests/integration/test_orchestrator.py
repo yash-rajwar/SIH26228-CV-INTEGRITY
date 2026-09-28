@@ -479,6 +479,39 @@ def test_run_pipeline_delegates_finding_to_existing_c5_engine(
     assert calls[0]["c4_binding"] is None
 
 
+def test_yaml_submission_manifest_uses_declared_production_parser(
+    orchestrator: SupervisorOrchestrator,
+    tmp_path: pathlib.Path,
+) -> None:
+    import yaml
+
+    asset_directory = tmp_path / "assets"
+    asset_directory.mkdir()
+    asset_path = asset_directory / "labels.txt"
+    asset_path.write_text("0 0.5 0.5 0.25 0.25\n", encoding="utf-8")
+    manifest = {
+        "schema_version": "submission-manifest-v1",
+        "asset_directory": str(asset_directory.resolve()),
+        "assets": [
+            {
+                "asset_id": "asset-yaml",
+                "asset_paths": [str(asset_path.resolve())],
+                "format": "YOLO_DETECTION",
+            }
+        ],
+    }
+    manifest_path = tmp_path / "manifest.yaml"
+    manifest_path.write_text(yaml.safe_dump(manifest), encoding="utf-8")
+
+    loaded = orchestrator._load_manifest(str(manifest_path))
+
+    assert loaded["schema_version"] == manifest["schema_version"]
+    assert loaded["asset_directory"] == manifest["asset_directory"]
+    assert loaded["assets"][0]["asset_id"] == "asset-yaml"
+    assert loaded["assets"][0]["asset_paths"] == [str(asset_path.resolve())]
+    assert loaded["assets"][0]["format"] == "YOLO_DETECTION"
+
+
 def test_assessment_error_is_complete_and_does_not_expose_sensitive_detail(
     orchestrator: SupervisorOrchestrator,
 ) -> None:

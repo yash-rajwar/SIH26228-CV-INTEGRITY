@@ -996,6 +996,7 @@ Required packages (provisional — exact versions subject to PRE-01 and PRE-02 r
 | Package | Purpose | Source | Offline status |
 |---|---|---|---|
 | Python stdlib (`hashlib`, `subprocess`, `sqlite3`, `json`, `hmac`) | Core functionality | Built-in | OFFLINE — no staging needed |
+| `PyYAML==6.0.3` | Runtime configuration and YAML submission-manifest parsing through `yaml.safe_load` | Pre-staged binary wheel | CONDITIONAL — verified CPython 3.13 / Windows AMD64 wheel required; no source build |
 | `onnx` | ONNX structural validation (COMP-W-C3C, COMP-W-C3A) | Pre-staged wheel | CONDITIONAL — must be verified on target host |
 | `torch` (CPU-only) | PyTorch safe-loading gate (COMP-W-C3D) — if PyTorch in scope (PRE-05) | Pre-staged wheel | CONDITIONAL — depends on target OS/arch; PyTorch CPU wheel staging non-trivial |
 | `cryptography` | Ed25519 signing (if XREG-002 → Ed25519) | Pre-staged wheel | CONDITIONAL — depends on XREG-002 |

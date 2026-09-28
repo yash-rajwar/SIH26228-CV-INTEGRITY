@@ -2291,6 +2291,7 @@ Four-layer check in COMP-W-C3A (see Section 3.7). Defense in depth: COMP-W-C3C r
 | Package | Purpose | Offline status | Condition |
 |---|---|---|---|
 | Python stdlib (hashlib, subprocess, sqlite3, json, hmac, uuid, math, pathlib, shutil, argparse, http.server) | Core functionality | FULLY_OFFLINE — no staging needed | None |
+| `PyYAML==6.0.3` | Parse the required runtime configuration files and supported YAML submission manifests using `yaml.safe_load` | CONDITIONAL — pre-staged binary wheel required | CPython 3.13 / Windows AMD64 wheel verified on target; no source build |
 | `onnx` | ONNX structural validation (C3A, C3C) | CONDITIONAL — pre-staged wheel required | Must install and import on target |
 | `torch` (CPU-only) | PyTorch safe-loading gate (C3D) | CONDITIONAL — large wheel; CPU-only variant required | PRE-01 (target OS/arch); PRE-05 (PyTorch in scope) |
 | `pycocotools` (R27) | COCO JSON parsing (C2A) | CONDITIONAL — C extension build required on target | PRE-01 (compiler present); C extension must compile |
@@ -2302,12 +2303,14 @@ The offline dependency claim requires this procedure to be executed on the **con
 
 ```
 1. On target host (no internet):
+   pip install --no-index --find-links /opt/assurance-wheelhouse PyYAML==6.0.3
    pip install --no-index --find-links /opt/assurance-wheelhouse onnx
    pip install --no-index --find-links /opt/assurance-wheelhouse pycocotools
    pip install --no-index --find-links /opt/assurance-wheelhouse torch --index-url file:///opt/assurance-wheelhouse
    pip install --no-index --find-links /opt/assurance-wheelhouse cryptography   [if Ed25519]
 
 2. Verify imports:
+   python -c "import yaml; print(yaml.__version__)"
    python -c "import onnx; print(onnx.__version__)"
    python -c "import pycocotools; print('ok')"
    python -c "import torch; print(torch.__version__)"
@@ -2326,6 +2329,7 @@ No offline claim is made until all four steps complete successfully on the actua
 
 All package versions are pinned in `requirements.txt` after successful wheelhouse verification on target (PRE-01). Hard constraints already established:
 - `torch >= 2.10.0` (XREG-005 floor — cannot be relaxed without architecture change control)
+- `PyYAML == 6.0.3` (production configuration and YAML manifest parser; CPython 3.13 / Windows AMD64 binary wheel verified)
 
 All other versions: pending PRE-01 resolution.
 
