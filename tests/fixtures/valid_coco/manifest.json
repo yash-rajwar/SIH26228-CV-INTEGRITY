@@ -1,0 +1,9 @@
+{
+  "expected_result": {
+    "assessment_status": "COMPLETED",
+    "violation_count": 0
+  },
+  "fixture_id": "FIX-008-CONTROL",
+  "is_synthetic": true,
+  "seed": 26228
+}

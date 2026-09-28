@@ -1,0 +1,19 @@
+{
+  "asset_directory": "C:\\Users\\master\\Desktop\\SIH26228-CV-INTEGRITY\\tests\\fixtures\\valid_coco",
+  "assets": [
+    {
+      "asset_id": "off-002-valid-coco",
+      "asset_paths": [
+        "C:\\Users\\master\\Desktop\\SIH26228-CV-INTEGRITY\\tests\\fixtures\\valid_coco\\valid_coco.json"
+      ],
+      "contributor_metadata": [
+        {
+          "contributor_id": "synthetic-source-1"
+        }
+      ],
+      "format": "COCO",
+      "is_synthetic": true
+    }
+  ],
+  "schema_version": "submission-manifest-v1"
+}

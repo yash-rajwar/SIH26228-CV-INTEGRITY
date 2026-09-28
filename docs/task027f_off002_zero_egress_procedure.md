@@ -37,8 +37,11 @@ boundary to be confirmed by that monitoring. Conditions 1 and 2 alone do not
 satisfy the contract.
 
 Qualifying evidence is a lossless, reviewable NIC-layer capture and counter
-record that covers every active non-loopback interface from before environment
-preparation until after cleanup. It must be accompanied by the command
+record that covers every active non-loopback interface for the OFF-002
+acceptance window: immediately before `cli.py assess` starts until that command
+and its required pipeline cleanup have completed. Isolation-transition traffic
+is retained in a separate readiness capture and is not OFF-002 acceptance
+evidence. It must be accompanied by the command
 transcript, UTC timestamps, interface/address/route/DNS/proxy/firewall
 inventories, converted packet output, and SHA-256 hashes.
 
@@ -83,11 +86,13 @@ counts as egress. Destination classification must use the captured source and
 destination addresses plus the pre-capture interface and route inventory; DNS
 names are not used to decide whether a packet left the host.
 
-The current session is connected through an active network and is not an
-approved isolated boundary. A future run needs a separately approved local-
-console or equivalent execution arrangement in which remote administration
-and background transmitters cannot contaminate the capture. Firewall and
-endpoint-security controls must remain enabled.
+The current session is connected through the target adapter. An autonomous
+SYSTEM runner must arm independent recovery, record transition traffic,
+establish the approved firewall/binding isolation, verify the isolated state,
+and only then start the acceptance capture. Remote-administration and other
+traffic observed before that acceptance start is readiness/environment traffic,
+not OFF-002 evidence. Firewall and endpoint-security controls must remain
+enabled except for the narrowly scoped temporary outbound isolation rule.
 
 # PktMon Capability
 
@@ -121,17 +126,18 @@ approved repository-local interpreter.
 
 Before capture, the operator must freeze the exact full-pipeline command list
 in `validation-commands.txt`, record its SHA-256, and confirm that no command
-uses a package index or network URL. The current full-pipeline candidate is the
-wheelhouse verifier plus `tests/integration/test_vertical_slice.py`; the final
-authorization must approve the command manifest. The skip-only files under
-`tests/offline/` are contracts, not replacements for the actual pipeline run.
+uses a package index or network URL. For OFF-002 the frozen command is exactly
+`python cli.py assess --submission tests/fixtures/valid_coco_submission.json`.
+OFF-001, OFF-003, and OFF-004 are separate tests and are not executed inside
+the OFF-002 acceptance window.
 
 ```powershell
 $ErrorActionPreference = 'Stop'
 $RepoRoot = (Get-Location).Path
 $Python = (Resolve-Path '.\.venv-torch-test\Scripts\python.exe').Path
 $EvidenceRoot = '<approved-secured-evidence-directory>'
-$Etl = Join-Path $EvidenceRoot 'off002-pktmon.etl'
+$TransitionEtl = Join-Path $EvidenceRoot 'transition-pktmon.etl'
+$AcceptanceEtl = Join-Path $EvidenceRoot 'off002-acceptance-pktmon.etl'
 
 if ((Test-Path $EvidenceRoot) -and (Get-ChildItem $EvidenceRoot -Force)) {
     throw 'Evidence directory must be new or empty.'
@@ -156,38 +162,42 @@ pktmon list --all --include-hidden --json | Out-File (Join-Path $EvidenceRoot 'p
 if ((pktmon status | Out-String) -notmatch 'not running') {
     throw 'PktMon already active; preserve that evidence and stop for review.'
 }
-pktmon filter remove
+Arm-And-Verify-SystemRecovery
+Snapshot-AllAdapterBindings
+Create-DisabledTemporaryFirewallRule
+
+# Transition/readiness capture. Preserve it, but never use it to decide OFF-002.
 pktmon reset
+pktmon start --capture --comp nics --type all --pkt-size 128 `
+    --file-name $TransitionEtl --file-size 128 --log-mode multi-file
+Enable-TemporaryIsolation
+Wait-For-IsolationStability
+Assert-AdapterUpRuleActiveAndBindingsDisabled
+pktmon stop
+Convert-And-HashTransitionEvidence
+
+# The OFF-002 acceptance boundary starts only after isolation is stable.
+pktmon reset
+pktmon start --capture --comp nics --type all --pkt-size 128 `
+    --file-name $AcceptanceEtl --file-size 512 --log-mode multi-file
+$AcceptanceStart = Get-Date
 
 try {
-    pktmon start --capture --comp nics --type all --pkt-size 128 `
-        --file-name $Etl --file-size 512 --log-mode multi-file
-    [DateTime]::UtcNow.ToString('o') | Set-Content (Join-Path $EvidenceRoot 'capture-active-utc.txt')
-
-    # Environment preparation and local-only installation verification.
-    & $Python scripts/verify_wheelhouse.py --wheelhouse-dir wheelhouse --python $Python `
-        *>&1 | Tee-Object (Join-Path $EvidenceRoot 'wheelhouse-verifier.txt')
-    if ($LASTEXITCODE -ne 0) { throw 'Wheelhouse verification failed.' }
-
-    # Required package imports.
-    & $Python -I -c "import onnx, torch, pycocotools, yaml; print(onnx.__version__, torch.__version__, yaml.__version__)" `
-        *>&1 | Tee-Object (Join-Path $EvidenceRoot 'imports.txt')
-    if ($LASTEXITCODE -ne 0) { throw 'Import validation failed.' }
-
-    # Full pipeline. Any final authorization must preserve this exact command
-    # or replace it in the pre-hashed command manifest before capture starts.
-    & $Python -m pytest tests/integration/test_vertical_slice.py -v `
-        *>&1 | Tee-Object (Join-Path $EvidenceRoot 'pipeline.txt')
-    if ($LASTEXITCODE -ne 0) { throw 'Full pipeline validation failed.' }
-
-    # Cleanup performed by the invoked verifier/tests remains inside capture.
-    [DateTime]::UtcNow.ToString('o') | Set-Content (Join-Path $EvidenceRoot 'validation-complete-utc.txt')
+    & $Python cli.py assess --submission tests/fixtures/valid_coco_submission.json `
+        1> (Join-Path $EvidenceRoot 'off002-assess.stdout.txt') `
+        2> (Join-Path $EvidenceRoot 'off002-assess.stderr.txt')
+    $AssessExit = $LASTEXITCODE
+    # Returning from assess is the pipeline-cleanup completion point.
+    $AcceptanceEnd = Get-Date
 }
 finally {
-    pktmon counters | Out-File (Join-Path $EvidenceRoot 'pktmon-counters.txt')
-    pktmon stop | Out-File (Join-Path $EvidenceRoot 'pktmon-stop.txt')
-    [DateTime]::UtcNow.ToString('o') | Set-Content (Join-Path $EvidenceRoot 'capture-stopped-utc.txt')
+    pktmon counters --json | Out-File (Join-Path $EvidenceRoot 'acceptance-counters.json')
+    pktmon stop | Out-File (Join-Path $EvidenceRoot 'acceptance-stop.txt')
 }
+
+Convert-And-HashAcceptanceEvidence
+Measure-OnlyTrafficBetween $AcceptanceStart $AcceptanceEnd
+Restore-ExactPreRunState
 
 $Etls = Get-ChildItem $EvidenceRoot -Filter 'off002-pktmon*.etl' | Sort-Object Name
 if (-not $Etls) { throw 'PktMon produced no ETL evidence.' }
@@ -218,9 +228,10 @@ unexpected traffic. A 128-byte snapshot retains link/network/transport headers
 and endpoint data while limiting incidental payload collection; PktMon's
 `OriginalSize` and counters retain the actual frame byte count.
 
-Post-capture classification is allowed only for reporting. It must never
-remove packets from the acceptance total. Loopback records may be reported
-separately. Every `Direction Tx` record on a monitored non-loopback NIC counts
+Post-capture classification is allowed only to apply the contract boundary and
+separate loopback. Traffic outside the recorded acceptance timestamps and
+loopback-only traffic are excluded. Every `Direction Tx` record inside the
+acceptance interval on a monitored non-loopback NIC counts
 toward egress, regardless of destination, owner, protocol, port, or apparent
 purpose.
 
@@ -230,40 +241,44 @@ OFF-002 may pass only if all of the following are true:
 
 1. The execution was separately authorized and used the frozen command
    manifest on the approved target host.
-2. Capture began before environment preparation and ended after cleanup.
-3. Every active non-loopback NIC was included, with no packet filters.
-4. The ETL reports zero lost events and converts successfully to text and
+2. Isolation was established and verified before the acceptance capture.
+3. The acceptance capture was active immediately before `cli.py assess` and
+   ended only after that command and its required cleanup completed.
+4. Every active non-loopback NIC was included, with no packet filters.
+5. The ETL reports zero lost events and converts successfully to text and
    PCAPNG.
-5. For every monitored NIC, PktMon reports `Tx Packets = 0` and
-   `Tx Bytes = 0` for the complete capture window.
-6. The converted text and PCAPNG contain no transmitted frame at the
+6. For every monitored NIC, the acceptance interval reports `Tx Packets = 0`
+   and `Tx Bytes = 0` after loopback exclusion.
+7. The converted text and PCAPNG contain no transmitted frame during the
+   acceptance interval at the
    non-loopback boundary. Any ARP, DNS, same-subnet, broadcast, multicast,
    IPv4, or IPv6 transmit is a nonzero-egress result.
-7. All required pipeline commands complete successfully and their transcript
+8. The frozen `cli.py assess` command completes successfully and its transcript
    is present.
-8. Environment, command, capture, conversion, decision, and SHA-256 evidence
+9. Environment, command, capture, conversion, decision, and SHA-256 evidence
    is complete and independently reviewable.
-9. There is no unexplained capture gap, counter reset, interface change,
-   logging rollover, or security-control change.
+10. There is no unexplained acceptance-window capture gap, counter reset,
+    logging rollover, or security-control change.
 
-Any nonzero transmitted packet produces **FAIL**, not a discretionary ignore.
+Traffic in the separately timestamped isolation-transition capture is
+readiness/environment evidence only. It is not added to the OFF-002 acceptance
+total and cannot by itself produce an OFF-002 failure.
+
+Any non-loopback transmitted packet in the acceptance interval produces
+**FAIL**, not a discretionary ignore.
 Missing, lossy, late, truncated, inconsistent, or unauditable evidence
 produces **BLOCKED**, not PASS.
 
 # Background Traffic Handling
 
-Background traffic is not subtracted. Because PktMon provides no reliable
-process attribution, an authorized run must occur from a local console or an
-equivalent approved boundary with remote administration disconnected and
-background transmitters quiesced by deployment policy. Security controls must
-not be disabled. If any background frame is transmitted, the strict host-wide
-acceptance condition fails and the run must be repeated only after the
-deployment owner establishes a valid isolation boundary.
+Background traffic inside the acceptance window is not subtracted. PktMon does
+not provide reliable process attribution, so every non-loopback physical-NIC
+transmission in that window fails OFF-002 regardless of apparent owner.
 
-The present remote/connected environment does not meet this precondition. The
-dry run observed continuous unrelated RDP and HTTPS transmissions, so there is
-no deterministic way to isolate validation-originated traffic with PktMon
-alone.
+RDP, HTTPS, LLDP, or other traffic observed before isolation is complete is
+recorded as transition/readiness evidence. It does not fail OFF-002. The
+autonomous runner must prevent that traffic from continuing into the acceptance
+window through the approved adapter-scoped firewall and binding isolation.
 
 # DNS/Proxy Handling
 
@@ -290,7 +305,8 @@ The final evidence package must contain:
 6. Complete command transcript with exit codes and UTC timestamps.
 7. Pipeline output and environment-cleanup evidence.
 8. A machine-generated classification summary enumerating every transmitted
-   record and byte count; zero rows is required for PASS.
+   record and byte count inside the acceptance interval, with loopback reported
+   separately; zero non-loopback rows is required for PASS.
 9. SHA-256 hashes for every evidence file, calculated after capture and
    conversion.
 10. A signed-off `PASS`, `FAIL`, or `BLOCKED` decision that cites the exact
@@ -314,13 +330,12 @@ No “watch the screen” decision is part of the acceptance rule.
 
 # False Positive Analysis
 
-A false FAIL can be caused by Windows services, RDP/remote administration,
-antivirus/security software, DNS, ARP, DHCP, multicast, another interactive
-session, or an unrelated application transmitting during the window. The
-procedure does not hide those packets. It prevents an incorrect project
-attribution by requiring an approved isolated/quiescent boundary before the
-run; otherwise the outcome remains blocked or failed and is not used to judge
-application behavior.
+A false FAIL can result if transition/readiness traffic is incorrectly counted
+inside the OFF-002 acceptance interval. The separate transition capture and
+recorded acceptance start/end timestamps prevent that error. Windows services,
+RDP, security software, DNS, ARP, DHCP, multicast, another session, or any
+unrelated application transmitting after acceptance starts still cause a valid
+OFF-002 failure; those packets are not subtracted.
 
 Loopback traffic can also be mistaken for egress if captures from non-NIC
 components are mixed into the decision. Capturing NIC components only and
@@ -374,17 +389,32 @@ evidence.
 | `pktmon-dry-run.pcapng` | `d1cc1283abe54ffd26dff00420573746e424f8a77977694c2458f75f7e62dc8f` |
 | `dry-run-transcript.txt` | `dda4d0248a94f3ca86b98e063071891ef3a8c1fa80fddb072a00e54b6d7547ac` |
 
+## TASK-027-S contract-alignment dry run
+
+The contract-aligned SYSTEM runner completed a non-isolating dry run on
+2026-09-28. It changed no adapter binding, created no firewall rule, started no
+PktMon capture, and did not execute OFF-002. It confirmed the acceptance start
+and end definitions, the five approved binding changes, the exact recovery
+snapshot, and the frozen `cli.py assess` command. The dry-run evidence is held
+outside Git under
+`C:\ProgramData\SIH26228-Off002\evidence\task027q-dry-run-20260928-224314`.
+
+The updated recovery task was also demand-run against the unchanged state. It
+returned success, changed zero bindings, confirmed the adapter `Up`, confirmed
+the temporary rule absent, and confirmed PktMon stopped.
+
 # Limitations
 
 - PktMon does not provide the process attribution required to separate
   validation traffic from concurrent background traffic.
-- The current Codex session depends on active network/remote-administration
-  traffic, so it cannot produce a strict zero-transmit window.
+- The connected session emits remote-administration traffic before isolation.
+  The autonomous runner must disconnect that session through the approved
+  controls before starting the acceptance window.
 - The host has no active external IPv6 route. The unfiltered capture includes
   IPv6 if present, but the dry run did not generate an external IPv6 probe.
 - PktMon availability and successful conversion do not prove isolation.
-- The final OFF-002 run, final full-pipeline command manifest, and approval of
-  the isolated execution boundary require separate authorization.
+- The final OFF-002 run requires separate execution authorization and evidence
+  review; the command and acceptance boundary are frozen by this procedure.
 
 # Final Readiness Decision
 
@@ -392,8 +422,9 @@ evidence.
 
 PktMon is technically capable of producing full-NIC, IPv4/IPv6-inclusive,
 auditable packet evidence, and the capture/conversion mechanism works.
-However, the current connected execution environment produces concurrent
-unattributed outbound traffic and PktMon cannot attribute it by process. An
-approved isolated/local-console or equivalently quiescent execution boundary
-is therefore missing. OFF-002 remains `BLOCKED`; no zero-egress or offline
-capability claim is made.
+The contract-aligned autonomous runner has not yet executed an OFF-002
+acceptance window. The earlier TASK-027-R observation of 118 pre-isolation Tx
+packets is classified as readiness/environment traffic and is not OFF-002
+acceptance evidence. OFF-002 therefore remains `BLOCKED / NOT EXECUTED`; no
+zero-egress or offline capability claim is made until an authorized acceptance
+run completes and its acceptance-only evidence is reviewed.

@@ -1,0 +1,30 @@
+{
+  "annotations": [
+    {
+      "area": 400,
+      "bbox": [
+        10,
+        10,
+        20,
+        20
+      ],
+      "category_id": 1,
+      "id": 1,
+      "image_id": 1
+    }
+  ],
+  "categories": [
+    {
+      "id": 1,
+      "name": "synthetic-object"
+    }
+  ],
+  "images": [
+    {
+      "file_name": "synthetic-219345.jpg",
+      "height": 100,
+      "id": 1,
+      "width": 100
+    }
+  ]
+}
