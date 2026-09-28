@@ -12,7 +12,7 @@ Update this file at the end of every coding session before committing.
 ## PROJECT
 
 **Name:** Trustworthy Computer Vision Integrity Assurance — SIH 2026 PS 26228  
-**Current stage:** TASK-026-B vertical-slice execution `TESTED WITH BLOCKERS`; GATE-2 `BLOCKED`
+**Current stage:** TASK-026-C Gate-2 evidence review `TESTED`; GATE-2 `BLOCKED`
 **Repository created:** [DATE TO BE FILLED ON REPO INIT]  
 **Five-day window start:** [DATE — begins after P1 conditions resolved]
 
@@ -61,7 +61,7 @@ Status codes: `NOT STARTED` | `IN PROGRESS` | `IMPLEMENTED` | `TESTED` | `VALIDA
 | CLI entry points | TASK-023 | `TESTED` | Seven argparse entry points implemented; complete stored findings/evidence/deferred records remain visible, audit corruption is surfaced before events, assessment delegates to COMP-SUP, and export delegates to COMP-EXPORT. TASK-024 remains explicitly unavailable. Original TASK-023 acceptance and current TASK-025 CLI regression pass. |
 | Dashboard (SHOULD BUILD) | TASK-024 | `NOT STARTED` | Antigravity — begins after GATE-2 |
 | Evidence bundle exporter | TASK-025 | `TESTED` | Deterministic read-only six-document ZIP packaging, complete field/state preservation, non-mutating audit verification, path and overwrite controls, secret/prohibited-field rejection, and CLI delegation are validated. Targeted: 27 passed; relevant regression: 107 passed, 3 expected skips. |
-| End-to-end integration test | TASK-026 | `IN PROGRESS` | TASK-026-B executed VS-001 through VS-007: 5 passed, 0 failed, 2 named HOST-CAP-001 skips. VS-001 valid COCO and VS-002 FIX-008 remain unvalidated; GATE-2 is `BLOCKED`. |
+| End-to-end integration test | TASK-026 | `IN PROGRESS` | TASK-026-C formally reviewed Part A/B evidence: Gate-2.3 through Gate-2.7 pass, while Gate-2.1 valid COCO and Gate-2.2 FIX-008 remain blocked by environment capability blocker HOST-CAP-001. Gate-2 remains `BLOCKED`. |
 | Offline validation (target host) | TASK-027 | `NOT STARTED` | Target identified; still awaits completed system, Windows AMD64 / Python 3.13.12 wheelhouse verification, and zero-egress validation |
 
 ---
@@ -69,25 +69,20 @@ Status codes: `NOT STARTED` | `IN PROGRESS` | `IMPLEMENTED` | `TESTED` | `VALIDA
 ## CURRENT TASK
 
 ```
-TASK: TASK-026-B — Vertical Slice Execution and GATE-2 Validation
+TASK: TASK-026-C — GATE-2 Evidence Review and Blocker Reconciliation
 Owner: Codex
 Branch: feature/vertical-slice
 Started: 2026-09-28
-Status: TESTED WITH BLOCKERS — GATE-2 BLOCKED.
+Status: TESTED — evidence review complete; GATE-2 BLOCKED.
 
 Validated behavior:
-  GATE-2.1 VALID SUBMISSION: BLOCKED — VS-001 skipped because pycocotools is unavailable under HOST-CAP-001. No completed COCO C2 evidence/finding/audit lifecycle is claimed.
-  GATE-2.2 GEOMETRY: BLOCKED — VS-002 skipped under the same blocker. FIX-008 runtime violation count/type preservation is not claimed by this execution.
-  GATE-2.3 HOSTILE PYTORCH: PASS — FIX-001 produced C3D LOAD_BLOCKED with fallback_attempted=false; C5 emitted ANOMALY_DETECTED / REQUIRES_INVESTIGATION with ESCALATE and the malicious-intent non-claim.
-  GATE-2.4 UNAVAILABLE: PASS — ingestion, C2, C3, C4, and C5 injection cases remained UNAVAILABLE / UNAVAILABLE_NO_DECISION with limitations and non-claims preserved and no positive-state conversion.
-  GATE-2.5 DEFERRED: PASS — all 15 frozen capability-gap IDs were persisted and displayed by list-deferred with `deferral_reason`, limitations, and non-claims. The packet's `deferred_reason`/`scope_note` labels are not introduced because they are absent from the approved deferred schema.
-  GATE-2.6 EXPORT: PASS — the CLI preserved UNAVAILABLE findings, evidence, and all deferred records in the resolved TASK-025 six-document bundle; deferred records remain under `capabilities.json`. The stale `deferred_records.json` filename is not reintroduced.
-  GATE-2.7 AUDIT: PASS — focused linkage and corruption tests passed; corruption remains non-destructive and the CLI exposes CHAIN_CORRUPT before events. The skipped valid-COCO audit lifecycle remains part of GATE-2.1.
-  GATE DECISION: BLOCKED — Gate-2 requires every criterion to pass, and VS-001/VS-002 did not execute.
-  TEST EVIDENCE: vertical slice 5 passed, 0 failed, 2 named HOST-CAP-001 skips; focused audit validation 3 passed, 0 failed, 0 skipped.
-  SECURITY EVIDENCE: production scans returned zero matches for `weights_only=False`, `risk_score`, `confidence_score`, `trust_score`, and prohibited positive-assurance constants.
-  TOOLING: Python 3.13.12 and pytest 9.1.1 from the existing approved offline environment/package source; no package was installed or downloaded.
-  SCOPE: validation modified only this state file. Tests, production code, dashboard, schemas, constants, workers, and protected research documentation remain unchanged.
+  EVIDENCE REVIEW: TASK-026-A test hash matches its committed version; TASK-026-B commit `60f4d92` changed only PROJECT_STATE.md and records 5 passed, 0 failed, 2 HOST-CAP-001 skips plus 3/3 focused audit passes.
+  DECISION: Gate-2 remains BLOCKED because its criteria are all-of and Gate-2.1/Gate-2.2 did not execute.
+  BLOCKER CLASSIFICATION: HOST-CAP-001 is an environment/dependency capability blocker, not a demonstrated software defect. The approved Python 3.13.12 runtime cannot locate pycocotools, and no compatible approved offline wheel is staged.
+  OWNER: dependency / deployment owner.
+  UNAFFECTED EVIDENCE: Gate-2.3 through Gate-2.7 remain valid and are not downgraded by the COCO dependency blocker.
+  SECURITY REVIEW: existing TASK-026-B zero-match scan evidence is complete for unrestricted loading, risk/confidence/trust scores, and prohibited positive-assurance constants; no unnecessary rerun was performed.
+  SCOPE: only PROJECT_STATE.md is updated. Tests, production code, dashboard, schemas, constants, workers, and protected research documentation remain unchanged.
 ```
 
 ---
@@ -122,6 +117,7 @@ Validated behavior:
 | TASK-025 Parts A-B | Implemented and validated the packet-authorized COMP-EXPORT packager with exact six-file output, stable JSON/ZIP encoding, complete state/non-claim preservation, read-only store access, non-mutating exported-chain verification, explicit corruption visibility, secret/prohibited-field rejection, contained new-file output, bounded failures, and CLI delegation. | Targeted exporter integration/security: 27 passed; relevant CLI/store/audit/provenance/capability/exporter regression: 107 passed, 3 expected skips; import, compilation, generated-payload scans, AST import audit, and universal security guards passed. | Part A `364155f`; this TASK-025 Part B validation commit |
 | TASK-026-A | Created the seven-scenario vertical-slice integration battery across real supervisor/worker, persistence, C5, capability, CLI, and exporter boundaries without modifying production. Preserved the frozen C5 vocabulary, deferred schema, and resolved TASK-025 bundle contract rather than introducing stale packet aliases. | Targeted: 5 passed, 0 failed, 2 named HOST-CAP-001 skips; Python 3.13.12 / pytest 9.1.1; compilation and universal production security guards passed. | This TASK-026-A commit |
 | TASK-026-B | Executed the seven-scenario vertical-slice battery and evaluated each Gate-2 item without changing tests or production. Five scenarios and all focused audit/security checks pass; valid COCO and FIX-008 execution remain blocked by HOST-CAP-001, so Gate-2 remains blocked. | Vertical slice: 5 passed, 0 failed, 2 HOST-CAP-001 skips. Focused audit: 3 passed. All mandated production security scans: zero matches. | This TASK-026-B validation commit |
+| TASK-026-C | Formally reviewed and reconciled Gate-2 evidence without rerunning tests or changing implementation. Classified Gate-2.1/2.2 as blocked, Gate-2.3–2.7 as passed, and HOST-CAP-001 as an environment/dependency capability blocker owned by dependency/deployment. | Documentation review of committed TASK-026-A/B evidence; test hash unchanged; no fresh execution or security scan claimed. | This TASK-026-C review commit |
 
 ---
 
@@ -162,10 +158,10 @@ Validated behavior:
 ## LATEST VALIDATED COMMIT
 
 ```
-Commit: This TASK-026-B validation commit
+Commit: This TASK-026-C review commit
 Branch: feature/vertical-slice
 Date: 2026-09-28
-Tests: TASK-026-B vertical slice passed 5, failed 0, with 2 named HOST-CAP-001 skips; focused audit checks passed 3/3. TASK-026 remains in progress and GATE-2 is blocked.
+Tests: No tests rerun for the documentation-only review. Reviewed TASK-026-B evidence remains vertical slice 5 passed / 2 HOST-CAP-001 skips and focused audit 3 passed. TASK-026 remains in progress and GATE-2 is blocked.
 ```
 
 ---
@@ -187,6 +183,35 @@ Integration gates:
   GATE-4 (Validation):       NOT PASSED
   GATE-5 (Demo):             NOT PASSED
 ```
+
+---
+
+## TASK-026-C GATE-2 EVIDENCE REVIEW
+
+**Date:** 2026-09-28
+**Review status:** `TESTED` — documentation/evidence review complete
+**Gate decision:** `BLOCKED` — HOST-CAP-001
+
+| Gate item | Status | Reviewed evidence | Claim boundary |
+|---|---|---|---|
+| GATE-2.1 Valid COCO submission | `BLOCKED` | VS-001 collected but skipped exactly as HOST-CAP-001; the approved runtime cannot import pycocotools | No completed COCO C2 evidence, finding, CLI, provenance, or audit lifecycle is claimed |
+| GATE-2.2 FIX-008 geometry validation | `BLOCKED` | VS-002 collected but skipped under the same pycocotools dependency blocker | No partial geometry acceptance or target-host violation-count/type claim is made |
+| GATE-2.3 Hostile PyTorch flow | `PASS` | VS-003: FIX-001 → C3D `LOAD_BLOCKED`, `fallback_attempted=false`; C5 disposition `ESCALATE` | LOAD_BLOCKED is evidence, not proof of malicious intent or a confirmed threat |
+| GATE-2.4 UNAVAILABLE propagation | `PASS` | VS-004: ingestion/C2/C3/C4/C5 injections retain `UNAVAILABLE` / `UNAVAILABLE_NO_DECISION`, limitations, and non-claims | No conversion to CLEAN, SAFE, HEALTHY, or WITHIN_EXPECTED_PARAMETERS |
+| GATE-2.5 Deferred capability flow | `PASS` | VS-005/006: all frozen coverage-gap records persist and are displayed with method ID, `deferral_reason`, limitations, and non-claims | Deferred/unavailable coverage is not converted to success; stale packet field aliases do not replace the approved schema |
+| GATE-2.6 Export validation | `PASS` | VS-007: findings, evidence, and deferred records are preserved in the resolved TASK-025 six-document bundle | Deferred records remain under `capabilities.json`; no stale bundle filename is invented |
+| GATE-2.7 Audit validation | `PASS` | UT-AUD-001/002 and INT-CLI-004 pass: links verify, corruption is non-destructive, and CLI exposes `CHAIN_CORRUPT` | The blocked valid-COCO lifecycle remains part of Gate-2.1 and is not inferred from these focused checks |
+
+### HOST-CAP-001 reconciliation
+
+1. **Unavailable capability:** pycocotools is not importable in the approved repository-local Python 3.13.12 environment, and no approved compatible offline wheel is staged.
+2. **Affected items:** GATE-2.1, GATE-2.2, TASK-010 target-host COCO runtime acceptance, and the overall all-of GATE-2 decision.
+3. **Unaffected evidence:** GATE-2.3 through GATE-2.7 remain valid within their recorded boundaries.
+4. **Classification and owner:** environment/dependency capability blocker; dependency / deployment owner. No production defect is inferred.
+
+### Security evidence review
+
+TASK-026-B recorded zero production matches for `weights_only=False`, `risk_score`, `confidence_score`, `trust_score`, and prohibited positive-assurance constants. TASK-026-C reviewed that committed evidence and did not rerun scans or expand the claim. PRE-08, HOST-CAP-002, HOST-CAP-003, and E-2 remain open and unchanged.
 
 ---
 
@@ -356,7 +381,7 @@ The Stage 6 rule permits exit when every requirement is either satisfied with ev
 
 ## NEXT TASK
 
-**Next task:** TASK-026-C requires its own authoritative execution packet. It must not relabel VS-001/VS-002 as passed while HOST-CAP-001 remains open, and it must not treat the five passing scenarios as a Gate-2 pass. TASK-024 remains pending and was not started. TASK-019 Part B remains blocked on PRE-08 target-host key-path/ACL provisioning.
+**Next task:** TASK-026-D requires its own authoritative execution packet. It must preserve the formal Gate-2 evidence matrix and may not close HOST-CAP-001 or relabel Gate-2.1/2.2 as passed without new approved runtime evidence. TASK-024 remains pending and was not started. TASK-019 Part B remains blocked on PRE-08 target-host key-path/ACL provisioning.
 
 Critical path reminder:
 ```
@@ -410,7 +435,7 @@ PRE-04 resolved
 
 *(To be filled by the agent ending a session — for the agent starting the next session)*
 
-**Current session:** TASK-026-B executed the committed vertical-slice battery on `feature/vertical-slice` without changing tests or production. The result is 5 passed, 0 failed, 2 named HOST-CAP-001 skips: VS-003 through VS-007 pass; VS-001 valid COCO and VS-002 FIX-008 remain blocked because pycocotools is unavailable. Focused audit linkage/corruption/CLI visibility checks pass 3/3, and all mandated production security scans are clean. TASK-026-B is `TESTED WITH BLOCKERS`; TASK-026 remains `IN PROGRESS`; GATE-2 is `BLOCKED`. PRE-08, HOST-CAP-001/002/003, E-2, and other recorded blockers remain open. TASK-024 was not started, and protected `docs/research/**` remains unchanged.
+**Current session:** TASK-026-C completed a documentation-only formal review of committed TASK-026-A/B evidence on `feature/vertical-slice`. The unchanged test hash and Part B state commit support the matrix: Gate-2.1 and Gate-2.2 are blocked by HOST-CAP-001; Gate-2.3 through Gate-2.7 pass within their explicit claim boundaries. HOST-CAP-001 is classified as an environment/dependency capability blocker owned by dependency/deployment, not as a demonstrated software defect. Gate-2 remains `BLOCKED`; TASK-026 remains `IN PROGRESS`; PRE-08, HOST-CAP-001/002/003, E-2, and other recorded blockers remain open. No tests or security scans were rerun, TASK-024 was not started, and protected `docs/research/**` remains unchanged.
 
 **TASK-020 specification reconciliation:** No separately saved Stage 8 packet was available in the repository or attachments; the current TASK-020 execution request and committed architecture/technical/MVP contracts supplied the scope. The MVP's §10 §3.17 citation points to COMP-FIX, so the concrete COMP-CAP API follows TASK-020 and the deferred persistence/audit contracts in §10 §§3.1, 3.15, 20.3. UT-CAP-001's generic deferred-count wording is met by enumerating drift/OOD and heavyweight methods separately while retaining M11=REFERENCE_UNAVAILABLE and tail=COMPLETENESS_UNAVAILABLE. T05d remains a permanent NON_CLAIM in persisted reason/non-claim text using the existing deferred-table envelope; no new assessment status was introduced.
 
