@@ -12,7 +12,7 @@ Update this file at the end of every coding session before committing.
 ## PROJECT
 
 **Name:** Trustworthy Computer Vision Integrity Assurance — SIH 2026 PS 26228  
-**Current stage:** TASK-026-D final gate decision `TESTED`; TASK-026 `TESTED WITH BLOCKERS`; GATE-2 `BLOCKED`
+**Current stage:** TASK-027-A offline-validation infrastructure `IMPLEMENTED`; OFF-001 through OFF-004 `NOT EXECUTED`
 **Repository created:** [DATE TO BE FILLED ON REPO INIT]  
 **Five-day window start:** [DATE — begins after P1 conditions resolved]
 
@@ -62,27 +62,28 @@ Status codes: `NOT STARTED` | `IN PROGRESS` | `IMPLEMENTED` | `TESTED` | `VALIDA
 | Dashboard (SHOULD BUILD) | TASK-024 | `NOT STARTED` | `NOT AUTHORIZED` while GATE-2 remains blocked; Antigravity begins only after GATE-2 passes |
 | Evidence bundle exporter | TASK-025 | `TESTED` | Deterministic read-only six-document ZIP packaging, complete field/state preservation, non-mutating audit verification, path and overwrite controls, secret/prohibited-field rejection, and CLI delegation are validated. Targeted: 27 passed; relevant regression: 107 passed, 3 expected skips. |
 | End-to-end integration test | TASK-026 | `BLOCKED` | Final TASK-026 status: `TESTED WITH BLOCKERS`. Five Gate-2 items pass; Gate-2.1 valid COCO and Gate-2.2 FIX-008 remain blocked by HOST-CAP-001. The all-of GATE-2 decision is `BLOCKED`. |
-| Offline validation (target host) | TASK-027 | `NOT STARTED` | Target identified; still awaits completed system, Windows AMD64 / Python 3.13.12 wheelhouse verification, and zero-egress validation |
+| Offline validation (target host) | TASK-027 | `IN PROGRESS` | TASK-027-A infrastructure is implemented: local-only wheelhouse verification tooling and four target-host test contracts exist. OFF-001 through OFF-004 were not executed; no offline capability is claimed. |
 
 ---
 
 ## CURRENT TASK
 
 ```
-TASK: TASK-026-D — Final Gate Decision and Stage Transition Review
+TASK: TASK-027-A — Offline Validation Infrastructure Authoring
 Owner: Codex
 Branch: feature/vertical-slice
 Started: 2026-09-28
-Status: TESTED — governance/evidence decision complete; TASK-026 TESTED WITH BLOCKERS; GATE-2 BLOCKED.
+Status: IMPLEMENTED — infrastructure authoring complete; offline execution NOT EXECUTED.
 
 Validated behavior:
-  FINAL DECISION: Gate-2 is BLOCKED because the all-of gate has five PASS items and two BLOCKED items; a blocked item is not treated as passed.
-  BLOCKED ITEMS: Gate-2.1 valid COCO and Gate-2.2 FIX-008 did not execute because HOST-CAP-001 prevents pycocotools import in the approved runtime.
-  PASSED ITEMS: Gate-2.3 hostile PyTorch, Gate-2.4 UNAVAILABLE propagation, Gate-2.5 deferred visibility, Gate-2.6 export preservation, and Gate-2.7 audit integrity remain passed within their recorded claim boundaries.
-  AUTHORIZATION: TASK-024 is NOT AUTHORIZED because the MVP plan permits dashboard work only after Gate-2 passes.
-  BLOCKERS PRESERVED: HOST-CAP-001, HOST-CAP-002, HOST-CAP-003, PRE-08, and E-2 remain open; no blocker is reclassified or closed.
-  SECURITY REVIEW: existing TASK-026-B zero-match evidence remains the applicable evidence; no tests or scans were rerun and no new security finding is claimed.
-  SCOPE: only PROJECT_STATE.md is updated. Production code, tests, dashboard, schemas, constants, workers, and protected research documentation remain unchanged.
+  SCRIPT: scripts/verify_wheelhouse.py exposes --wheelhouse-dir and --python, checks mandatory and active requirements, uses local-only pip resolution/installation, validates isolated imports, and cleans its temporary target.
+  SCRIPT VALIDATION: --help and Python compilation pass with repository-local Python 3.13.12. The installation/import workflow itself was not executed.
+  TEST CONTRACTS: OFF-001 through OFF-004 collect from tests/offline/test_offline_validation.py (4 collected) with the exact packet-mandated skip reason. No OFF test body was executed.
+  COLLECTION RECONCILIATION: directory-wide collection reports 7 because the repository already contains three legacy skipped stubs in tests/offline/test_offline.py. They were preserved under the allowed-file and no-test-weakening rules.
+  PRE-01 RECONCILIATION: PRE-01 remains RESOLVED. The packet-mandated legacy skip text is preserved verbatim but does not reopen PRE-01; execution is deferred by Part A scope and pending target-host wheelhouse/zero-egress validation.
+  SECURITY REVIEW: the script imports only approved stdlib facilities; contains no requests, urllib, socket, index URL, extra index URL, network fallback, or hardcoded absolute path; every pip invocation is --no-index and --find-links based. Universal production guards remain zero-match.
+  BLOCKERS PRESERVED: HOST-CAP-001, HOST-CAP-002, HOST-CAP-003, PRE-08, E-2, and OFFLINE-001 remain open.
+  SCOPE: no production module, existing test, dependency, wheel, dashboard file, or protected research dossier was modified.
 ```
 
 ---
@@ -119,6 +120,7 @@ Validated behavior:
 | TASK-026-B | Executed the seven-scenario vertical-slice battery and evaluated each Gate-2 item without changing tests or production. Five scenarios and all focused audit/security checks pass; valid COCO and FIX-008 execution remain blocked by HOST-CAP-001, so Gate-2 remains blocked. | Vertical slice: 5 passed, 0 failed, 2 HOST-CAP-001 skips. Focused audit: 3 passed. All mandated production security scans: zero matches. | This TASK-026-B validation commit |
 | TASK-026-C | Formally reviewed and reconciled Gate-2 evidence without rerunning tests or changing implementation. Classified Gate-2.1/2.2 as blocked, Gate-2.3–2.7 as passed, and HOST-CAP-001 as an environment/dependency capability blocker owned by dependency/deployment. | Documentation review of committed TASK-026-A/B evidence; test hash unchanged; no fresh execution or security scan claimed. | This TASK-026-C review commit |
 | TASK-026-D | Finalized the all-of Gate-2 governance decision from the committed Part A/B/C evidence. Recorded TASK-026 as tested with blockers, retained the five passed and two blocked item outcomes, and withheld TASK-024 authorization. | Documentation-only final review; no tests or scans rerun and no new runtime evidence claimed. | This TASK-026-D decision commit |
+| TASK-027-A | Authored a stdlib-only local wheelhouse verifier and four skipped target-host offline validation contracts. Reconciled the packet's stale PRE-01 skip wording and the three pre-existing legacy offline stubs without altering either prior state or tests. | Script `--help` and compilation pass; new file collects 4 contracts; directory collects 7 including 3 preserved legacy stubs. OFF test bodies and installation/import simulation were not executed. | This TASK-027-A infrastructure commit |
 
 ---
 
@@ -159,10 +161,10 @@ Validated behavior:
 ## LATEST VALIDATED COMMIT
 
 ```
-Commit: This TASK-026-D decision commit
+Commit: This TASK-027-A infrastructure commit
 Branch: feature/vertical-slice
 Date: 2026-09-28
-Tests: No tests or security scans rerun for the documentation-only final decision. Reviewed TASK-026-A/B/C evidence remains five Gate-2 items passed and two HOST-CAP-001 items blocked. TASK-026 is TESTED WITH BLOCKERS and GATE-2 is BLOCKED.
+Tests: No OFF test body or wheelhouse installation/import simulation executed. Script --help and compilation pass. The new contract file collects 4 tests; directory-wide collection reports 7 because 3 pre-existing legacy stubs remain preserved.
 ```
 
 ---
@@ -171,11 +173,11 @@ Tests: No tests or security scans rerun for the documentation-only final decisio
 
 ```
 Date: 2026-09-28
-Latest focused tests: TASK-026-B vertical slice passed 5, failed 0, skipped 2 (`BLOCKED: HOST-CAP-001`); focused audit validation passed 3, failed 0, skipped 0
-Executed files: `tests/integration/test_vertical_slice.py`; focused `UT-AUD-001`, `UT-AUD-002`, and `INT-CLI-004`
-Test tooling: `C:\Users\master\Desktop\SIH26228-CV-INTEGRITY\.venv-torch-test\Scripts\python.exe` (Python 3.13.12) with pytest 9.1.1 loaded from the existing approved offline package source `C:\Users\master\AppData\Local\Temp\sih26228-task-tests` through `PYTHONPATH`. No package was downloaded or installed.
-Focused coverage: VS-001/002 remain blocked by pycocotools absence; VS-003 through VS-007 pass across FIX-001, FIX-013, deferred persistence, CLI display, and bundle export. Audit linkage, corruption detection, and CHAIN_CORRUPT CLI visibility pass.
-Security checks: production scans returned zero matches for `weights_only=False`, `risk_score`, `confidence_score`, `trust_score`, and prohibited positive-assurance constants.
+Latest authoring validation: TASK-027-A script help and compilation passed; targeted collection found 4 new OFF contracts; directory-wide collection found 7 contracts because 3 legacy stubs pre-existed.
+Executed files: None. OFF-001 through OFF-004 bodies and the wheelhouse install/import simulation were not executed.
+Test tooling: `C:\Users\master\Desktop\SIH26228-CV-INTEGRITY\.venv-torch-test\Scripts\python.exe` (Python 3.13.12) with pytest 9.1.1 loaded from the existing approved offline package source `C:\Users\master\AppData\Local\Temp\sih26228-task-tests` through `PYTHONPATH` for collection only. No package was downloaded or installed.
+Focused coverage: CLI argument exposure, syntax/bytecode compilation, collection, exact skip contract, and static local-only pip/network-path review. No offline-readiness claim is supported.
+Security checks: zero script matches for requests, urllib, socket, `--index-url`, `--extra-index-url`, or HTTP(S) URLs; all pip command construction includes `--no-index` and local `--find-links`.
 
 Integration gates:
   GATE-1 (Foundation):       NOT PASSED
@@ -249,6 +251,35 @@ The committed TASK-026-B evidence records zero prohibited production matches for
 ### Next authorized action
 
 The dependency / deployment owner may resolve HOST-CAP-001 using an approved compatible offline pycocotools package for the frozen Windows AMD64 / Python 3.13.12 target. After that capability is verified, a separately authorized revalidation may execute the two blocked scenarios and reconsider Gate-2. TASK-024 remains unauthorized until Gate-2 actually passes.
+
+---
+
+## TASK-027-A OFFLINE VALIDATION INFRASTRUCTURE
+
+**Date:** 2026-09-28
+**Part A status:** `IMPLEMENTED`
+**TASK-027 status:** `IN PROGRESS`
+**Offline execution status:** `NOT EXECUTED`
+
+### Authored infrastructure
+
+- `scripts/verify_wheelhouse.py` checks `torch>=2.10.0` CPU, `onnx`, `pycocotools`, and every active `requirements.txt` entry. It reports per-package `STAGED`/`MISSING`, performs compatibility resolution and installation using only `pip --no-index --find-links=<wheelhouse>`, validates isolated imports, cleans the temporary target, and exits nonzero on any missing/incompatible package, install failure, or import failure.
+- `tests/offline/test_offline_validation.py` defines OFF-001 through OFF-004 as skipped target-host contracts. Their bodies were not executed.
+- `tests/offline/__init__.py` already existed and remains unchanged.
+- `assurance_system/config/system_config.yaml` contains no wheelhouse-location setting. Part A therefore uses the packet-authorized repository-relative default `wheelhouse/`; no machine-specific path or new configuration semantic was introduced.
+- `requirements.txt` currently has no active dependency entries. The verifier still reads future active entries and always includes the three mandatory runtime packages.
+
+### Validation evidence and boundaries
+
+- Repository-local Python 3.13.12 displays both required CLI arguments and compiles the new script/test file successfully.
+- Targeted collection of the new file reports exactly 4 contracts. Directory-wide collection reports 7 because three legacy skipped stubs already existed in `tests/offline/test_offline.py`; Part A neither deletes, rewrites, nor suppresses them.
+- The exact skip reason required by the TASK-027-A packet is present on all four new contracts. That wording says PRE-01 is unresolved, but the approved live decision record says PRE-01 was resolved on 2026-09-27. Preserving the packet string does not reopen or downgrade PRE-01.
+- The actual remaining conditions are OFFLINE-001, incomplete wheel staging (including HOST-CAP-001 and HOST-CAP-003), and separately authorized execution on the frozen target host. No OFF test, installation simulation, import simulation, zero-egress run, or SQLite offline run occurred in Part A.
+- Static review found no network library, URL/index fallback, or hardcoded absolute path. Pip subprocesses are list-form, `shell=False`, index-disabled, and local-wheelhouse-only. Universal production scans returned zero matches for `weights_only=False`, `risk_score`, and quoted positive-assurance constant values.
+
+### Blockers carried forward
+
+HOST-CAP-001, HOST-CAP-002, HOST-CAP-003, PRE-08, E-2 / SP-002-ONNX, and OFFLINE-001 remain open and unchanged. GATE-2 remains blocked and TASK-024 remains unauthorized.
 
 ---
 
@@ -418,7 +449,7 @@ The Stage 6 rule permits exit when every requirement is either satisfied with ev
 
 ## NEXT TASK
 
-**Next authorized action:** Dependency / deployment resolution of HOST-CAP-001 using an approved compatible offline pycocotools package for the frozen target, followed by an explicitly authorized Gate-2.1/Gate-2.2 revalidation. No downstream implementation task is authorized by this decision. TASK-024 is `NOT AUTHORIZED` while Gate-2 is blocked. TASK-019 Part B remains blocked on PRE-08 target-host key-path/ACL provisioning.
+**Next authorized action:** Dependency / deployment staging of the approved complete offline wheel closure for the frozen Windows AMD64 / Python 3.13.12 target, including the unresolved pycocotools and ONNX requirements. TASK-027-B requires its own authorization before executing the verifier or OFF-001 through OFF-004 on that target. TASK-024 remains `NOT AUTHORIZED` while Gate-2 is blocked, and TASK-019 Part B remains blocked on PRE-08 target-host key-path/ACL provisioning.
 
 Critical path reminder:
 ```
@@ -472,7 +503,7 @@ PRE-04 resolved
 
 *(To be filled by the agent ending a session — for the agent starting the next session)*
 
-**Current session:** TASK-026-D finalized the documentation-only Gate-2 governance decision on `feature/vertical-slice` from the committed TASK-026-A/B/C evidence. Gate-2.1 and Gate-2.2 remain blocked by HOST-CAP-001; Gate-2.3 through Gate-2.7 remain passed within their explicit claim boundaries. The final TASK-026 status is `TESTED WITH BLOCKERS`, the all-of Gate-2 result is `BLOCKED`, and TASK-024 is `NOT AUTHORIZED`. HOST-CAP-001 remains an environment/dependency capability blocker owned by dependency/deployment rather than a demonstrated software defect. PRE-08, HOST-CAP-001/002/003, E-2, and all other recorded blockers remain open. No tests or security scans were rerun, no implementation work began, and protected `docs/research/**` remains unchanged.
+**Current session:** TASK-027-A authored offline-validation infrastructure on `feature/vertical-slice` without executing the offline contracts or installation/import workflow. The verifier is stdlib-only, local-wheelhouse-only, and exposes the required CLI. Four new OFF contracts collect; directory-wide collection totals seven because three legacy skipped stubs were already tracked and were preserved. PRE-01 remains resolved despite the packet-mandated legacy skip text. TASK-027 is `IN PROGRESS`, Part A is `IMPLEMENTED`, and offline execution is `NOT EXECUTED`; no offline-readiness claim is made. HOST-CAP-001/002/003, PRE-08, E-2, OFFLINE-001, blocked Gate-2, and TASK-024 non-authorization remain unchanged. No package was installed or downloaded, production code and existing tests were not modified, and protected `docs/research/**` remains unchanged.
 
 **TASK-020 specification reconciliation:** No separately saved Stage 8 packet was available in the repository or attachments; the current TASK-020 execution request and committed architecture/technical/MVP contracts supplied the scope. The MVP's §10 §3.17 citation points to COMP-FIX, so the concrete COMP-CAP API follows TASK-020 and the deferred persistence/audit contracts in §10 §§3.1, 3.15, 20.3. UT-CAP-001's generic deferred-count wording is met by enumerating drift/OOD and heavyweight methods separately while retaining M11=REFERENCE_UNAVAILABLE and tail=COMPLETENESS_UNAVAILABLE. T05d remains a permanent NON_CLAIM in persisted reason/non-claim text using the existing deferred-table envelope; no new assessment status was introduced.
 
