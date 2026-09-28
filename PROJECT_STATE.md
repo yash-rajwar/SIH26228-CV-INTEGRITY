@@ -12,7 +12,7 @@ Update this file at the end of every coding session before committing.
 ## PROJECT
 
 **Name:** Trustworthy Computer Vision Integrity Assurance — SIH 2026 PS 26228  
-**Current stage:** TASK-025 COMP-EXPORT status `TESTED`
+**Current stage:** TASK-026-A vertical-slice test battery status `IMPLEMENTED`
 **Repository created:** [DATE TO BE FILLED ON REPO INIT]  
 **Five-day window start:** [DATE — begins after P1 conditions resolved]
 
@@ -61,7 +61,7 @@ Status codes: `NOT STARTED` | `IN PROGRESS` | `IMPLEMENTED` | `TESTED` | `VALIDA
 | CLI entry points | TASK-023 | `TESTED` | Seven argparse entry points implemented; complete stored findings/evidence/deferred records remain visible, audit corruption is surfaced before events, assessment delegates to COMP-SUP, and export delegates to COMP-EXPORT. TASK-024 remains explicitly unavailable. Original TASK-023 acceptance and current TASK-025 CLI regression pass. |
 | Dashboard (SHOULD BUILD) | TASK-024 | `NOT STARTED` | Antigravity — begins after GATE-2 |
 | Evidence bundle exporter | TASK-025 | `TESTED` | Deterministic read-only six-document ZIP packaging, complete field/state preservation, non-mutating audit verification, path and overwrite controls, secret/prohibited-field rejection, and CLI delegation are validated. Targeted: 27 passed; relevant regression: 107 passed, 3 expected skips. |
-| End-to-end integration test | TASK-026 | `NOT STARTED` | Gate task |
+| End-to-end integration test | TASK-026 | `IN PROGRESS` | TASK-026-A created VS-001 through VS-007; 5 executable scenarios pass and VS-001/VS-002 retain named HOST-CAP-001 skips because pycocotools is unavailable. TASK-026 is not complete and GATE-2 has not been executed. |
 | Offline validation (target host) | TASK-027 | `NOT STARTED` | Target identified; still awaits completed system, Windows AMD64 / Python 3.13.12 wheelhouse verification, and zero-egress validation |
 
 ---
@@ -69,22 +69,21 @@ Status codes: `NOT STARTED` | `IN PROGRESS` | `IMPLEMENTED` | `TESTED` | `VALIDA
 ## CURRENT TASK
 
 ```
-TASK: TASK-025 Part B — COMP-EXPORT Validation and Contract Verification
+TASK: TASK-026-A — Vertical Slice Test Battery Creation
 Owner: Codex
-Branch: feature/exporter
+Branch: feature/vertical-slice
 Started: 2026-09-28
-Status: TESTED.
+Status: IMPLEMENTED — tests created; TASK-026-B validation pending.
 
 Validated behavior:
-  IMPLEMENTATION: EvidenceExporter packages exactly `manifest.json`, `findings.json`, `evidence_records.json`, `audit_trail.json`, `provenance.json`, and `capabilities.json` using stable JSON serialization, sorted entry order, fixed ZIP metadata, and UTF-8 bytes.
-  READ BOUNDARY: source evidence/findings/provenance/audit data comes from the approved `EvidenceStore.export_bundle()` read API; capability coverage comes from `query_deferred()` and is asset-filtered. The exporter has no store mutation path.
-  AUDIT CONTRACT: exported events receive read-only link/hash verification. Corruption is represented by `CHAIN_CORRUPT`; the mutating AuditChainWriter corruption-report method is not called by the exporter.
-  PATH/FAILURE CONTRACT: the output must be a new `.zip` contained by the configured exporter output directory (current working directory by default); traversal, missing parent directories, non-ZIP targets, and overwrites fail closed with bounded errors. Generated documents are rejected if prohibited assurance or secret-bearing fields are present.
-  CONTRACT RECONCILIATION: the first Part B run passed 26 checks and failed only the CLI delegation check, proving TASK-023 still imported the old stub. The CLI import now targets `assurance_system.export.exporter`; its stale TASK-025-unavailable expectation was replaced by end-to-end export coverage. No export logic was duplicated in the CLI.
-  TEST EVIDENCE: targeted exporter integration/security suite — 27 passed, 0 failed, 0 skipped; relevant CLI/store/audit/provenance/capability/exporter regression — 107 passed, 0 failed, 3 existing expected skips.
-  SECURITY EVIDENCE: exporter scans returned zero matches for unsafe loading, prohibited score output, evidence writes, and audit writes. Global unsafe-load and positive-assurance-constant guards also returned zero matches. AST import/dynamic-execution audit passed; generated bundle payloads contain none of the prohibited secret or score terms.
+  TEST BATTERY: `tests/integration/test_vertical_slice.py` defines exactly VS-001 through VS-007 for valid COCO, FIX-008, FIX-001, FIX-013 UNAVAILABLE propagation, deferred-record persistence, CLI deferred display, and CLI evidence-bundle export.
+  REAL BOUNDARIES: executable scenarios use the actual `SupervisorOrchestrator`, worker subprocess dispatch, `C5InterpretationEngine`, `EvidenceStore`, `AuditChainWriter`, `CapabilityDeclaration`, `AssuranceCLI`, and `EvidenceExporter`; no production component is mocked away.
+  HOST BLOCKER: VS-001 and VS-002 skip exactly as `BLOCKED: HOST-CAP-001` because pycocotools is absent from the approved repository-local interpreter. No manual parser or production bypass was added. The other five scenarios pass.
+  CONTRACT RECONCILIATION: packet aliases `WITHIN_EXPECTED_PARAMETERS` and `DETECT` were not introduced into the frozen C5 vocabulary. Tests assert the Technical Specification statuses and dispositions. The requested deferred scope note is verified through the frozen non-empty `limitations`/`non_claims` fields, and export verification follows the already-resolved TASK-025 six-document contract with deferred records under `capabilities.json`.
+  TEST EVIDENCE: targeted run — 5 passed, 0 failed, 2 named HOST-CAP-001 skips.
+  SECURITY EVIDENCE: recursive test assertions exclude risk/confidence/trust/safety score fields; production scans returned zero matches for `weights_only=False`, `risk_score`, and prohibited positive-assurance constants.
   TOOLING: Python 3.13.12 and pytest 9.1.1 from the existing approved offline environment/package source; no package was installed or downloaded.
-  SCOPE: Part B added `tests/integration/test_exporter.py` and `tests/security/test_exporter_security.py`, made the proven one-line CLI import repair, removed its obsolete unavailable-export test case, and updated this state file. Exporter implementation, dashboard, workers, supervisor components, schemas, audit implementation, constants, and protected research documentation remain unchanged.
+  SCOPE: only `tests/integration/test_vertical_slice.py` and this state file were changed. Production code, dashboard, schemas, constants, workers, and protected research documentation remain unchanged.
 ```
 
 ---
@@ -117,6 +116,7 @@ Validated behavior:
 | TASK-022 Parts A-C | Implemented COMP-SUP; validated initialization, fail-closed configuration, isolated subprocess dispatch and cleanup, schema-gated supervisor-only persistence, fail-closed audit behavior, C2/C3 scheduling, C5 delegation, and complete ASSESSMENT_ERROR construction; completed the final architecture/security compliance review without production changes. | Part B targeted: 21 passed, 0 failed, 0 skipped; relevant regression: 149 passed, 0 failed, 9 expected skips; Part C focused security: 6 passed; all required prohibited-field, dynamic-execution, network, parser/model, secret-read, and assurance-constant scans returned zero production matches | This TASK-022 final security review commit |
 | TASK-023 | Implemented the read-only COMP-IFACE analyst CLI and root entry point with seven stdlib argparse commands, orchestrator-only assessment execution, complete finding/evidence/deferred display, fail-closed missing-record output, and audit-corruption visibility. TASK-025 Part B subsequently connected its export command through the packet-authorized COMP-EXPORT class; TASK-024 remains unavailable. | Original INT-CLI-001..004 plus contract/boundary checks: 9 passed; original full suite: 435 passed, 28 expected skips; TASK-025 relevant CLI regression also passes. | TASK-023 `2b423cf`; TASK-025 adapter repair in this validation commit |
 | TASK-025 Parts A-B | Implemented and validated the packet-authorized COMP-EXPORT packager with exact six-file output, stable JSON/ZIP encoding, complete state/non-claim preservation, read-only store access, non-mutating exported-chain verification, explicit corruption visibility, secret/prohibited-field rejection, contained new-file output, bounded failures, and CLI delegation. | Targeted exporter integration/security: 27 passed; relevant CLI/store/audit/provenance/capability/exporter regression: 107 passed, 3 expected skips; import, compilation, generated-payload scans, AST import audit, and universal security guards passed. | Part A `364155f`; this TASK-025 Part B validation commit |
+| TASK-026-A | Created the seven-scenario vertical-slice integration battery across real supervisor/worker, persistence, C5, capability, CLI, and exporter boundaries without modifying production. Preserved the frozen C5 vocabulary, deferred schema, and resolved TASK-025 bundle contract rather than introducing stale packet aliases. | Targeted: 5 passed, 0 failed, 2 named HOST-CAP-001 skips; Python 3.13.12 / pytest 9.1.1; compilation and universal production security guards passed. | This TASK-026-A commit |
 
 ---
 
@@ -157,10 +157,10 @@ Validated behavior:
 ## LATEST VALIDATED COMMIT
 
 ```
-Commit: This TASK-025 Part B validation commit
-Branch: feature/exporter
+Commit: This TASK-026-A commit
+Branch: feature/vertical-slice
 Date: 2026-09-28
-Tests: TASK-025 targeted suite passed 27, failed 0, skipped 0. Relevant regression passed 107, failed 0, with 3 existing expected skips.
+Tests: TASK-026-A targeted suite passed 5, failed 0, with 2 named HOST-CAP-001 skips. TASK-026 remains in progress and GATE-2 is not passed.
 ```
 
 ---
@@ -169,11 +169,11 @@ Tests: TASK-025 targeted suite passed 27, failed 0, skipped 0. Relevant regressi
 
 ```
 Date: 2026-09-28
-Latest focused tests: TASK-025 exporter integration/security passed 27, failed 0, skipped 0
-Executed files: `tests/integration/test_exporter.py`, `tests/security/test_exporter_security.py`
+Latest focused tests: TASK-026-A vertical slice passed 5, failed 0, skipped 2 (`BLOCKED: HOST-CAP-001`)
+Executed file: `tests/integration/test_vertical_slice.py`
 Test tooling: `C:\Users\master\Desktop\SIH26228-CV-INTEGRITY\.venv-torch-test\Scripts\python.exe` (Python 3.13.12) with pytest 9.1.1 loaded from the existing approved offline package source `C:\Users\master\AppData\Local\Temp\sih26228-task-tests` through `PYTHONPATH`. No package was downloaded or installed.
-Relevant regression: 107 passed, 0 failed, 3 existing expected skips across CLI, exporter, evidence store, audit chain, provenance, capability declaration, and their security suites.
-Security checks: zero exporter matches for `weights_only=False`, `risk_score`, evidence writes, and audit writes; zero global unsafe-load and prohibited positive-assurance-constant matches. Import/dynamic-execution audit passed.
+Focused coverage: VS-001/002 are collected and retain the named pycocotools host-capability skip; VS-003 through VS-007 pass across FIX-001, FIX-013, deferred persistence, CLI display, and bundle export.
+Security checks: recursive score-field assertions pass; production scans returned zero matches for `weights_only=False`, `risk_score`, and prohibited positive-assurance constants. Test-file compilation passed.
 
 Integration gates:
   GATE-1 (Foundation):       NOT PASSED
@@ -351,7 +351,7 @@ The Stage 6 rule permits exit when every requirement is either satisfied with ev
 
 ## NEXT TASK
 
-**Next task:** TASK-026 / the next Stage 11 activity requires its own authoritative execution packet. TASK-024 remains pending and was not started. TASK-019 Part B remains blocked on PRE-08 target-host key-path/ACL provisioning.
+**Next task:** TASK-026-B requires its own authoritative execution packet. It must retain the named HOST-CAP-001 limitation for VS-001/VS-002 unless an approved offline pycocotools dependency becomes available. Do not claim TASK-026 or GATE-2 complete from Part A. TASK-024 remains pending and was not started. TASK-019 Part B remains blocked on PRE-08 target-host key-path/ACL provisioning.
 
 Critical path reminder:
 ```
@@ -405,7 +405,7 @@ PRE-04 resolved
 
 *(To be filled by the agent ending a session — for the agent starting the next session)*
 
-**Current session:** TASK-025 Part B validated COMP-EXPORT on `feature/exporter`. The first targeted run passed 26/27 and proved the recorded CLI import mismatch; the minimal import repair then produced 27/27 targeted passes. Relevant regression passed 107 with 3 existing expected skips. Exact bundle contents, metadata, state/non-claim preservation, complete evidence/provenance/deferred output, read-only behavior, non-mutating corruption visibility, deterministic bytes, path containment, overwrite prevention, bounded failures, secret/prohibited-field rejection, offline imports, and CLI delegation are covered. Static guards passed. TASK-025 is `TESTED`; TASK-024 was not started and Stage 11 was not closed. PRE-08, E-2, HOST-CAP-003, HOST-CAP-002 deployment limitations, and TASK-017 SEC-002/SEC-003 remain carried without expanded claims. Protected `docs/research/**` remains unchanged.
+**Current session:** TASK-026-A created `tests/integration/test_vertical_slice.py` on `feature/vertical-slice` without production changes. VS-001 through VS-007 are all collected. VS-003 through VS-007 pass against the actual supervisor/worker, persistence, C5, capability, CLI, and exporter boundaries; VS-001 and VS-002 skip exactly on HOST-CAP-001 because pycocotools is absent, with no parser bypass. The targeted result is 5 passed, 0 failed, 2 named skips. The test battery follows the frozen Technical Specification vocabulary and the resolved TASK-025 six-document bundle rather than introducing stale packet aliases. TASK-026 remains `IN PROGRESS`; GATE-2 is not passed; TASK-024 was not started. Protected `docs/research/**` remains unchanged.
 
 **TASK-020 specification reconciliation:** No separately saved Stage 8 packet was available in the repository or attachments; the current TASK-020 execution request and committed architecture/technical/MVP contracts supplied the scope. The MVP's §10 §3.17 citation points to COMP-FIX, so the concrete COMP-CAP API follows TASK-020 and the deferred persistence/audit contracts in §10 §§3.1, 3.15, 20.3. UT-CAP-001's generic deferred-count wording is met by enumerating drift/OOD and heavyweight methods separately while retaining M11=REFERENCE_UNAVAILABLE and tail=COMPLETENESS_UNAVAILABLE. T05d remains a permanent NON_CLAIM in persisted reason/non-claim text using the existing deferred-table envelope; no new assessment status was introduced.
 
