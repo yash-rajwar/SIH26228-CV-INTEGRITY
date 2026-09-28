@@ -1,126 +1,190 @@
-# Wheelhouse Dependency Closure Preparation
+# Controlled Online Dependency Acquisition Evidence
 
 **Date:** 2026-09-28
+
 **Branch:** `feature/vertical-slice`
-**Status:** `BLOCKED — execution stopped; no dependency blocker closed`
-**Prior runtime evidence:** [HOST-CAP resolution evidence](host_cap_resolution_evidence.md), committed at `6d3900e`.
 
-The project owner confirmed that the repository-relative `wheelhouse/` is the
-only approved/documented artifact source and that it contains no ONNX or
-pycocotools wheels or provenance records for those packages. There is no other
-approved local source. The owner instructed that dependency-closure execution
-stop and that HOST-CAP-001 and HOST-CAP-003 remain unresolved.
+**Scope:** HOST-CAP-001 / HOST-CAP-003 artifact acquisition only
 
-## Environment
+**Status:** `DEPENDENCY CLOSURE COMPLETE; RUNTIME VALIDATION NOT EXECUTED`
 
-These are the frozen target and previously validated interpreter, not new
-host/import measurements made by this preparation record.
+This record supersedes the missing-artifact inventory previously stored at this
+path. The project owner explicitly authorized a bounded online acquisition from
+official PyPI for compatible CPython 3.13 / Windows AMD64 binary wheels and
+their required transitive dependencies. The authorization did not include
+installation into the approved runtime, Gate-2, TASK-027-B, OFF-001 through
+OFF-004, product or test changes, or closure of HOST-CAP-001/HOST-CAP-003.
+
+## Acquisition Environment
 
 | Field | Value |
 |---|---|
-| OS | Windows 10 Pro, build 22631 (PRE-01 record) |
-| Python | CPython 3.13.12 |
-| Architecture | AMD64 |
-| Interpreter | Repository-relative `.venv-torch-test\Scripts\python.exe` |
-| Approved artifact directory | Repository-relative `wheelhouse/` only |
-| Required compiled-wheel target | CPython 3.13-compatible ABI / `win_amd64` |
+| Host | Windows 11 Pro build 22631, AMD64 |
+| Approved target interpreter | `C:\Users\master\AppData\Local\Programs\Python\Python313\python.exe` |
+| Python | CPython 3.13.12, 64-bit, GIL-enabled |
+| Package index | Official PyPI Simple API: `https://pypi.org/simple` |
+| Artifact host | `https://files.pythonhosted.org` |
+| Wheelhouse | Repository-relative `wheelhouse/` |
+| Acquisition UTC | 2026-09-28T12:15:44Z |
+| Build policy | Binary wheels only; no source distribution or local build |
 
-## Dependency Matrix
+## Version Selection
 
-The 10 existing wheels are unchanged. Their versions and SHA-256 values below
-are carried from the committed inventory, not newly hashed in this preparation
-phase. `STAGED` is an inventory fact, not proof of authenticated provenance,
-successful isolated installation, or complete offline dependency closure.
+Resolution used pip 26.2.1 with `--only-binary=:all:` against official PyPI
+and the existing wheelhouse. The initially resolved ONNX 1.23.1 was rejected
+because PyPI reported its upload as 2026-09-29T15:48:54.092469Z, later than
+this acquisition. ONNX 1.23.0 was the highest compatible, non-yanked release
+available by the acquisition timestamp. No future-dated artifact was staged.
 
-| Package | Version | Status | Hash (SHA-256) |
-|---|---|---|---|
-| filelock | 3.32.3 | STAGED | `7f0ca4bcc0e181c60dbbd8aa9ab5b120ebb99e4e064e83636340056f833a1f09` |
-| fsspec | 2026.7.0 | STAGED | `b57ddbafedfaef7018c1ecab32aa200a9d7ca26b77965f64e48b70061249d279` |
-| jinja2 | 3.1.6 | STAGED | `85ece4451f492d0c13c5dd7c13a64681a86afae63a5f347908daf103ce6d2f67` |
-| markupsafe | 3.0.3 | STAGED | `9a1abfdc021a164803f4d485104931fb8f8c1efd55bc6b748d2f5774e78b62c5` |
-| mpmath | 1.3.0 | STAGED | `a0b2b9fe80bbcd81a6647ff13108738cfb482d481d826cc0e02f5b35e5c88d2c` |
-| networkx | 3.6.1 | STAGED | `d47fbf302e7d9cbbb9e2555a0d267983d2aa476bac30e90dfbe5669bd57f3762` |
-| setuptools | 78.1.0 | STAGED | `3e386e96793c8702ae83d17b853fb93d3e09ef82ec62722e61da5cd22376dcd8` |
-| sympy | 1.14.0 | STAGED | `e091cc3e99d2141a0ba2847328f5479b05d94a6635cb96148ccb3f34671bd8f5` |
-| torch | 2.10.0+cpu | STAGED; prior approved-environment import PASS | `b719da5af01b59126ac13eefd6ba3dd12d002dc0e8e79b8b365e55267a8189d3` |
-| typing_extensions | 4.16.0 | STAGED | `481caa481374e813c1b176ada14e97f1f67a4539ce9cfeb3f350d78d6370c2e8` |
-| onnx | UNAVAILABLE | MISSING | UNAVAILABLE |
-| pycocotools | UNAVAILABLE | MISSING | UNAVAILABLE |
+| Package | Selected version | Wheel tag | Target compatibility |
+|---|---:|---|---|
+| onnx | 1.23.0 | `cp312-abi3-win_amd64` | PASS: stable ABI supports CPython 3.13 / Windows AMD64 |
+| pycocotools | 2.0.11 | `cp312-abi3-win_amd64` | PASS: stable ABI supports CPython 3.13 / Windows AMD64 |
+| numpy | 2.5.3 | `cp313-cp313-win_amd64` | PASS |
+| protobuf | 7.36.2 | `cp310-abi3-win_amd64` | PASS: stable ABI supports CPython 3.13 / Windows AMD64 |
+| ml_dtypes | 0.6.0 | `cp313-cp313-win_amd64` | PASS |
+| typing_extensions | 4.16.0 | `py3-none-any` | PASS; identical wheel was already staged |
 
-Exact existing filenames and sizes remain in the prior inventory. No wheel was
-added, copied, downloaded, installed, or removed. Source and acquisition dates
-for existing wheels are not established by that inventory and are not invented.
+## Dependency Closure
 
-### Missing artifact provenance
-
-| Required field | onnx | pycocotools |
+| Root / dependency | Declared requirement | Resolution |
 |---|---|---|
-| Package | onnx | pycocotools |
-| Version | UNAVAILABLE | UNAVAILABLE |
-| Filename | NONE | NONE |
-| SHA-256 | UNAVAILABLE | UNAVAILABLE |
-| Approved source artifact / provenance record | NONE PROVIDED | NONE PROVIDED |
-| Acquisition date | UNAVAILABLE | UNAVAILABLE |
-| Python ABI | Required CPython 3.13-compatible; no artifact verified | Required CPython 3.13-compatible; no artifact verified |
-| Platform | Required `win_amd64`; no artifact verified | Required `win_amd64`; no artifact verified |
-| Architecture | Required AMD64; no artifact verified | Required AMD64; no artifact verified |
+| onnx 1.23.0 | Python >=3.10 | Python 3.13.12 |
+| onnx → numpy | `numpy>=1.23.2` | numpy 2.5.3 |
+| onnx → protobuf | `protobuf>=6.31.1` | protobuf 7.36.2 |
+| onnx → typing_extensions | `typing_extensions>=4.7.1` | typing_extensions 4.16.0, already staged |
+| onnx → ml_dtypes | `ml_dtypes>=0.5.4` | ml_dtypes 0.6.0 |
+| pycocotools 2.0.11 | Python >=3.9 | Python 3.13.12 |
+| pycocotools → numpy | `numpy` | numpy 2.5.3 |
 
-The complete transitive closure must also be supplied and checked against the
-approved wheels' metadata. No dependency versions or closure are guessed from
-unavailable artifacts. ONNX Runtime is not required by the approved C3A/C3C
-implementation and is not added as a prerequisite.
+Pillow (ONNX `reference` extra) and matplotlib (pycocotools `all` extra) are
+optional extras and are not part of the requested runtime closure. An offline
+dry-run combining the existing Torch 2.10.0+cpu set with ONNX 1.23.0 and
+pycocotools 2.0.11 completed without conflict and selected 15 staged wheels.
+No source distribution was selected.
 
-## HOST-CAP Impact
+## Wheel Metadata Review
 
-| Blocker | Previous | New | Reason |
-|---|---|---|---|
-| HOST-CAP-001 | UNAVAILABLE | REMAINS UNAVAILABLE / UNRESOLVED | No approved pycocotools artifact, provenance, compatibility, installation, or successful import evidence |
-| HOST-CAP-003 | UNAVAILABLE | REMAINS UNAVAILABLE / UNRESOLVED | No approved ONNX artifact, provenance, compatibility, installation, or successful import evidence |
+| Package | METADATA name/version | Requires-Python | WHEEL generator | Purelib | Required dependencies |
+|---|---|---|---|---|---|
+| onnx | onnx 1.23.0 | >=3.10 | scikit-build-core 1.0.3 | false | numpy, protobuf, typing_extensions, ml_dtypes |
+| pycocotools | pycocotools 2.0.11 | >=3.9 | setuptools 80.9.0 | false | numpy |
+| numpy | numpy 2.5.3 | >=3.12 | meson | false | none |
+| protobuf | protobuf 7.36.2 | >=3.10 | bazel-wheelmaker 1.0 | false | none |
+| ml_dtypes | ml_dtypes 0.6.0 | >=3.10 | scikit-build-core 1.0.3 | false | numpy (version conditioned by Python) |
+| typing_extensions | typing_extensions 4.16.0 | >=3.9 | flit 3.12.0 | true | none |
 
-GATE-2, TASK-027-B, and OFFLINE-001 retain their existing outcomes. HOST-CAP-002,
-PRE-08, and E-2 are unchanged. TASK-024 and Stage 13 were not started.
+All six wheel archives passed ZIP integrity checks. Embedded METADATA
+name/version values matched their filenames.
 
-## Validation Performed
+## Hash Verification and Provenance
 
-This phase reviewed AGENTS.md, PROJECT_STATE.md, the committed HOST-CAP evidence,
-TASK-027 offline documentation/verifier, and the existing wheelhouse. An initial
-read-only bounded local search found no target wheels before the owner's source
-clarification; no other location was treated as approved or used. All further
-dependency searches and execution stopped on the owner's instruction.
+Every SHA-256 below was recomputed locally and matched the official PyPI file
+digest exactly.
 
-Current branch synchronization used `git pull --ff-only origin feature/vertical-slice`
-and reported already up to date. The worktree was clean before documentation edits.
+| Artifact | Bytes | SHA-256 | Official digest |
+|---|---:|---|---|
+| `onnx-1.23.0-cp312-abi3-win_amd64.whl` | 7,872,197 | `70a2f930b221f9dbdff62704838ce8bf81442787b25048f8b9cdc9118168799e` | MATCH |
+| `pycocotools-2.0.11-cp312-abi3-win_amd64.whl` | 77,570 | `ffe806ce535f5996445188f9a35643791dc54beabc61bd81e2b03367356d604f` | MATCH |
+| `numpy-2.5.3-cp313-cp313-win_amd64.whl` | 12,560,965 | `71cad2b2a7451ab79d8f5e71b453485b6775963d5cf794179144a7463fe6e8ec` | MATCH |
+| `protobuf-7.36.2-cp310-abi3-win_amd64.whl` | 456,514 | `a300819d441e078a5608c0d3c709796bb548136058fda017ae51d425b44fd353` | MATCH |
+| `ml_dtypes-0.6.0-cp313-cp313-win_amd64.whl` | 439,357 | `fb87f46b4f7ad7b5d3ad8f4b452b024bd4229d44c8ff934798c1fe656210387a` | MATCH |
+| `typing_extensions-4.16.0-py3-none-any.whl` | 45,571 | `481caa481374e813c1b176ada14e97f1f67a4539ce9cfeb3f350d78d6370c2e8` | MATCH; pre-existing |
 
-| Check / command | Result in this phase |
+Official artifact URLs and upload timestamps:
+
+| Package | Official artifact URL | PyPI upload UTC |
+|---|---|---|
+| onnx | `https://files.pythonhosted.org/packages/81/5a/766abb1411b9f9b06dc4e8fe9ff195d3b715535677c362ab3d950fa0e93f/onnx-1.23.0-cp312-abi3-win_amd64.whl` | 2026-09-18T19:30:20.619654Z |
+| pycocotools | `https://files.pythonhosted.org/packages/83/b4/f6708404ff494706b80e714b919f76dc4ec9845a4007affd6d6b0843f928/pycocotools-2.0.11-cp312-abi3-win_amd64.whl` | 2025-12-15T22:31:17.703037Z |
+| numpy | `https://files.pythonhosted.org/packages/f3/ec/100f2b1794ede74a9b3d7ec6b9736927f56713414c1dfe19ab6c383494bf/numpy-2.5.3-cp313-cp313-win_amd64.whl` | 2026-09-06T16:25:26.602903Z |
+| protobuf | `https://files.pythonhosted.org/packages/8a/55/b77bda4e5e5f5971fb51b07663694690e9afdb9402136c16a522bd621cad/protobuf-7.36.2-cp310-abi3-win_amd64.whl` | 2026-09-17T20:07:57.188171Z |
+| ml_dtypes | `https://files.pythonhosted.org/packages/e2/55/4561acefa00fa4bcbfb82ca6a48578b41f372cd7dd7cdd6eb4720abc2e5f/ml_dtypes-0.6.0-cp313-cp313-win_amd64.whl` | 2026-08-13T14:14:12.172352Z |
+| typing_extensions | `https://files.pythonhosted.org/packages/49/d3/b8441a820a491ddfc024b0b0cf0393375b75ea13866d9c66727e54c2fc80/typing_extensions-4.16.0-py3-none-any.whl` | 2026-07-02 |
+
+PyPI Integrity API records were present for ONNX, pycocotools, numpy,
+ml_dtypes, and typing_extensions; every returned statement subject matched the
+selected filename and SHA-256. The protobuf endpoint returned no attestation.
+Attestation cryptography was not independently verified. Provenance is therefore
+`PARTIAL` and `PROVENANCE_ATTESTATION_NOT_VERIFIED`, not authenticated
+supply-chain proof.
+
+## Final Wheelhouse Inventory
+
+Five wheels were newly copied: ONNX, pycocotools, numpy, protobuf, and
+ml_dtypes. The identical typing_extensions dependency was already present. All
+15 wheelhouse files were SHA-256 hashed after staging.
+
+| Filename | SHA-256 |
 |---|---|
-| Target-wheel compatibility and new SHA-256 verification | BLOCKED / NOT EXECUTED — target artifacts absent |
-| Offline `pip install --no-index --find-links=wheelhouse` | NOT EXECUTED — no target artifacts; owner requested stop |
-| `import onnx` / `import pycocotools` | NOT RERUN; prior committed imports FAIL with ModuleNotFoundError |
-| Wheelhouse verifier | NOT RERUN; prior committed result is exit 1 / incomplete closure |
-| GATE-2 / TASK-027-B / OFF test execution | NOT RERUN |
-| `rg -n -F 'weights_only=False' assurance_system/` | Zero matches, rg exit 1 |
-| `rg -n -F 'risk_score' assurance_system/` | Zero matches, rg exit 1 |
-| Exact-name positive-constant guard (`CLEAN`, `SAFE`, `HEALTHY`) in constants.py | Zero prohibited positive constants, rg exit 1 |
-| `rg -n -F 'pip install' scripts/` | Zero matches, rg exit 1 |
-| Raw `requests\|urllib\|socket` production scan | Only local orchestrator `requests` variable names; no urllib/socket matches |
-| Anchored production imports of requests, urllib, socket | Zero matches, rg exit 1 |
+| `filelock-3.32.3-py3-none-any.whl` | `7f0ca4bcc0e181c60dbbd8aa9ab5b120ebb99e4e064e83636340056f833a1f09` |
+| `fsspec-2026.7.0-py3-none-any.whl` | `b57ddbafedfaef7018c1ecab32aa200a9d7ca26b77965f64e48b70061249d279` |
+| `jinja2-3.1.6-py3-none-any.whl` | `85ece4451f492d0c13c5dd7c13a64681a86afae63a5f347908daf103ce6d2f67` |
+| `markupsafe-3.0.3-cp313-cp313-win_amd64.whl` | `9a1abfdc021a164803f4d485104931fb8f8c1efd55bc6b748d2f5774e78b62c5` |
+| `ml_dtypes-0.6.0-cp313-cp313-win_amd64.whl` | `fb87f46b4f7ad7b5d3ad8f4b452b024bd4229d44c8ff934798c1fe656210387a` |
+| `mpmath-1.3.0-py3-none-any.whl` | `a0b2b9fe80bbcd81a6647ff13108738cfb482d481d826cc0e02f5b35e5c88d2c` |
+| `networkx-3.6.1-py3-none-any.whl` | `d47fbf302e7d9cbbb9e2555a0d267983d2aa476bac30e90dfbe5669bd57f3762` |
+| `numpy-2.5.3-cp313-cp313-win_amd64.whl` | `71cad2b2a7451ab79d8f5e71b453485b6775963d5cf794179144a7463fe6e8ec` |
+| `onnx-1.23.0-cp312-abi3-win_amd64.whl` | `70a2f930b221f9dbdff62704838ce8bf81442787b25048f8b9cdc9118168799e` |
+| `protobuf-7.36.2-cp310-abi3-win_amd64.whl` | `a300819d441e078a5608c0d3c709796bb548136058fda017ae51d425b44fd353` |
+| `pycocotools-2.0.11-cp312-abi3-win_amd64.whl` | `ffe806ce535f5996445188f9a35643791dc54beabc61bd81e2b03367356d604f` |
+| `setuptools-78.1.0-py3-none-any.whl` | `3e386e96793c8702ae83d17b853fb93d3e09ef82ec62722e61da5cd22376dcd8` |
+| `sympy-1.14.0-py3-none-any.whl` | `e091cc3e99d2141a0ba2847328f5479b05d94a6635cb96148ccb3f34671bd8f5` |
+| `torch-2.10.0+cpu-cp313-cp313-win_amd64.whl` | `b719da5af01b59126ac13eefd6ba3dd12d002dc0e8e79b8b365e55267a8189d3` |
+| `typing_extensions-4.16.0-py3-none-any.whl` | `481caa481374e813c1b176ada14e97f1f67a4539ce9cfeb3f350d78d6370c2e8` |
 
-These static documentation-commit guards are not runtime/offline validation.
-The prior review records local-only verifier behavior; this phase added no
-installation command, network fallback, or automatic download path.
+`wheelhouse/` remains ignored by Git as required; acquisition does not add
+large binaries to version control.
 
-## Limitations
+## Wheelhouse Verifier
 
-Dependency closure acceptance is **not satisfied**. Computed hashes of existing
-wheels do not authenticate their source. No new compatibility, installation,
-successful target-package import, regression, or zero-egress result is claimed.
-Production code, tests, architecture, requirements, and protected
-`docs/research/**` content remain unchanged.
+The existing verifier ran with the approved CPython 3.13.12 executable. It
+used an isolated temporary `pip --target` operation and did not install into
+the approved interpreter environment.
 
-The next required action belongs to the project owner/deployment process:
-provide approved, provenance-recorded, independently hash-verified CPython 3.13 /
-Windows AMD64 ONNX and pycocotools wheels plus their transitive dependencies.
-Every artifact must include package/version/filename/SHA-256/source/acquisition
-date/ABI/platform/architecture records. Once provided, re-run wheelhouse
-verification and continue only with authorized validation re-entry. No package
-acquisition or later-stage execution is authorized by this blocked record.
+```text
+PACKAGE STATUS
+torch>=2.10.0: STAGED
+onnx: STAGED
+pycocotools: STAGED
+INSTALL STATUS: PASS
+IMPORT STATUS
+onnx: PASS
+torch: PASS
+pycocotools: PASS
+WHEELHOUSE_VERIFIER_EXIT=0
+```
+
+This proves binary dependency closure and temporary isolated importability. It
+does not replace separately authorized TASK-027-B target-runtime and
+zero-egress validation.
+
+## Security and Scope Controls
+
+- Acquisition used only official PyPI endpoints and only for artifact and
+  provenance retrieval.
+- No runtime network path, downloader, dependency installer, product source,
+  test, architecture, requirements, or protected `docs/research/**` content was
+  changed.
+- No package was installed into the approved Python environment.
+- No Gate-2, TASK-027-B, OFF-001 through OFF-004, TASK-024, or Stage 13 work was
+  executed.
+- E-2 and PRE-08 remain unchanged.
+
+## Current Blocker Disposition
+
+| Blocker | Current disposition |
+|---|---|
+| HOST-CAP-001 | `ARTIFACT STAGED / RUNTIME NOT VERIFIED` |
+| HOST-CAP-003 | `ARTIFACT STAGED / RUNTIME NOT VERIFIED` |
+| HOST-CAP-002 | unchanged / PARTIAL |
+| OFFLINE-001 | OPEN; revalidation required |
+| E-2 | OPEN |
+| PRE-08 | PARTIAL / unresolved operational provisioning |
+| GATE-2 | BLOCKED; not rerun |
+
+The next authorized action requires a separate validation re-entry packet. It
+must explicitly authorize offline installation/import verification in the
+approved validation environment, affected regression, Gate-2.1/Gate-2.2, and
+OFF-001 through OFF-004 in prerequisite order. Artifact staging alone does not
+close either host capability blocker.
