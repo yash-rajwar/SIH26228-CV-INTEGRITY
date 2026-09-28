@@ -1,8 +1,8 @@
 # TASK-027-B Target-Host Offline Validation Evidence
 
-**Date:** 2026-09-28  
-**Branch:** `feature/vertical-slice`  
-**Result:** `TESTED WITH BLOCKERS`  
+**Date:** 2026-09-28
+**Branch:** `feature/vertical-slice`
+**Result:** `TESTED WITH BLOCKERS`
 **Offline capability claim:** `NOT ESTABLISHED`
 
 This record reports only observed TASK-027-B results. No package was downloaded,
