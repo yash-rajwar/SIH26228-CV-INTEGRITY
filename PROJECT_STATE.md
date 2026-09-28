@@ -12,7 +12,7 @@ Update this file at the end of every coding session before committing.
 ## PROJECT
 
 **Name:** Trustworthy Computer Vision Integrity Assurance — SIH 2026 PS 26228  
-**Current stage:** TASK-027-E dependency contract and wheelhouse closure `TESTED`; fresh TASK-027 validation remains blocked on an approved zero-egress evidence procedure
+**Current stage:** TASK-027-F OFF-002 procedure defined and mechanically dry-run; authorized execution remains blocked pending an approved isolated/quiescent network boundary
 **Repository created:** [DATE TO BE FILLED ON REPO INIT]  
 **Five-day window start:** [DATE — begins after P1 conditions resolved]
 
@@ -62,26 +62,25 @@ Status codes: `NOT STARTED` | `IN PROGRESS` | `IMPLEMENTED` | `TESTED` | `VALIDA
 | Dashboard (SHOULD BUILD) | TASK-024 | `NOT STARTED` | `NOT AUTHORIZED` while GATE-2 remains blocked; Antigravity begins only after GATE-2 passes |
 | Evidence bundle exporter | TASK-025 | `TESTED` | Deterministic read-only six-document ZIP packaging, complete field/state preservation, non-mutating audit verification, path and overwrite controls, secret/prohibited-field rejection, and CLI delegation are validated. Targeted: 27 passed; relevant regression: 107 passed, 3 expected skips. |
 | End-to-end integration test | TASK-026 | `BLOCKED` | Final TASK-026 status: `TESTED WITH BLOCKERS`. Five Gate-2 items pass; Gate-2.1 valid COCO and Gate-2.2 FIX-008 remain blocked by HOST-CAP-001. The all-of GATE-2 decision is `BLOCKED`. |
-| Offline validation (target host) | TASK-027 | `BLOCKED` | TASK-027-E integrated the ONNX/protobuf fix, declared and staged PyYAML 6.0.3, and verified the declared application wheelhouse plus production config/YAML paths. Historical OFF results were not rerun; OFF-002 still lacks an approved zero-egress evidence procedure. No offline capability is claimed. |
+| Offline validation (target host) | TASK-027 | `BLOCKED` | TASK-027-F defines strict all-NIC/no-filter zero-egress evidence and proves PktMon capture/conversion mechanics. The connected host emits unattributed background traffic and PktMon has no process filter, so an approved isolated/quiescent execution boundary is still required. OFF-001..004 were not rerun and no offline capability is claimed. |
 
 ---
 
 ## CURRENT TASK
 
 ```
-TASK: TASK-027-E Dependency Contract Closure + Compatibility Fix Integration
+TASK: TASK-027-F OFF-002 Zero-Egress Evidence Procedure Definition
 Owner: Codex
 Branch: feature/vertical-slice
 Started: 2026-09-28
-Status: TESTED — dependency closure prepared; OFF contracts and Gate-2 were not rerun.
+Status: DOCUMENTED / NOT READY — capture mechanics validated; authorized OFF-002 execution blocked on an approved isolated/quiescent boundary.
 
 Validated behavior:
-  INTEGRATION: feature/vertical-slice fast-forwarded from 94501ba to unchanged commit 81bfd36; no cherry-pick, rebase, squash, or history rewrite.
-  DEPENDENCY: PyYAML==6.0.3 is now declared in requirements.txt and the architecture/technical dependency tables because ConfigLoader and supervisor YAML manifests are production paths.
-  WHEEL: Official cp313-cp313-win_amd64 binary staged; local SHA-256 matches PyPI. Provenance is PARTIAL because PyPI's Integrity API has no provenance object for this exact file.
-  CLOSURE: Verifier reports Torch, ONNX, pycocotools, and PyYAML staged; isolated install and core imports pass with exit 0. Direct yaml.safe_load, ConfigLoader, and supervisor YAML manifest checks pass.
-  REGRESSION: Config/orchestrator 24 passed; C3A/C3C 48 passed; C3B/schema/orchestrator 42 passed; security 87 passed with 6 pre-existing skips; direct prohibited scans are clean.
-  ZERO EGRESS: Windows PktMon is present, but no project-approved capture/filter/acceptance procedure exists. OFF-002 remains BLOCKED.
+  CONTRACT: OFF-002 requires a full-pipeline monitored window with exactly zero bytes transmitted at every non-loopback host boundary; --no-index and wheel evidence are insufficient.
+  NETWORK: Ethernet0 3 is active with an IPv4 default route, Internet connectivity, DNS, and enabled firewall profiles; no WinHTTP/user/environment proxy is configured. No network setting was changed.
+  PKTMON: All-NIC/no-filter capture, counters, ETL, text, and PCAPNG conversion are available and mechanically validated. IPv4 and IPv6 remain in scope; the target currently has no external IPv6 route.
+  DRY RUN: One local-subnet and one remote IPv4 ICMP event were captured. PktMon reported no lost ETL events and converted 106 packet appearances with zero packet drops, but also captured continuous unrelated RDP/HTTPS transmissions without process attribution.
+  DECISION: NOT READY. An approved local-console/isolated or equivalently quiescent boundary is required before separately authorized OFF-002 execution. No OFF contract was run and no zero-egress claim was made.
   UNCHANGED: E-2 OPEN; PRE-08 PARTIAL; HOST-CAP-002 PARTIAL; historical OFF/Gate results unchanged; TASK-024 not authorized; protected research content unchanged.
 ```
 
@@ -127,6 +126,7 @@ Validated behavior:
 | TASK-027-C validation re-entry | Installed the declared staged closure into a fresh temporary venv with `--no-index`; verified native imports; exercised real C2A/C3A/C3C paths; stopped without implementation changes when the full application closure lacked PyYAML and ONNX traversal exposed a protobuf API compatibility defect. | Verifier exit 0; selected offline install exit 0; seven requested package imports pass; yaml import fails; C2A valid/FIX-008 paths fail closed; C3A/C3C valid ONNX path fails; regression and Gate scenarios withheld. | This TASK-027-C evidence commit |
 | C3A/C3C ONNX/protobuf compatibility fix | Replaced the removed protobuf descriptor `label` dependency with modern `is_repeated` cardinality detection plus a legacy fallback. Preserved full protobuf-reachable TensorProto traversal, containment-before-file-access, checker-only validation, E-2 behavior, PF-002/EF-004, and all non-claims. | Focused defect cases 5 passed; full C3A/C3C 48 passed; related C3B/schema/orchestrator 41 passed; security rerun 2 passed, 4 pre-existing stubs skipped; static guards clean. | This compatibility-fix commit |
 | TASK-027-E dependency contract closure | Fast-forwarded `81bfd36` into `feature/vertical-slice`; declared PyYAML 6.0.3 through the existing requirements mechanism and authoritative dependency tables; staged and hash-verified the official CPython 3.13 / Windows AMD64 wheel; verified application closure and production YAML paths; retained all OFF/Gate claim boundaries. | Verifier exit 0; config/orchestrator 24 passed; C3A/C3C 48 passed; C3B/schema/orchestrator 42 passed; security 87 passed, 6 pre-existing skips; static guards clean. | This TASK-027-E completion commit |
+| TASK-027-F OFF-002 procedure | Defined the strict host-boundary zero-egress contract, target network boundary, conservative PktMon capture, acceptance rules, evidence package, reproducibility steps, and false-positive/negative controls. Performed a bounded ICMP dry run proving capture/conversion mechanics without running OFF-002. | PktMon dry run: start/stop PASS; ETL/text/PCAPNG PASS; 106 packet appearances, 0 drops, 0 lost ETL events; controlled local/remote packets visible. Continuous unattributed background Tx makes readiness `NOT READY`; no OFF/Gate tests run. | This TASK-027-F procedure commit |
 
 ---
 
@@ -137,7 +137,7 @@ Validated behavior:
 | PRE-08 | HMAC-SHA256 parameters are frozen, but a Windows target-host absolute key path and supervisor-only ACL verification are not yet provisioned | TASK-019 operational signing | Project owner / deployment owner |
 | HOST-CAP-001 | REVALIDATION PENDING: pycocotools and PyYAML now import in the repository-local CPython 3.13 environment, ConfigLoader passes, and the declared wheelhouse closes. Valid COCO/FIX-008 and Gate-2 were not rerun in TASK-027-E. | TASK-010 COCO runtime claims; TASK-026 VS-001/VS-002; GATE-2 | Dependency / deployment owner |
 | HOST-CAP-002 | `close_fds=True` subprocess isolation passes, but Python `resource`/Unix RLIMIT controls are unavailable and no authorized Windows replacement exists; capability remains PARTIAL | Resource-limit enforcement claims; later isolation hardening if required | Architecture / deployment owner |
-| OFFLINE-001 | Dependency closure is prepared and verified, but historical OFF-001..004 were not rerun. OFF-002 lacks a project-approved PktMon capture/filter/acceptance procedure; `--no-index` is not zero-egress evidence. | TASK-027 and every offline deployment claim | Dependency / deployment owner |
+| OFFLINE-001 | Dependency closure is prepared and verified, and TASK-027-F defines a conservative PktMon capture/acceptance procedure. Historical OFF-001..004 were not rerun. OFF-002 remains blocked because the connected host emits concurrent unattributed traffic, PktMon lacks process attribution, and no approved isolated/quiescent execution boundary is provisioned. | TASK-027 and every offline deployment claim | Dependency / deployment owner |
 | E-2 / SP-002-ONNX | No frozen ONNX artifact-unit definition ID exists. C3A returns the resolved manifest as `ARTIFACT_UNIT_AMBIGUOUS` with definition ID `UNAVAILABLE`; no ID is inferred from PyTorch. | Final ONNX C3A acceptance and TASK-015 ONNX hashing | Project owner / architecture owner |
 | HOST-CAP-003 / TASK-014 packet E-3 | FORMAL RECONCILIATION PENDING: the protobuf 7.36.2 descriptor compatibility defect is fixed; real ONNX C3A/C3C tests pass without ONNX Runtime, with full containment traversal preserved. TASK-027-C itself has not been rerun, so this task does not silently close the recorded host-capability blocker. | TASK-027-C state reconciliation; E-2 remains separate for C3A identity | Dependency / deployment owner |
 | TASK-022-C3D-INTEGRATION | SEC-002 OOM termination/continuation and SEC-003 timeout/responsiveness require the real supervisor dispatch/orchestrator; worker-level C3D validation is complete and these integration claims remain explicitly unverified | TASK-017 supervisor-level integration evidence | TASK-022 implementation owner |
@@ -167,10 +167,10 @@ Validated behavior:
 ## LATEST VALIDATED COMMIT
 
 ```
-Commit: This TASK-027-E dependency-contract completion commit
+Commit: This TASK-027-F procedure-definition commit
 Branch: feature/vertical-slice
 Date: 2026-09-28
-Tests: Wheelhouse verifier exit 0; config/orchestrator 24 passed; C3A/C3C 48 passed; C3B/schema/orchestrator 42 passed; security 87 passed with 6 pre-existing skips; static guards clean. OFF/Gate not run.
+Tests: No product/OFF/Gate tests run. PktMon procedure dry run started/stopped cleanly, generated ETL/text/PCAPNG, reported 0 lost ETL events and 0 packet drops, and exposed controlled plus unattributed background traffic. Final readiness: NOT READY.
 ```
 
 ---
@@ -179,10 +179,10 @@ Tests: Wheelhouse verifier exit 0; config/orchestrator 24 passed; C3A/C3C 48 pas
 
 ```
 Date: 2026-09-28
-Latest validation: Repository-local CPython 3.13.12 with PyYAML 6.0.3, ONNX 1.23.0, protobuf 7.36.2, pycocotools 2.0.11, Torch 2.10.0+cpu, and pytest 9.1.1 from the approved offline test package source.
-Executed checks: wheelhouse verifier exit 0; ConfigLoader/supervisor YAML regression 24/24; C3A/C3C 48/48; C3B/schema/orchestrator 42/42; security 87 passed with 6 historical task-gated skips.
-Focused coverage: declared dependency closure, yaml.safe_load, committed configuration files, YAML submission manifest, genuine ONNX traversal/containment/checker behavior, E-2 preservation, and affected supervisor/schema paths.
-Security checks: zero production matches for unsafe loaders, unsafe model loading, score fields, aggregate assurance, compromise probability, shell execution, ONNX Runtime, external-data loading, runtime package installation, network imports, or prohibited positive constants.
+Latest validation: Documentation-only TASK-027-F procedure-capability check; prior TASK-027-E product/dependency results remain the latest product validation.
+Executed checks: PktMon availability/help/filter review; target adapter/address/route/DNS/proxy/firewall inventory; bounded all-NIC/no-filter ICMP dry run; ETL-to-text and ETL-to-PCAPNG conversion; SHA-256 hashing.
+Focused coverage: capture start/stop, NIC boundary coverage, endpoint/direction visibility, conversion/auditability, timestamp correlation, and background-traffic attribution limits.
+Result: Procedure mechanics PASS; current execution readiness NOT READY because continuous unrelated RDP/HTTPS transmissions are not process-attributable. OFF-002 remains BLOCKED and was not run.
 
 Integration gates:
   GATE-1 (Foundation):       NOT PASSED
@@ -568,7 +568,7 @@ The Stage 6 rule permits exit when every requirement is either satisfied with ev
 
 ## NEXT TASK
 
-**Next authorized action:** Freeze and approve an OFF-002 evidence procedure for the available Windows Packet Monitor (or another accepted isolation/monitoring mechanism), then issue a separate TASK-027 validation re-entry authorization. That run must execute OFF-001 through OFF-004 in prerequisite order and may only reconsider Gate-2.1/2.2 under separate Gate authorization. TASK-024 remains `NOT AUTHORIZED`; PRE-08 and E-2 remain separate unresolved blockers.
+**Next authorized action:** The deployment owner must provision and approve a local-console isolated or equivalently quiescent execution boundary in which every non-loopback transmit can be treated deterministically; PktMon alone cannot attribute the current background traffic. After that precondition is reviewed, issue a separate OFF-002/TASK-027 validation authorization using `docs/task027f_off002_zero_egress_procedure.md`. OFF-001 through OFF-004 must execute in prerequisite order, and Gate-2.1/2.2 require separate Gate authorization. TASK-024 remains `NOT AUTHORIZED`; PRE-08 and E-2 remain separate unresolved blockers.
 
 Critical path reminder:
 ```
@@ -623,7 +623,7 @@ PRE-04 resolved
 
 *(To be filled by the agent ending a session — for the agent starting the next session)*
 
-**Current session:** TASK-027-E fast-forwarded the unchanged compatibility commit `81bfd36` into `feature/vertical-slice`. Production dependency analysis was formalized by declaring `PyYAML==6.0.3` in the existing requirements mechanism and the architecture/technical dependency tables. The official `cp313-cp313-win_amd64` wheel is staged locally; its computed SHA-256 matches PyPI, while provenance remains PARTIAL because PyPI's Integrity API has no provenance object for the file. The verifier consumes PyYAML from requirements and exits 0. Repository-local `import yaml`, `safe_load`, ConfigLoader, and supervisor YAML manifest handling pass. Config/orchestrator tests pass 24, C3A/C3C pass 48, C3B/schema/orchestrator pass 42, and security passes 87 with 6 historical skips; static guards are clean. No C3A/C3C production logic changed in this commit. PktMon is technically present, but no approved OFF-002 capture and acceptance procedure exists, so OFF-002 and overall offline validation remain blocked. E-2 OPEN, PRE-08 PARTIAL, HOST-CAP-002 PARTIAL, Gate-2 BLOCKED, TASK-024 unauthorized, and protected `docs/research/**` unchanged.
+**Current session:** TASK-027-F defined the OFF-002 host-boundary contract, captured the actual target network/proxy/firewall boundary, and documented an all-NIC/no-filter PktMon runbook with strict zero-Tx acceptance, auditable evidence, and false-positive/negative controls. A bounded dry run captured both controlled local/remote ICMP events, produced ETL/text/PCAPNG with no reported loss/drop, and exposed continuous unrelated RDP/HTTPS transmissions. PktMon has no PID/process filter, so the current connected session cannot distinguish validation traffic with sufficient confidence. Procedure mechanics are available, but final readiness is `NOT READY` until the deployment owner provisions an approved isolated/local-console or equivalently quiescent boundary. OFF-002 remains BLOCKED and was not run. OFF/Gate/TASK-024 states, HOST-CAP-001/002/003, E-2, PRE-08, production code, tests, and protected `docs/research/**` are unchanged.
 
 **TASK-020 specification reconciliation:** No separately saved Stage 8 packet was available in the repository or attachments; the current TASK-020 execution request and committed architecture/technical/MVP contracts supplied the scope. The MVP's §10 §3.17 citation points to COMP-FIX, so the concrete COMP-CAP API follows TASK-020 and the deferred persistence/audit contracts in §10 §§3.1, 3.15, 20.3. UT-CAP-001's generic deferred-count wording is met by enumerating drift/OOD and heavyweight methods separately while retaining M11=REFERENCE_UNAVAILABLE and tail=COMPLETENESS_UNAVAILABLE. T05d remains a permanent NON_CLAIM in persisted reason/non-claim text using the existing deferred-table envelope; no new assessment status was introduced.
 
