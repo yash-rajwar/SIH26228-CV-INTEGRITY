@@ -12,7 +12,7 @@ Update this file at the end of every coding session before committing.
 ## PROJECT
 
 **Name:** Trustworthy Computer Vision Integrity Assurance — SIH 2026 PS 26228  
-**Current stage:** TASK-027-C validation `BLOCKED`; missing approved PyYAML artifact and ONNX/protobuf production compatibility defect prevent Gate-2 re-entry
+**Current stage:** C3A/C3C ONNX/protobuf compatibility fix `TESTED`; TASK-027-C re-entry remains blocked on approved PyYAML and zero-egress evidence
 **Repository created:** [DATE TO BE FILLED ON REPO INIT]  
 **Five-day window start:** [DATE — begins after P1 conditions resolved]
 
@@ -43,14 +43,14 @@ Status codes: `NOT STARTED` | `IN PROGRESS` | `IMPLEMENTED` | `TESTED` | `VALIDA
 | Audit chain writer | TASK-006 | `TESTED` | UT-AUD-001..005 and the dedicated SEC-010 corruption test pass in the current Stage 8 prerequisite reconciliation; fail-closed atomic hash chain, corruption diagnostics, sequence-gap detection, and no reset path committed at `0f671ca` |
 | Worker base (IPC, resource limits) | TASK-007 | `TESTED` | Worker-side named-file IPC, fail-closed output builder, path containment, crash handling, and timeout test harness committed at `793950a`; Windows RLIMIT limitations remain explicit |
 | Schema validator + JSON schemas | TASK-008 | `TESTED` | Custom fail-closed validator and six `v1.0` schema documents committed at `a78e5c4`; SEC-011 and SEC-012 confirmed |
-| Hostile fixture suite (P0) | TASK-009 | `TESTED` | Part A non-torch families implemented at `5af987f`; Part B FIX-001/002/003/015 and FIX-009-S implemented and tested in the current completion commit with repository-local Torch 2.10.0+cpu; YOLO pose/OBB remain outside PRE-05 scope; ONNX runtime verification remains conditionally skipped because `onnx` is not installed |
+| Hostile fixture suite (P0) | TASK-009 | `TESTED` | Part A non-torch families implemented at `5af987f`; Part B FIX-001/002/003/015 and FIX-009-S tested with Torch 2.10.0+cpu; YOLO pose/OBB remain outside PRE-05 scope. FIX-004/005/006 and benign FIX-016 now execute successfully in the C3A/C3C ONNX 1.23.0 compatibility suites. |
 | COMP-W-C2A (all-box structural) | TASK-010 | `IMPLEMENTED` | All-box COCO geometry layer and PRE-05-authorized YOLO detection/segmentation parser implemented at `65fef55`; 14 targeted tests and full regression pass; real `pycocotools` runtime remains conditional under HOST-CAP-001 and fails closed when unavailable |
 | COMP-W-C2B (exact hash) | TASK-011 | `IMPLEMENTED` | Stdlib-only streaming SHA-256 duplicate grouping, per-file error handling, fail-closed all-failed state, and mandatory deferred PDQ disclosure implemented in the current TASK-011 commit; 10 targeted tests and full regression pass |
 | COMP-W-C2C (concentration) | TASK-012 | `TESTED` | Exact §3.5 HHI/entropy statistics, source shares/counts, UNTRUSTED-default SYBIL_UNRELIABLE behavior, fail-closed missing/prohibited input handling, and FIX-012 integration implemented in the current TASK-012 commit; 8 targeted tests and full regression pass |
 | COMP-W-C2D (image hash) | TASK-013 | `TESTED` | Stdlib-only streaming SHA-256, byte-identical image grouping, path containment, per-file error handling, mandatory PDQ deferral, and permanent T05d non-claims implemented in the current TASK-013 commit; 6 targeted tests and full regression pass |
-| COMP-W-C3A (artifact-unit resolver) | TASK-014 | `IMPLEMENTED` | IMPLEMENTED WITH BLOCKER: implementation and adversarial security review complete; 23 targeted checks pass, while UT-C3A-001 through UT-C3A-005 plus the missing-external-file integration check remain blocked on HOST-CAP-003; E-2 keeps the ONNX definition ID `UNAVAILABLE` |
+| COMP-W-C3A (artifact-unit resolver) | TASK-014 | `IMPLEMENTED` | Runtime compatibility fixed for ONNX 1.23.0 / protobuf 7.36.2; all 30 C3A tests now pass, including genuine ONNX external-data containment. E-2 intentionally keeps the ONNX definition ID `UNAVAILABLE`, so final identity acceptance remains blocked. |
 | COMP-W-C3B (model hasher) | TASK-015 | `IMPLEMENTED` | IMPLEMENTED WITH BLOCKER: deterministic whole-unit SHA-256, fail-closed ambiguity/containment/read-error handling, reference comparison, and PF-002 contract pass 18 targeted tests; ONNX identity path blocked pending ONNX artifact-unit definition ID (E-2) |
-| COMP-W-C3C (ONNX structural) | TASK-016 | `IMPLEMENTED` | IMPLEMENTED WITH BLOCKER: containment-first lazy ONNX loading, C3A external-reference helper reuse, in-memory checker validation, architecture-authoritative malformed-protobuf mapping, metadata, PF-002, and EF-004 contracts are implemented; 12 executable targeted tests pass and 5 genuine ONNX tests remain blocked on HOST-CAP-003 |
+| COMP-W-C3C (ONNX structural) | TASK-016 | `TESTED` | ONNX 1.23.0 / protobuf 7.36.2 descriptor compatibility is fixed without narrowing traversal; all 18 C3C tests pass, including genuine valid/absolute/traversal/symlink/malformed ONNX cases, checker/schema behavior, PF-002, EF-004, and no-ORT/no-execution boundaries. |
 | COMP-W-C3D (PyTorch safe-load gate) | TASK-017 | `TESTED` | Worker-level implementation and runtime/security validation complete with repository-local Torch 2.10.0+cpu; SEC-002 OOM dispatch and SEC-003 timeout dispatch remain explicitly deferred to TASK-022 |
 | COMP-REF (reference manager) | TASK-018 | `TESTED` | Approved SP-001 all-of R0–R7 gate enforcement, fail-closed default, FORMAT_ASSET boundary, audited transitions, staleness downgrade, and AuditWriteError rollback verified; 7 targeted tests and full regression pass |
 | COMP-C4 provenance record builder | TASK-019 Part A | `TESTED` | Provenance structure, canonicalization, replay rejection, durable sequence recovery, PF-002 binding, and explicit SIGNING_UNAVAILABLE behavior are tested. No signing primitive or key access is implemented. |
@@ -62,30 +62,27 @@ Status codes: `NOT STARTED` | `IN PROGRESS` | `IMPLEMENTED` | `TESTED` | `VALIDA
 | Dashboard (SHOULD BUILD) | TASK-024 | `NOT STARTED` | `NOT AUTHORIZED` while GATE-2 remains blocked; Antigravity begins only after GATE-2 passes |
 | Evidence bundle exporter | TASK-025 | `TESTED` | Deterministic read-only six-document ZIP packaging, complete field/state preservation, non-mutating audit verification, path and overwrite controls, secret/prohibited-field rejection, and CLI delegation are validated. Targeted: 27 passed; relevant regression: 107 passed, 3 expected skips. |
 | End-to-end integration test | TASK-026 | `BLOCKED` | Final TASK-026 status: `TESTED WITH BLOCKERS`. Five Gate-2 items pass; Gate-2.1 valid COCO and Gate-2.2 FIX-008 remain blocked by HOST-CAP-001. The all-of GATE-2 decision is `BLOCKED`. |
-| Offline validation (target host) | TASK-027 | `BLOCKED` | TASK-027-C fresh-venv imports pass for the staged native packages, but full application closure fails because PyYAML is absent; actual C3A/C3C ONNX traversal is incompatible with protobuf 7.36.2. OFF-001/OFF-003 fail and OFF-002/OFF-004 remain blocked. No offline capability is claimed. |
+| Offline validation (target host) | TASK-027 | `BLOCKED` | The ONNX/protobuf production defect found by TASK-027-C is fixed and tested. Full application closure still fails because approved PyYAML is absent; OFF-001/OFF-003 retain their stopped-run failures and OFF-002/OFF-004 remain blocked until TASK-027-C is rerun. No offline capability is claimed. |
 
 ---
 
 ## CURRENT TASK
 
 ```
-TASK: TASK-027-C / Gate-2 Validation Re-entry
+TASK: C3A/C3C ONNX 1.23.0 / protobuf 7.36.2 Compatibility Fix
 Owner: Codex
-Branch: feature/vertical-slice
+Branch: codex/onnx-protobuf-compat
 Started: 2026-09-28
-Status: BLOCKED — validation stopped on a missing approved PyYAML artifact and a production ONNX/protobuf compatibility defect.
+Status: TESTED — narrow production compatibility defect fixed; Gate-2 and TASK-027-C were not rerun.
 
 Validated behavior:
-  INSTALL: Fresh temporary CPython 3.13.12 venv installed the declared Torch/ONNX/pycocotools closure using --no-index and only the approved wheelhouse; command exit 0. Full application closure is incomplete because the C2A ConfigLoader requires PyYAML and no approved wheel exists.
-  IMPORTS: ONNX 1.23.0, pycocotools 2.0.11 including COCO, numpy 2.5.3, protobuf 7.36.2, ml_dtypes 0.6.0, Torch 2.10.0+cpu, and typing_extensions 4.16.0 import from the fresh venv. yaml fails with ModuleNotFoundError.
-  HOST-CAP-001: UNRESOLVED. pycocotools imports, but the real valid-COCO and FIX-008 paths fail closed before parsing because PyYAML is missing.
-  HOST-CAP-003: UNRESOLVED. ONNX imports without onnxruntime, but real C3A/C3C traversal raises AttributeError because protobuf 7.36.2 FieldDescriptor has no label attribute.
-  OFF: OFF-001 FAIL; OFF-002 BLOCKED without approved zero-egress monitoring; OFF-003 FAIL; OFF-004 BLOCKED/not executed after mandatory stop.
-  GATE: Gate-2.1 and Gate-2.2 BLOCKED. Gate-2.3 through Gate-2.7 preserve their committed PASS evidence. Overall Gate-2 remains BLOCKED.
-  HOST-CAP-002: PARTIAL. close_fds subprocess execution passes; Python resource/RLIMIT support is unavailable; no unsupported replacement was attempted.
-  BLOCKERS: Missing approved PyYAML wheel; ONNX/protobuf FieldDescriptor compatibility defect; absent approved zero-egress monitor; HOST-CAP-002, OFFLINE-001, PRE-08, and E-2 remain open.
-  SCOPE: Validation/evidence only. No production/test source, research document, architecture, requirement, or wheelhouse artifact was modified.
-  EVIDENCE: docs/task027c_gate2_validation.md.
+  ROOT CAUSE: protobuf 7.36.2 upb FieldDescriptor exposes is_repeated but removes legacy label; the shared recursive TensorProto walker accessed field.label.
+  FIX: Prefer the modern is_repeated property with the legacy label/LABEL_REPEATED comparison retained only as compatibility fallback. Recursive traversal and containment semantics are unchanged.
+  C3A: All 30 tests pass, including all real ONNX external-data/containment cases and modern/legacy descriptor APIs. E-2 remains OPEN and valid ONNX remains ARTIFACT_UNIT_AMBIGUOUS with definition ID UNAVAILABLE.
+  C3C: All 18 tests pass, including valid STRUCTURAL_VALID, malformed STRUCTURAL_INVALID, FIX-004/005/006 containment, checker/schema, PF-002/EF-004, and no-ORT/no-execution tests.
+  RELATED REGRESSION: C3B, schema validator, and orchestrator C3 sequencing 41 passed. Security invariant rerun 2 passed and 4 pre-existing stubs skipped; direct guards are clean.
+  HOST-CAP-003: Production compatibility criteria now pass at component-test level; formal blocker reconciliation remains for the separately authorized TASK-027-C rerun.
+  UNCHANGED: E-2, PRE-08, HOST-CAP-001/002, OFF outcomes, Gate-2, TASK-024 authorization, specifications, dependencies, versions, and protected research content.
 ```
 
 ---
@@ -128,6 +125,7 @@ Validated behavior:
 | HOST-CAP preparation blocker record | Recorded the owner's confirmation that wheelhouse/ is the sole approved source and no ONNX/pycocotools wheels or provenance are available. Created the missing-artifact matrix and stopped dependency execution; closure itself remains BLOCKED. | Documentation/static guards only; no fresh dependency, import, installation, verifier, GATE, or OFF execution. | This dependency-closure evidence commit |
 | HOST-CAP controlled online acquisition | Acquired compatible binary-only ONNX 1.23.0, pycocotools 2.0.11, numpy 2.5.3, protobuf 7.36.2, and ml_dtypes 0.6.0 wheels from official PyPI; verified official digest matches, metadata/tags/archive integrity, closure, and conflict-free resolution with the existing Torch set. | Existing isolated wheelhouse verifier: install PASS, ONNX/Torch/pycocotools import PASS, exit 0. No target-runtime, Gate-2, TASK-027-B, OFF, or regression tests executed. | This acquisition-evidence commit |
 | TASK-027-C validation re-entry | Installed the declared staged closure into a fresh temporary venv with `--no-index`; verified native imports; exercised real C2A/C3A/C3C paths; stopped without implementation changes when the full application closure lacked PyYAML and ONNX traversal exposed a protobuf API compatibility defect. | Verifier exit 0; selected offline install exit 0; seven requested package imports pass; yaml import fails; C2A valid/FIX-008 paths fail closed; C3A/C3C valid ONNX path fails; regression and Gate scenarios withheld. | This TASK-027-C evidence commit |
+| C3A/C3C ONNX/protobuf compatibility fix | Replaced the removed protobuf descriptor `label` dependency with modern `is_repeated` cardinality detection plus a legacy fallback. Preserved full protobuf-reachable TensorProto traversal, containment-before-file-access, checker-only validation, E-2 behavior, PF-002/EF-004, and all non-claims. | Focused defect cases 5 passed; full C3A/C3C 48 passed; related C3B/schema/orchestrator 41 passed; security rerun 2 passed, 4 pre-existing stubs skipped; static guards clean. | This compatibility-fix commit |
 
 ---
 
@@ -140,7 +138,7 @@ Validated behavior:
 | HOST-CAP-002 | `close_fds=True` subprocess isolation passes, but Python `resource`/Unix RLIMIT controls are unavailable and no authorized Windows replacement exists; capability remains PARTIAL | Resource-limit enforcement claims; later isolation hardening if required | Architecture / deployment owner |
 | OFFLINE-001 | TASK-027-C failed full application closure: PyYAML is missing from the approved wheelhouse; OFF-003 application imports fail, OFF-002 lacks approved zero-egress monitoring, and OFF-004 was not executed after the mandatory stop | TASK-027 and every offline deployment claim | Dependency / deployment owner |
 | E-2 / SP-002-ONNX | No frozen ONNX artifact-unit definition ID exists. C3A returns the resolved manifest as `ARTIFACT_UNIT_AMBIGUOUS` with definition ID `UNAVAILABLE`; no ID is inferred from PyTorch. | Final ONNX C3A acceptance and TASK-015 ONNX hashing | Project owner / architecture owner |
-| HOST-CAP-003 / TASK-014 packet E-3 | UNRESOLVED: ONNX 1.23.0 imports without ONNX Runtime, but the real shared C3A/C3C external-reference traversal is incompatible with protobuf 7.36.2 because upb FieldDescriptor lacks `label`; valid ONNX does not reach structural success. Evidence: docs/task027c_gate2_validation.md | TASK-014 ONNX validation, conditional ONNX fixtures, and TASK-016 runtime acceptance | Production defect-fix owner |
+| HOST-CAP-003 / TASK-014 packet E-3 | FORMAL RECONCILIATION PENDING: the protobuf 7.36.2 descriptor compatibility defect is fixed; real ONNX C3A/C3C tests pass without ONNX Runtime, with full containment traversal preserved. TASK-027-C itself has not been rerun, so this task does not silently close the recorded host-capability blocker. | TASK-027-C state reconciliation; E-2 remains separate for C3A identity | Dependency / deployment owner |
 | TASK-022-C3D-INTEGRATION | SEC-002 OOM termination/continuation and SEC-003 timeout/responsiveness require the real supervisor dispatch/orchestrator; worker-level C3D validation is complete and these integration claims remain explicitly unverified | TASK-017 supervisor-level integration evidence | TASK-022 implementation owner |
 
 ---
@@ -149,9 +147,9 @@ Validated behavior:
 
 *(At repository creation — to be updated as implementation progresses)*
 
-- Foundation components through TASK-009, all four data workers TASK-010 through TASK-013, and TASK-017/C3D are tested at worker level; the core TASK-015/C3B and TASK-016/C3C contracts are implemented. TASK-014 retains partial ONNX validation; final ONNX C3A/C3B identity acceptance remains blocked by E-2, while genuine TASK-016 protobuf/checker runtime acceptance remains blocked by HOST-CAP-003.
+- Foundation components through TASK-009, all four data workers TASK-010 through TASK-013, and TASK-016/C3C plus TASK-017/C3D are tested at worker level. TASK-014 genuine ONNX containment now passes, but final C3A/C3B ONNX identity acceptance remains blocked by E-2.
 - Offline capability claim is not permissible until TASK-027 passes on the confirmed Windows AMD64 / Python 3.13.12 target host.
-- The target has no detected C compiler. Staged native packages import in a fresh venv, but full application validation fails on missing PyYAML and the ONNX/protobuf FieldDescriptor compatibility defect.
+- The target has no detected C compiler. Staged native packages import in a fresh venv and the ONNX/protobuf descriptor defect is fixed; full application validation still fails because approved PyYAML is missing.
 - Python `resource.setrlimit` and Unix `RLIMIT_AS`, `RLIMIT_NOFILE`, and `RLIMIT_NPROC` are unavailable. `subprocess.Popen(..., close_fds=True)` is verified working.
 - T05d clean-label poisoning coverage gap is a **permanent** non-claim. This will never change under the current baseline.
 - All references are UNAVAILABLE at MVP start. No reference-relative assessments are possible.
@@ -168,10 +166,10 @@ Validated behavior:
 ## LATEST VALIDATED COMMIT
 
 ```
-Commit: This TASK-027-C validation evidence commit
-Branch: feature/vertical-slice
+Commit: This ONNX/protobuf compatibility-fix commit
+Branch: codex/onnx-protobuf-compat
 Date: 2026-09-28
-Tests: Verifier exit 0 and selected offline install exit 0. Requested native imports pass; yaml fails. Real C2A valid/FIX-008 paths and C3A/C3C valid ONNX path fail. Affected regression and Gate-2.1/2.2 were not run after mandatory stop.
+Tests: Focused defect tests 5 passed; C3A/C3C suite 48 passed; related C3B/schema/orchestrator regression 41 passed; security-invariants rerun 2 passed with 4 pre-existing skipped stubs. Gate-2 not run.
 ```
 
 ---
@@ -180,11 +178,10 @@ Tests: Verifier exit 0 and selected offline install exit 0. Requested native imp
 
 ```
 Date: 2026-09-28
-Latest validation: Fresh temporary venv from approved CPython 3.13.12; install used PIP_NO_INDEX=1, PIP_CONFIG_FILE=NUL, local --find-links, and binary-only wheels. Selected closure installation passed with exit 0.
-Executed checks: ONNX, pycocotools/COCO, numpy, protobuf, ml_dtypes, Torch, and typing_extensions imports pass. yaml import fails. C2A valid COCO and FIX-008 fail before parsing; valid ONNX C3A/C3C paths fail in external-reference traversal.
-Test tooling: No pytest suite executed after the mandatory stop. Existing OFF tests remain skip-only and are not represented as passing.
-Focused coverage: wheel inventory, offline installation, ABI imports, actual C2A/C3A/C3C runtime paths, and blocker classification.
-Security checks: zero production matches for unsafe loading and score fields. Positive-state words occur only in schema rejection literals or contextual identifiers such as safe-load, SAFETENSORS, NEURAL_CLEANSE, and cleanup; no positive output state was introduced. Production/test and protected research changed-file counts are zero.
+Latest validation: CPython 3.13.12, ONNX 1.23.0, protobuf 7.36.2, pytest 9.1.1. Modern descriptors expose is_repeated without label; the fixed traversal supports modern and legacy APIs.
+Executed checks: focused 5/5; C3A/C3C 48/48; C3B/schema/orchestrator 41/41; security invariants 2 passed with 4 historical skip-only stubs. Initial security run's two failures were environment-only because GNU grep was absent from PATH; unchanged rerun with Git-for-Windows grep passed.
+Focused coverage: genuine valid and external-data ONNX, absolute/traversal/symlink containment, recursive singular/repeated TensorProto fields, malformed protobuf, checker/schema, C3 sequencing, E-2 preservation, PF-002/EF-004, and no-ORT/no-execution boundaries.
+Security checks: zero production matches for unsafe loading, score fields, aggregate assurance, compromise probability, or prohibited positive constants; no prohibited C3C imports. E-2 remains OPEN.
 
 Integration gates:
   GATE-1 (Foundation):       NOT PASSED
@@ -395,6 +392,12 @@ No product/test code, requirements, wheel, architecture, or protected research
 file was modified. E-2 remains OPEN; PRE-08 remains PARTIAL; HOST-CAP-002 remains
 PARTIAL. TASK-024 and Stage 13 remain unauthorized.
 
+**Subsequent authorized defect fix:** The ONNX 1.23.0 / protobuf 7.36.2
+FieldDescriptor compatibility defect is fixed and passes the complete C3A/C3C
+component suites. This does not retroactively change the stopped TASK-027-C OFF
+or Gate results; formal HOST-CAP-003 reconciliation requires a new TASK-027-C
+run. The missing approved PyYAML artifact and zero-egress evidence remain.
+
 ---
 
 ## Stage 8 Final Exit Review
@@ -485,16 +488,17 @@ Carried blockers remain PRE-08, E-2, HOST-CAP-003, and TASK-022-C3D-INTEGRATION.
 ### Security-test status
 
 - **E-2:** `OPEN` — ONNX artifact-unit definition ID remains unresolved.
-- **E-3 / HOST-CAP-003:** `OPEN` — repository-local Python cannot import ONNX; no dependency was installed.
-- **SEC-004 (FIX-004 absolute reference):** `BLOCKED` — reference-classification implementation tests pass; protobuf-backed fixture execution remains blocked on HOST-CAP-003.
-- **SEC-005 (FIX-005 traversal):** `BLOCKED` — mixed-separator traversal tests pass before file stat; protobuf-backed fixture execution remains blocked on HOST-CAP-003.
-- **SEC-006 (FIX-006 symlink escape):** `BLOCKED` — direct C3A symlink containment test passes without reading the target; protobuf-backed fixture execution remains blocked on HOST-CAP-003.
+- **E-3 / HOST-CAP-003:** Historical review blocker; subsequent ONNX 1.23.0 component runtime tests pass after the protobuf descriptor compatibility fix. Formal TASK-027-C reconciliation remains pending.
+- **SEC-004 (FIX-004 absolute reference):** `PASS` in genuine C3A and C3C ONNX fixture execution.
+- **SEC-005 (FIX-005 traversal):** `PASS` in genuine C3A and C3C ONNX fixture execution.
+- **SEC-006 (FIX-006 symlink escape):** `PASS` in genuine C3A and C3C ONNX fixture execution on the validated Windows host.
 
 ### Defects found and fixed
 
 1. Drive-relative Windows external references such as `C:weights.bin` could inherit worker-CWD semantics. All drive-qualified references are now rejected before joining or file inspection.
 2. Unexpected resolver exceptions could reach the generic base IPC fallback and omit C3A-specific PF-002 fields. The C3A dispatch boundary now converts them to its own fail-closed output contract.
 3. ONNX load exception text could expose absolute host paths in `error_detail`. Only the exception type is now retained, with the existing 512-character bound.
+4. protobuf 7.36.2 removed the legacy FieldDescriptor `label` attribute. The shared recursive TensorProto walker now uses `is_repeated` with a legacy fallback; traversal and containment coverage are unchanged.
 
 TASK-014 remains `BLOCKED / IMPLEMENTED WITH BLOCKER` and is not marked `TESTED`. The later TASK-015 execution packet authorized the bounded C3B core implementation with fail-closed `UNAVAILABLE` handling; E-2 still blocks the real ONNX identity path.
 
@@ -555,15 +559,15 @@ The Stage 6 rule permits exit when every requirement is either satisfied with ev
 ### Open items carried forward
 
 - **E-2:** `OPEN` — ONNX artifact-unit definition ID unresolved. Blocks final C3A/C3B ONNX identity acceptance; does not block TASK-017.
-- **E-3 / HOST-CAP-003:** `OPEN` — repository-local Python cannot import ONNX. Blocks genuine C3A/C3C protobuf runtime acceptance; does not block TASK-017.
-- **E-5:** `RESOLVED BY AUTHORITY` — malformed ONNX maps to `STRUCTURAL_INVALID` under the Architecture and Technical Specification. Runtime confirmation remains blocked by HOST-CAP-003.
-- **E-6 identifier reconciliation:** Stage 6 preflight already defines E-6 as the explicit PF-002 field-injection constraint; C3A/C3B/C3C satisfy that constraint without changing `base.py`. This exit packet reuses the E-6 label for full external-reference traversal. To avoid silently remapping the historical ID, that separate traversal item is recorded as `IMPLEMENTATION REVIEWED / RUNTIME BLOCKED: HOST-CAP-003`: the recursive TensorProto walker covers protobuf-reachable tensors and C3C reuses it, while genuine ONNX graph/sparse-initializer/attribute/subgraph/function traversal is not claimed as runtime-verified.
+- **E-3 / HOST-CAP-003:** Stage 6 exit was historically blocked. Subsequent ONNX 1.23.0 / protobuf 7.36.2 compatibility tests now pass for genuine C3A/C3C paths; formal host-capability reconciliation remains pending TASK-027-C re-entry and does not affect TASK-017.
+- **E-5:** `RESOLVED BY AUTHORITY` — malformed ONNX maps to `STRUCTURAL_INVALID` under the Architecture and Technical Specification. Genuine runtime confirmation now passes in the C3C suite.
+- **E-6 identifier reconciliation:** Stage 6 preflight defines E-6 as the explicit PF-002 field-injection constraint, which C3A/C3B/C3C satisfy without changing `base.py`. The separate full external-reference traversal concern now has genuine ONNX runtime evidence: recursive protobuf-reachable TensorProto traversal and C3C reuse pass under ONNX 1.23.0 / protobuf 7.36.2. The historical label collision remains documented without renumbering either item.
 
 ---
 
 ## NEXT TASK
 
-**Next authorized action:** The dependency/deployment owner must stage an approved, provenance-recorded, hash-verified CPython 3.13-compatible PyYAML wheel. Separately authorize a production defect fix and tests for ONNX 1.23.0 / protobuf 7.36.2 FieldDescriptor traversal compatibility in shared C3A/C3C code. After both prerequisites are satisfied, rerun TASK-027-C from the beginning with approved zero-egress evidence. TASK-024 remains `NOT AUTHORIZED`; PRE-08 and E-2 remain separate unresolved blockers.
+**Next authorized action:** The dependency/deployment owner must stage an approved, provenance-recorded, hash-verified CPython 3.13-compatible PyYAML wheel. Then issue a separate TASK-027-C re-entry authorization with approved zero-egress evidence to reconcile HOST-CAP-003 formally and rerun OFF/Gate prerequisites from the beginning. TASK-024 remains `NOT AUTHORIZED`; PRE-08 and E-2 remain separate unresolved blockers.
 
 Critical path reminder:
 ```
@@ -601,7 +605,7 @@ PRE-04 resolved
 | PRE-08 / SP-004 | **PARTIAL 2026-09-27:** algorithm/key/encoding frozen; Windows target-host absolute path and supervisor-only ACL provisioning remain pending | Project team / deployment owner | P1 blocker for operational signing |
 | PRE-09 / SP-006 | **RESOLVED 2026-09-27:** C3→C4 field mapping frozen | Project team | Closed |
 | E-2 / SP-002-ONNX | Freeze the ONNX artifact-unit definition and its `artifact_unit_definition_id`; the PyTorch ID must not be reused or inferred | Project owner / architecture owner | Blocks final TASK-014 ONNX acceptance and TASK-015 ONNX hashing |
-| E-3 / HOST-CAP-003 | ONNX 1.23.0 imports in the fresh target-compatible venv without ONNX Runtime, but genuine C3A/C3C execution fails because protobuf 7.36.2 upb FieldDescriptor lacks the `label` attribute used by the shared traversal. Preserve fail-closed behavior pending a separately authorized production fix and regression. | Production defect-fix owner | Blocks genuine C3A/C3C ONNX runtime acceptance; does not block TASK-017 |
+| E-3 / HOST-CAP-003 | **IMPLEMENTATION DEFECT RESOLVED 2026-09-28:** ONNX 1.23.0 / protobuf 7.36.2 C3A/C3C component tests pass using modern `is_repeated` descriptor cardinality with a legacy fallback; no ONNX Runtime or execution path was introduced. Formal host-capability status remains pending TASK-027-C re-entry. | Dependency / deployment owner | Component runtime acceptance passes; procedural re-entry reconciliation remains |
 | TASK-027-C PyYAML closure | The real C2A path requires PyYAML through ConfigLoader, but no approved PyYAML wheel exists in wheelhouse and requirements.txt remains an inactive stub. | Dependency / deployment owner | Blocks OFF-001/OFF-003, HOST-CAP-001, Gate-2.1, and Gate-2.2 |
 | E-5 | **RESOLVED BY AUTHORITY 2026-09-27:** malformed ONNX maps to `STRUCTURAL_INVALID`; Architecture and Technical Specification override the lower-ranked MVP test wording | Project team | Closed as a semantic decision; runtime test remains under HOST-CAP-003 |
 | E-6 identifier reconciliation | Preflight E-6 is the PF-002 explicit-injection constraint and is satisfied by C3A/C3B/C3C. The Stage 6 exit packet separately labels full external-reference traversal as E-6; implementation is reviewed, but genuine protobuf traversal remains blocked by HOST-CAP-003. The two meanings are recorded without silently renumbering either. | Project owner / architecture owner | Naming reconciliation pending; runtime traversal evidence remains blocked by HOST-CAP-003 |
@@ -618,7 +622,7 @@ PRE-04 resolved
 
 *(To be filled by the agent ending a session — for the agent starting the next session)*
 
-**Current session:** TASK-027-C ran the existing wheelhouse verifier (exit 0), created a fresh temporary CPython 3.13.12 venv, and installed the selected Torch/ONNX/pycocotools closure exclusively with `--no-index` from the approved wheelhouse. ONNX, pycocotools/COCO, numpy, protobuf, ml_dtypes, Torch, and typing_extensions imports pass. The real C2A path exposed missing PyYAML, which is not staged; valid COCO and FIX-008 fail closed before parsing. The real C3A/C3C ONNX path exposed an existing protobuf 7.36.2 compatibility defect: upb FieldDescriptor has no `label` attribute, so valid ONNX fails structural validation. Per packet rules, regression, OFF-004, Gate-2.1, and Gate-2.2 were not continued and production/tests were not changed. OFF-001/OFF-003 fail; OFF-002/OFF-004 are blocked; HOST-CAP-001/003 remain unresolved; Gate-2 remains blocked. E-2, PRE-08, HOST-CAP-002, TASK-024 non-authorization, and protected `docs/research/**` remain unchanged. Evidence: docs/task027c_gate2_validation.md.
+**Current session:** On `codex/onnx-protobuf-compat`, the authorized investigation confirmed that protobuf 7.36.2 removes FieldDescriptor.label and supplies boolean is_repeated. The shared C3A traversal now prefers is_repeated and retains the label comparison solely as a legacy fallback; recursion, external-reference coverage, containment-before-file-access, checker behavior, outputs, and non-claims are unchanged. Two focused no-label regressions were added. Focused tests pass 5/5; complete C3A/C3C pass 48/48; related C3B/schema/orchestrator regression passes 41/41; security-invariant rerun passes 2 with 4 historical skip-only stubs. Valid ONNX now produces C3C STRUCTURAL_VALID; C3A still produces ARTIFACT_UNIT_AMBIGUOUS with definition ID UNAVAILABLE, preserving E-2. No dependency version, schema, architecture, Gate-2, OFF result, TASK-024 authorization, or protected research content changed. Formal HOST-CAP-003 reconciliation remains for a separately authorized TASK-027-C rerun; approved PyYAML and zero-egress evidence remain blockers.
 
 **TASK-020 specification reconciliation:** No separately saved Stage 8 packet was available in the repository or attachments; the current TASK-020 execution request and committed architecture/technical/MVP contracts supplied the scope. The MVP's §10 §3.17 citation points to COMP-FIX, so the concrete COMP-CAP API follows TASK-020 and the deferred persistence/audit contracts in §10 §§3.1, 3.15, 20.3. UT-CAP-001's generic deferred-count wording is met by enumerating drift/OOD and heavyweight methods separately while retaining M11=REFERENCE_UNAVAILABLE and tail=COMPLETENESS_UNAVAILABLE. T05d remains a permanent NON_CLAIM in persisted reason/non-claim text using the existing deferred-table envelope; no new assessment status was introduced.
 

@@ -383,6 +383,54 @@ def test_recursive_tensor_walker_reviews_nested_and_repeated_message_fields():
     assert inconsistencies == []
 
 
+def test_recursive_tensor_walker_supports_modern_protobuf_cardinality_api():
+    class ModernField:
+        TYPE_MESSAGE = 11
+
+        def __init__(self, *, repeated: bool):
+            self.type = self.TYPE_MESSAGE
+            self.is_repeated = repeated
+
+    class FakeMessage:
+        DESCRIPTOR = types.SimpleNamespace(full_name="onnx.FakeContainer")
+
+        def __init__(self, fields):
+            self._fields = fields
+
+        def ListFields(self):
+            return self._fields
+
+    class FakeTensor:
+        DESCRIPTOR = types.SimpleNamespace(full_name="onnx.TensorProto")
+
+        def __init__(self, name: str, location: str):
+            self.name = name
+            self.data_location = 1
+            self.external_data = [
+                types.SimpleNamespace(key="location", value=location)
+            ]
+
+    repeated_field = ModernField(repeated=True)
+    singular_field = ModernField(repeated=False)
+    assert not hasattr(repeated_field, "label")
+    assert not hasattr(singular_field, "label")
+
+    direct = FakeTensor("initializer", "initializer.bin")
+    nested = FakeTensor("nested_attribute", "nested.bin")
+    nested_container = FakeMessage([(singular_field, nested)])
+    root = FakeMessage([(repeated_field, [direct, nested_container])])
+    fake_onnx = types.SimpleNamespace(
+        TensorProto=types.SimpleNamespace(EXTERNAL=1)
+    )
+
+    references, inconsistencies = c3a_artifact_unit._external_references(
+        root, fake_onnx
+    )
+
+    assert references == ["initializer.bin", "nested.bin"]
+    assert inconsistencies == []
+
+
 def test_unexpected_resolver_error_stays_in_c3a_output_contract(tmp_path, monkeypatch):
     model_path = tmp_path / "model.pt"
     model_path.write_bytes(b"opaque")

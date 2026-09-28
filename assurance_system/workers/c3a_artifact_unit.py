@@ -153,6 +153,18 @@ def _load_onnx_module():
     return onnx
 
 
+def _field_is_repeated(field: Any) -> bool:
+    """Read protobuf field cardinality across current and legacy APIs."""
+
+    # protobuf 7 descriptors expose ``is_repeated`` but no longer expose the
+    # legacy ``label`` attribute.  Retain the fallback for older supported
+    # protobuf releases without changing traversal or containment semantics.
+    is_repeated = getattr(field, "is_repeated", None)
+    if is_repeated is not None:
+        return bool(is_repeated)
+    return field.label == field.LABEL_REPEATED
+
+
 def _iter_tensor_protos(message: Any) -> Iterator[Any]:
     """Yield every TensorProto reachable through protobuf message fields."""
 
@@ -166,7 +178,7 @@ def _iter_tensor_protos(message: Any) -> Iterator[Any]:
     for field, value in message.ListFields():
         if field.type != field.TYPE_MESSAGE:
             continue
-        if field.label == field.LABEL_REPEATED:
+        if _field_is_repeated(field):
             for item in value:
                 yield from _iter_tensor_protos(item)
         else:

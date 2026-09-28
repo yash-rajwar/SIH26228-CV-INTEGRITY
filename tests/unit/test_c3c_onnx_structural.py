@@ -359,6 +359,25 @@ def test_checker_receives_in_memory_model_and_metadata_is_reported(
     assert result["raw_signal"]["graph_output_names"] == ["output"]
 
 
+def test_c3c_supports_modern_protobuf_cardinality_api(tmp_path, monkeypatch):
+    class ModernRepeatedField:
+        TYPE_MESSAGE = 11
+        type = TYPE_MESSAGE
+        is_repeated = True
+
+    field = ModernRepeatedField()
+    assert not hasattr(field, "label")
+
+    model = _FakeModel()
+    model._fields = [(field, [])]
+    fake_onnx = _fake_onnx(model)
+
+    result = _run_with_fake_onnx(tmp_path, monkeypatch, fake_onnx)
+
+    assert result["assessment_status"] == AssessmentStatus.STRUCTURAL_VALID
+    assert fake_onnx.checker_calls == [model]
+
+
 def test_checker_failure_is_structural_invalid_and_detail_is_bounded(
     tmp_path, monkeypatch
 ):
