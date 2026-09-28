@@ -12,7 +12,7 @@ Update this file at the end of every coding session before committing.
 ## PROJECT
 
 **Name:** Trustworthy Computer Vision Integrity Assurance — SIH 2026 PS 26228  
-**Current stage:** HOST-CAP dependency artifacts `STAGED`; dependency closure/verifier PASS; runtime validation and blocker closure require separately authorized re-entry
+**Current stage:** TASK-027-C validation `BLOCKED`; missing approved PyYAML artifact and ONNX/protobuf production compatibility defect prevent Gate-2 re-entry
 **Repository created:** [DATE TO BE FILLED ON REPO INIT]  
 **Five-day window start:** [DATE — begins after P1 conditions resolved]
 
@@ -62,30 +62,30 @@ Status codes: `NOT STARTED` | `IN PROGRESS` | `IMPLEMENTED` | `TESTED` | `VALIDA
 | Dashboard (SHOULD BUILD) | TASK-024 | `NOT STARTED` | `NOT AUTHORIZED` while GATE-2 remains blocked; Antigravity begins only after GATE-2 passes |
 | Evidence bundle exporter | TASK-025 | `TESTED` | Deterministic read-only six-document ZIP packaging, complete field/state preservation, non-mutating audit verification, path and overwrite controls, secret/prohibited-field rejection, and CLI delegation are validated. Targeted: 27 passed; relevant regression: 107 passed, 3 expected skips. |
 | End-to-end integration test | TASK-026 | `BLOCKED` | Final TASK-026 status: `TESTED WITH BLOCKERS`. Five Gate-2 items pass; Gate-2.1 valid COCO and Gate-2.2 FIX-008 remain blocked by HOST-CAP-001. The all-of GATE-2 decision is `BLOCKED`. |
-| Offline validation (target host) | TASK-027 | `BLOCKED` | Execution status remains `TESTED WITH BLOCKERS`. ONNX/pycocotools binary closure is now staged and the isolated wheelhouse verifier passes, but TASK-027-B target-runtime and zero-egress validation have not been rerun. No offline capability is claimed. |
+| Offline validation (target host) | TASK-027 | `BLOCKED` | TASK-027-C fresh-venv imports pass for the staged native packages, but full application closure fails because PyYAML is absent; actual C3A/C3C ONNX traversal is incompatible with protobuf 7.36.2. OFF-001/OFF-003 fail and OFF-002/OFF-004 remain blocked. No offline capability is claimed. |
 
 ---
 
 ## CURRENT TASK
 
 ```
-TASK: HOST-CAP Controlled Online Dependency Acquisition
+TASK: TASK-027-C / Gate-2 Validation Re-entry
 Owner: Codex
 Branch: feature/vertical-slice
 Started: 2026-09-28
-Status: ACQUISITION COMPLETE — dependency closure and isolated verifier pass; runtime validation not authorized or executed.
+Status: BLOCKED — validation stopped on a missing approved PyYAML artifact and a production ONNX/protobuf compatibility defect.
 
 Validated behavior:
-  HOST-CAP-001: ARTIFACT STAGED / RUNTIME NOT VERIFIED. pycocotools 2.0.11 and required numpy 2.5.3 binary wheels are staged with locally recomputed hashes matching official PyPI.
-  HOST-CAP-003: ARTIFACT STAGED / RUNTIME NOT VERIFIED. ONNX 1.23.0 plus protobuf 7.36.2, ml_dtypes 0.6.0, numpy 2.5.3, and pre-existing typing_extensions 4.16.0 form the compatible binary closure. E-2 remains open.
-  WHEELHOUSE: 15 wheels are staged. All were hashed after staging. The existing local-only verifier reports package STAGED, isolated install PASS, imports PASS, exit 0.
-  PROVENANCE: Official PyPI URLs/upload times and digest matches are recorded. Integrity statements matched five artifacts, but cryptographic verification was not independently performed and protobuf had no statement; provenance is PARTIAL.
-  OFFLINE RE-ENTRY: NOT EXECUTED. No package was installed into the approved Python environment; TASK-027-B, Gate-2, and OFF-001..004 retain their previous outcomes.
+  INSTALL: Fresh temporary CPython 3.13.12 venv installed the declared Torch/ONNX/pycocotools closure using --no-index and only the approved wheelhouse; command exit 0. Full application closure is incomplete because the C2A ConfigLoader requires PyYAML and no approved wheel exists.
+  IMPORTS: ONNX 1.23.0, pycocotools 2.0.11 including COCO, numpy 2.5.3, protobuf 7.36.2, ml_dtypes 0.6.0, Torch 2.10.0+cpu, and typing_extensions 4.16.0 import from the fresh venv. yaml fails with ModuleNotFoundError.
+  HOST-CAP-001: UNRESOLVED. pycocotools imports, but the real valid-COCO and FIX-008 paths fail closed before parsing because PyYAML is missing.
+  HOST-CAP-003: UNRESOLVED. ONNX imports without onnxruntime, but real C3A/C3C traversal raises AttributeError because protobuf 7.36.2 FieldDescriptor has no label attribute.
+  OFF: OFF-001 FAIL; OFF-002 BLOCKED without approved zero-egress monitoring; OFF-003 FAIL; OFF-004 BLOCKED/not executed after mandatory stop.
+  GATE: Gate-2.1 and Gate-2.2 BLOCKED. Gate-2.3 through Gate-2.7 preserve their committed PASS evidence. Overall Gate-2 remains BLOCKED.
   HOST-CAP-002: PARTIAL. close_fds subprocess execution passes; Python resource/RLIMIT support is unavailable; no unsupported replacement was attempted.
-  SECURITY: acquisition was limited to official PyPI artifact/provenance retrieval; production static guards remain clean. No runtime download/install path was added.
-  BLOCKERS: HOST-CAP-001/003 now await runtime verification; HOST-CAP-002, OFFLINE-001, PRE-08, and E-2 remain open/unchanged. GATE-2 remains blocked and TASK-024 remains unauthorized.
-  SCOPE: only the five ignored wheel files, docs/wheelhouse_dependency_closure.md, and PROJECT_STATE.md changed. No product/test source, approved-environment install, Gate-2, TASK-027-B, or OFF test execution.
-  EVIDENCE: docs/wheelhouse_dependency_closure.md; previous runtime evidence remains docs/host_cap_resolution_evidence.md at 6d3900e.
+  BLOCKERS: Missing approved PyYAML wheel; ONNX/protobuf FieldDescriptor compatibility defect; absent approved zero-egress monitor; HOST-CAP-002, OFFLINE-001, PRE-08, and E-2 remain open.
+  SCOPE: Validation/evidence only. No production/test source, research document, architecture, requirement, or wheelhouse artifact was modified.
+  EVIDENCE: docs/task027c_gate2_validation.md.
 ```
 
 ---
@@ -127,6 +127,7 @@ Validated behavior:
 | HOST-CAP resolution review | Evaluated the evidence-based closure criteria for HOST-CAP-001/002/003, inventoried and hashed all staged wheels, reconfirmed imports and local-only verifier behavior, and enforced prerequisite ordering by withholding GATE/OFF re-entry. | Torch import and `close_fds=True` pass; pycocotools/ONNX/`resource` imports fail; verifier exits 1; security scans clean; no GATE or OFF tests rerun. | `6d3900e` |
 | HOST-CAP preparation blocker record | Recorded the owner's confirmation that wheelhouse/ is the sole approved source and no ONNX/pycocotools wheels or provenance are available. Created the missing-artifact matrix and stopped dependency execution; closure itself remains BLOCKED. | Documentation/static guards only; no fresh dependency, import, installation, verifier, GATE, or OFF execution. | This dependency-closure evidence commit |
 | HOST-CAP controlled online acquisition | Acquired compatible binary-only ONNX 1.23.0, pycocotools 2.0.11, numpy 2.5.3, protobuf 7.36.2, and ml_dtypes 0.6.0 wheels from official PyPI; verified official digest matches, metadata/tags/archive integrity, closure, and conflict-free resolution with the existing Torch set. | Existing isolated wheelhouse verifier: install PASS, ONNX/Torch/pycocotools import PASS, exit 0. No target-runtime, Gate-2, TASK-027-B, OFF, or regression tests executed. | This acquisition-evidence commit |
+| TASK-027-C validation re-entry | Installed the declared staged closure into a fresh temporary venv with `--no-index`; verified native imports; exercised real C2A/C3A/C3C paths; stopped without implementation changes when the full application closure lacked PyYAML and ONNX traversal exposed a protobuf API compatibility defect. | Verifier exit 0; selected offline install exit 0; seven requested package imports pass; yaml import fails; C2A valid/FIX-008 paths fail closed; C3A/C3C valid ONNX path fails; regression and Gate scenarios withheld. | This TASK-027-C evidence commit |
 
 ---
 
@@ -135,11 +136,11 @@ Validated behavior:
 | Blocker ID | Description | Affects | Resolution owner |
 |---|---|---|---|
 | PRE-08 | HMAC-SHA256 parameters are frozen, but a Windows target-host absolute key path and supervisor-only ACL verification are not yet provisioned | TASK-019 operational signing | Project owner / deployment owner |
-| HOST-CAP-001 | ARTIFACT STAGED / RUNTIME NOT VERIFIED: compatible pycocotools 2.0.11 and numpy 2.5.3 wheels are hash-verified and staged; isolated wheelhouse verification passes. Approved target-runtime and Gate-2 execution remain pending. Evidence: docs/wheelhouse_dependency_closure.md | TASK-010 COCO runtime claims; TASK-026 VS-001/VS-002; GATE-2 | Dependency / deployment owner |
+| HOST-CAP-001 | UNRESOLVED: pycocotools and COCO import in the fresh venv, but the approved wheelhouse lacks PyYAML required by ConfigLoader; valid COCO and FIX-008 return fail-closed ASSESSMENT_ERROR before parsing. Evidence: docs/task027c_gate2_validation.md | TASK-010 COCO runtime claims; TASK-026 VS-001/VS-002; GATE-2 | Dependency / deployment owner |
 | HOST-CAP-002 | `close_fds=True` subprocess isolation passes, but Python `resource`/Unix RLIMIT controls are unavailable and no authorized Windows replacement exists; capability remains PARTIAL | Resource-limit enforcement claims; later isolation hardening if required | Architecture / deployment owner |
-| OFFLINE-001 | Artifact closure and the isolated verifier now pass, but TASK-027-B has not been rerun: no approved target-runtime install/import evidence or approved zero-egress monitor result exists, and OFF-001 through OFF-004 retain their prior skipped status | TASK-027 and every offline deployment claim | Dependency / deployment owner |
+| OFFLINE-001 | TASK-027-C failed full application closure: PyYAML is missing from the approved wheelhouse; OFF-003 application imports fail, OFF-002 lacks approved zero-egress monitoring, and OFF-004 was not executed after the mandatory stop | TASK-027 and every offline deployment claim | Dependency / deployment owner |
 | E-2 / SP-002-ONNX | No frozen ONNX artifact-unit definition ID exists. C3A returns the resolved manifest as `ARTIFACT_UNIT_AMBIGUOUS` with definition ID `UNAVAILABLE`; no ID is inferred from PyTorch. | Final ONNX C3A acceptance and TASK-015 ONNX hashing | Project owner / architecture owner |
-| HOST-CAP-003 / TASK-014 packet E-3 | ARTIFACT STAGED / RUNTIME NOT VERIFIED: compatible ONNX 1.23.0 and required dependency wheels are hash-verified and staged; isolated wheelhouse verification passes. Approved target-runtime imports and genuine C3A/C3C tests remain pending. ONNX Runtime is not required. Evidence: docs/wheelhouse_dependency_closure.md | TASK-014 ONNX validation, conditional ONNX fixtures, and TASK-016 runtime acceptance | Dependency / deployment owner |
+| HOST-CAP-003 / TASK-014 packet E-3 | UNRESOLVED: ONNX 1.23.0 imports without ONNX Runtime, but the real shared C3A/C3C external-reference traversal is incompatible with protobuf 7.36.2 because upb FieldDescriptor lacks `label`; valid ONNX does not reach structural success. Evidence: docs/task027c_gate2_validation.md | TASK-014 ONNX validation, conditional ONNX fixtures, and TASK-016 runtime acceptance | Production defect-fix owner |
 | TASK-022-C3D-INTEGRATION | SEC-002 OOM termination/continuation and SEC-003 timeout/responsiveness require the real supervisor dispatch/orchestrator; worker-level C3D validation is complete and these integration claims remain explicitly unverified | TASK-017 supervisor-level integration evidence | TASK-022 implementation owner |
 
 ---
@@ -150,7 +151,7 @@ Validated behavior:
 
 - Foundation components through TASK-009, all four data workers TASK-010 through TASK-013, and TASK-017/C3D are tested at worker level; the core TASK-015/C3B and TASK-016/C3C contracts are implemented. TASK-014 retains partial ONNX validation; final ONNX C3A/C3B identity acceptance remains blocked by E-2, while genuine TASK-016 protobuf/checker runtime acceptance remains blocked by HOST-CAP-003.
 - Offline capability claim is not permissible until TASK-027 passes on the confirmed Windows AMD64 / Python 3.13.12 target host.
-- The target has no detected C compiler. Compatible native-extension wheels are staged and pass isolated verification, but approved target-runtime validation remains pending.
+- The target has no detected C compiler. Staged native packages import in a fresh venv, but full application validation fails on missing PyYAML and the ONNX/protobuf FieldDescriptor compatibility defect.
 - Python `resource.setrlimit` and Unix `RLIMIT_AS`, `RLIMIT_NOFILE`, and `RLIMIT_NPROC` are unavailable. `subprocess.Popen(..., close_fds=True)` is verified working.
 - T05d clean-label poisoning coverage gap is a **permanent** non-claim. This will never change under the current baseline.
 - All references are UNAVAILABLE at MVP start. No reference-relative assessments are possible.
@@ -167,10 +168,10 @@ Validated behavior:
 ## LATEST VALIDATED COMMIT
 
 ```
-Commit: This controlled online acquisition evidence commit
+Commit: This TASK-027-C validation evidence commit
 Branch: feature/vertical-slice
 Date: 2026-09-28
-Tests: No target-runtime, GATE, OFF, TASK-027-B, or regression tests executed. Binary closure dry-run PASS; wheelhouse verifier isolated install/import PASS, exit 0. HOST-CAP-001/003 remain open pending runtime verification.
+Tests: Verifier exit 0 and selected offline install exit 0. Requested native imports pass; yaml fails. Real C2A valid/FIX-008 paths and C3A/C3C valid ONNX path fail. Affected regression and Gate-2.1/2.2 were not run after mandatory stop.
 ```
 
 ---
@@ -179,11 +180,11 @@ Tests: No target-runtime, GATE, OFF, TASK-027-B, or regression tests executed. B
 
 ```
 Date: 2026-09-28
-Latest acquisition validation: five new binary wheels and the pre-existing typing_extensions dependency passed tag/metadata/archive inspection and locally recomputed SHA-256 matched official PyPI. Complete combined offline dry-run resolution passed without conflict.
-Executed checks: existing wheelhouse verifier reports Torch/ONNX/pycocotools STAGED, isolated install PASS, three imports PASS, exit 0. This is temporary isolated verifier evidence, not approved target-runtime validation.
-Test tooling: Approved system CPython 3.13.12 executable. No package was installed into that environment and no test was modified or executed.
-Focused coverage: artifact compatibility, complete dependency closure, official digest match, provenance recording, post-stage 15-wheel inventory, and isolated verifier behavior.
-Security checks: production unsafe-load/risk-score/positive-assurance/network-import/runtime-install guards clean; no production/test source changed.
+Latest validation: Fresh temporary venv from approved CPython 3.13.12; install used PIP_NO_INDEX=1, PIP_CONFIG_FILE=NUL, local --find-links, and binary-only wheels. Selected closure installation passed with exit 0.
+Executed checks: ONNX, pycocotools/COCO, numpy, protobuf, ml_dtypes, Torch, and typing_extensions imports pass. yaml import fails. C2A valid COCO and FIX-008 fail before parsing; valid ONNX C3A/C3C paths fail in external-reference traversal.
+Test tooling: No pytest suite executed after the mandatory stop. Existing OFF tests remain skip-only and are not represented as passing.
+Focused coverage: wheel inventory, offline installation, ABI imports, actual C2A/C3A/C3C runtime paths, and blocker classification.
+Security checks: zero production matches for unsafe loading and score fields. Positive-state words occur only in schema rejection literals or contextual identifiers such as safe-load, SAFETENSORS, NEURAL_CLEANSE, and cleanup; no positive output state was introduced. Production/test and protected research changed-file counts are zero.
 
 Integration gates:
   GATE-1 (Foundation):       NOT PASSED
@@ -366,6 +367,36 @@ No package was installed into the approved interpreter. Gate-2, TASK-027-B, OFF-
 
 ---
 
+## TASK-027-C / GATE-2 VALIDATION RE-ENTRY
+
+**Date:** 2026-09-28
+
+**Status:** `BLOCKED — VALIDATION STOPPED`
+
+**Evidence record:** `docs/task027c_gate2_validation.md`
+
+| Item | Result | Evidence |
+|---|---|---|
+| Wheelhouse verifier | `PASS` | Torch, ONNX, and pycocotools staged; isolated install/import pass; exit 0 |
+| Selected offline install | `PASS` | Fresh CPython 3.13.12 venv; `--no-index`, local `--find-links`, binary-only; exit 0 |
+| Full application closure / OFF-001 | `FAIL` | C2A requires PyYAML through ConfigLoader; no approved PyYAML wheel exists |
+| OFF-002 | `BLOCKED` | No approved target-host zero-egress monitor/evidence |
+| OFF-003 | `FAIL` | Requested native imports pass, but application dependency `yaml` fails and ONNX production path is incompatible |
+| OFF-004 | `BLOCKED` | Not executed after mandatory stop; existing contract remains skipped |
+| HOST-CAP-001 | `UNRESOLVED` | pycocotools/COCO import, but valid COCO and FIX-008 production paths fail before parsing due missing PyYAML |
+| HOST-CAP-003 | `UNRESOLVED` | ONNX import succeeds without onnxruntime; C3A/C3C traversal raises AttributeError on protobuf 7.36.2 FieldDescriptor.label |
+| Affected regression | `BLOCKED / NOT RUN` | Packet requires stop on missing artifact or production defect |
+| Gate-2.1 | `BLOCKED` | HOST-CAP-001 and OFF prerequisites not satisfied |
+| Gate-2.2 | `BLOCKED` | Gate-2.1 prerequisites not satisfied |
+| Gate-2.3 through Gate-2.7 | `PRESERVED PASS` | No new evidence invalidated committed results |
+| Overall Gate-2 | `BLOCKED` | All-of condition not satisfied |
+
+No product/test code, requirements, wheel, architecture, or protected research
+file was modified. E-2 remains OPEN; PRE-08 remains PARTIAL; HOST-CAP-002 remains
+PARTIAL. TASK-024 and Stage 13 remain unauthorized.
+
+---
+
 ## Stage 8 Final Exit Review
 
 **Date:** 2026-09-28
@@ -532,7 +563,7 @@ The Stage 6 rule permits exit when every requirement is either satisfied with ev
 
 ## NEXT TASK
 
-**Next authorized action:** Issue a separate explicit validation re-entry packet authorizing offline installation/import verification in the approved validation environment, affected regression, Gate-2.1/Gate-2.2, and OFF-001 through OFF-004 in prerequisite order. TASK-024 remains `NOT AUTHORIZED`, and PRE-08/E-2 remain separate unresolved blockers.
+**Next authorized action:** The dependency/deployment owner must stage an approved, provenance-recorded, hash-verified CPython 3.13-compatible PyYAML wheel. Separately authorize a production defect fix and tests for ONNX 1.23.0 / protobuf 7.36.2 FieldDescriptor traversal compatibility in shared C3A/C3C code. After both prerequisites are satisfied, rerun TASK-027-C from the beginning with approved zero-egress evidence. TASK-024 remains `NOT AUTHORIZED`; PRE-08 and E-2 remain separate unresolved blockers.
 
 Critical path reminder:
 ```
@@ -570,7 +601,8 @@ PRE-04 resolved
 | PRE-08 / SP-004 | **PARTIAL 2026-09-27:** algorithm/key/encoding frozen; Windows target-host absolute path and supervisor-only ACL provisioning remain pending | Project team / deployment owner | P1 blocker for operational signing |
 | PRE-09 / SP-006 | **RESOLVED 2026-09-27:** C3→C4 field mapping frozen | Project team | Closed |
 | E-2 / SP-002-ONNX | Freeze the ONNX artifact-unit definition and its `artifact_unit_definition_id`; the PyTorch ID must not be reused or inferred | Project owner / architecture owner | Blocks final TASK-014 ONNX acceptance and TASK-015 ONNX hashing |
-| E-3 / HOST-CAP-003 | Compatible ONNX/protobuf/ml_dtypes/numpy/typing_extensions binary closure is staged and isolated verification passes, but approved target-runtime import and genuine C3A/C3C execution have not been authorized or rerun. Preserve fail-closed behavior and named skips until runtime validation passes. | Dependency / deployment owner | Blocks genuine C3A/C3C ONNX runtime acceptance; does not block TASK-017 |
+| E-3 / HOST-CAP-003 | ONNX 1.23.0 imports in the fresh target-compatible venv without ONNX Runtime, but genuine C3A/C3C execution fails because protobuf 7.36.2 upb FieldDescriptor lacks the `label` attribute used by the shared traversal. Preserve fail-closed behavior pending a separately authorized production fix and regression. | Production defect-fix owner | Blocks genuine C3A/C3C ONNX runtime acceptance; does not block TASK-017 |
+| TASK-027-C PyYAML closure | The real C2A path requires PyYAML through ConfigLoader, but no approved PyYAML wheel exists in wheelhouse and requirements.txt remains an inactive stub. | Dependency / deployment owner | Blocks OFF-001/OFF-003, HOST-CAP-001, Gate-2.1, and Gate-2.2 |
 | E-5 | **RESOLVED BY AUTHORITY 2026-09-27:** malformed ONNX maps to `STRUCTURAL_INVALID`; Architecture and Technical Specification override the lower-ranked MVP test wording | Project team | Closed as a semantic decision; runtime test remains under HOST-CAP-003 |
 | E-6 identifier reconciliation | Preflight E-6 is the PF-002 explicit-injection constraint and is satisfied by C3A/C3B/C3C. The Stage 6 exit packet separately labels full external-reference traversal as E-6; implementation is reviewed, but genuine protobuf traversal remains blocked by HOST-CAP-003. The two meanings are recorded without silently renumbering either. | Project owner / architecture owner | Naming reconciliation pending; runtime traversal evidence remains blocked by HOST-CAP-003 |
 | TASK-025 module/bundle contract | **RESOLVED 2026-09-28 by the explicit TASK-025 packets:** implementation remains at `assurance_system/export/exporter.py` with the six packet-named documents; TASK-023 now delegates to that class. Older Technical/MVP module/filename text remains historical and was not silently used to change the packet contract. | TASK-025 Part B owner / project owner | Closed for implementation; documentation maintenance may reconcile older path text separately |
@@ -586,7 +618,7 @@ PRE-04 resolved
 
 *(To be filled by the agent ending a session — for the agent starting the next session)*
 
-**Current session:** The controlled online acquisition packet authorized official-PyPI artifact/provenance retrieval only. Compatible ONNX 1.23.0, pycocotools 2.0.11, numpy 2.5.3, protobuf 7.36.2, and ml_dtypes 0.6.0 wheels were hash-verified and staged; existing typing_extensions 4.16.0 completed the closure. ONNX 1.23.1 was rejected as future-dated relative to acquisition. The 15-wheel combined Torch/ONNX/pycocotools closure resolves without conflict and the existing isolated verifier passes with exit 0. HOST-CAP-001 and HOST-CAP-003 are now `ARTIFACT STAGED / RUNTIME NOT VERIFIED`, not closed. No approved-environment install, Gate-2, TASK-027-B, OFF, regression, TASK-024, or Stage 13 execution occurred. HOST-CAP-002, OFFLINE-001, PRE-08, E-2, blocked Gate-2, and TASK-024 non-authorization are unchanged. No production/test code, architecture, requirements, or protected `docs/research/**` content changed. Next action requires a separate explicit validation re-entry packet.
+**Current session:** TASK-027-C ran the existing wheelhouse verifier (exit 0), created a fresh temporary CPython 3.13.12 venv, and installed the selected Torch/ONNX/pycocotools closure exclusively with `--no-index` from the approved wheelhouse. ONNX, pycocotools/COCO, numpy, protobuf, ml_dtypes, Torch, and typing_extensions imports pass. The real C2A path exposed missing PyYAML, which is not staged; valid COCO and FIX-008 fail closed before parsing. The real C3A/C3C ONNX path exposed an existing protobuf 7.36.2 compatibility defect: upb FieldDescriptor has no `label` attribute, so valid ONNX fails structural validation. Per packet rules, regression, OFF-004, Gate-2.1, and Gate-2.2 were not continued and production/tests were not changed. OFF-001/OFF-003 fail; OFF-002/OFF-004 are blocked; HOST-CAP-001/003 remain unresolved; Gate-2 remains blocked. E-2, PRE-08, HOST-CAP-002, TASK-024 non-authorization, and protected `docs/research/**` remain unchanged. Evidence: docs/task027c_gate2_validation.md.
 
 **TASK-020 specification reconciliation:** No separately saved Stage 8 packet was available in the repository or attachments; the current TASK-020 execution request and committed architecture/technical/MVP contracts supplied the scope. The MVP's §10 §3.17 citation points to COMP-FIX, so the concrete COMP-CAP API follows TASK-020 and the deferred persistence/audit contracts in §10 §§3.1, 3.15, 20.3. UT-CAP-001's generic deferred-count wording is met by enumerating drift/OOD and heavyweight methods separately while retaining M11=REFERENCE_UNAVAILABLE and tail=COMPLETENESS_UNAVAILABLE. T05d remains a permanent NON_CLAIM in persisted reason/non-claim text using the existing deferred-table envelope; no new assessment status was introduced.
 
