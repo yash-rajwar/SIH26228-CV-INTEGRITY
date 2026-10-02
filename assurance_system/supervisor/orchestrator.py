@@ -576,7 +576,11 @@ class SupervisorOrchestrator:
                 )
             except subprocess.TimeoutExpired:
                 pending.process.kill()
-                pending.process.wait()
+                # Finish the existing IPC reader as well as reaping the killed
+                # child before removing its working directory (Windows).
+                pending.process.communicate(
+                    timeout=pending.resource_limits.timeout_seconds
+                )
                 return self._build_assessment_error(
                     pending.task_spec,
                     "TIMEOUT",

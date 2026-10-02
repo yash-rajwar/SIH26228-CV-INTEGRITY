@@ -2,9 +2,9 @@
 
 ## Current Milestone
 
-Stage 8 component implementation is complete. TASK-018, TASK-019 Part A, and TASK-020 are tested; the component exit review passed with TASK-019 Part B explicitly deferred on PRE-08.
+Gate-2 is PASS. TASK-026 remains IN PROGRESS; Gate-3 and Gate-4 are not passed. SEC-003 controlled supervisor timeout acceptance now passes; SEC-002 remains OPEN under HOST-CAP-002.
 
-COMP-CAP now produces bounded scope declarations and 15 explicit missing-coverage records. Its default is `UNAVAILABLE`, and unsupported capabilities are rejected. Operational signing and downstream CLI/orchestrator integration remain pending. The prior Stage 7 exit remains `PASS-WITH-DEFERRED-TASK-022`.
+The existing dispatcher now finishes child IPC reader cleanup after timeout termination. Real schema/store/audit/C5 integration and a subsequent benign asset complete without converting failure into positive assurance. Supplemental bounded MemoryError handling is tested, but Windows memory-cap enforcement is not proven. Validation occurred 2026-09-29; documentation reconciled 2026-10-02.
 
 ## Completed Components
 
@@ -12,54 +12,42 @@ COMP-CAP now produces bounded scope declarations and 15 explicit missing-coverag
 - TASK-010 through TASK-013: C2 data-integrity workers for geometry, exact duplicates, source concentration, and image-level hashing.
 - TASK-014: C3A artifact-unit resolver, implemented with ONNX blockers.
 - TASK-015: C3B model hasher, implemented with the unresolved ONNX identity-definition blocker.
-- TASK-016: C3C ONNX structural validator, implemented with ONNX runtime verification blocked.
-- TASK-017: C3D PyTorch safe-loading gate, tested at worker level with TASK-022 integration deferred.
+- TASK-016: C3C ONNX structural validator, tested after ONNX/protobuf compatibility repair; formal host-capability reconciliation remains pending.
+- TASK-017: C3D restricted-load worker tested; SEC-003 controlled supervisor integration PASS, SEC-002 OPEN.
 - TASK-018: reference manager with approved R0–R7 gates, FORMAT_ASSET enforcement, staleness transitions, and audited health updates.
 - TASK-019 Part A: unsigned provenance construction, canonicalization, replay rejection, sequence recovery, and explicit signing-unavailable handling.
-- TASK-020: capability declaration component tested; limitations/non-claims, unsupported requests, schema gating, and store/audit integration verified. CLI acceptance remains conditional on TASK-023.
+- TASK-020: bounded capability declaration tested; downstream CLI display accepted by TASK-023 integration coverage.
+- TASK-021, TASK-022, TASK-023 and TASK-025: interpretation, supervisor, CLI and read-only exporter tested.
+- TASK-027: offline validation recorded TESTED for the frozen Windows AMD64 / CPython 3.13.12 tuple. OFF-002 acceptance PASS, historical recovery-marker FAIL and independent final-state PASS remain separate.
 
 ## Validation Summary
 
 | Area | Result |
 |---|---|
-| TASK-017 unit tests | 29 passed, 0 failed, 0 skipped |
-| TASK-017 security tests | 9 passed, 0 failed, 2 TASK-022 skips |
-| SEC-007 guards | 3 passed, 0 failed |
-| TASK-018 tests | 7 passed, 0 failed |
-| TASK-019 Part A tests | 7 passed, 0 failed, 2 expected signing skips |
-| TASK-020 unit/security tests | 53 passed, 0 failed, 1 TASK-023 CLI skip |
-| Full security suite | 61 passed, 0 failed, 6 expected skips |
-| Full regression | 385 passed, 0 failed, 28 expected skips |
-| FIX-001 hostile pickle | `LOAD_BLOCKED` |
-| FIX-015 benign PyTorch model | `LOAD_SUCCESS` |
-| Deterministic empty-file case | `LOAD_ERROR` |
-| TASK-017 security review | 24 passed, 1 blocked on TASK-022 |
+| SEC-003 targeted dispatch | 1 passed |
+| SEC-002 exact containment | OPEN; 1 HOST-CAP-002 skip |
+| TASK-022/C3D/base regression | 70 passed, 1 skipped, 0 failed |
+| Security suite | 89 passed, 5 skipped, 0 failed |
+| Non-offline regression | 485 passed, 12 skipped, 0 failed |
+| Prior full Gate-2 checkpoint | 483 passed, 20 skipped, 0 failed (historical) |
 
-The two TASK-017 skips are SEC-002 and SEC-003. TASK-019's two skips are the deferred HMAC/Ed25519 signing paths. UT-CAP-003 requires the TASK-023 CLI. Skipped cases are not counted as passed.
+The non-offline run explicitly excludes tests/offline and executes no OFF-002/network isolation. Its 12 skips comprise 9 unchanged stale placeholders, SEC-002, PRE-08-gated HMAC and non-applicable Ed25519. Skips are not passed. [Focused observations, limitations and hashes](docs/validation/task026_c3d_dispatch_acceptance.md) are committed; raw local JUnit/SQLite evidence remains in ignored build/task026-c3d-dispatch/.
 
 ## Pending Components
 
 - TASK-019 Part B operational signing (blocked on PRE-08).
-- TASK-021 interpretation engine.
-- TASK-022 supervisor/orchestrator.
-- TASK-023 CLI entry points.
-- TASK-024 dashboard after GATE-2.
-- TASK-025 evidence bundle exporter.
-- TASK-026 end-to-end integration.
-- TASK-027 target-host offline validation.
+- TASK-024 dashboard: dependency-eligible after Gate-2, not authorized by this packet.
+- TASK-026: SEC-002 resource containment and §18/Gate-4 observed-result reconciliation remain incomplete.
 
 Each pending task requires its own dependency review and execution packet.
 
 ## Current Blockers
 
-- TASK-022: required for C3D OOM termination/continuation and timeout/responsiveness verification.
+- SEC-002 / HOST-CAP-002: Windows has no enforced C3D memory cap; approved safe containment validation is required. No host-exhaustion experiment was attempted.
 - E-2 / SP-002-ONNX: no frozen ONNX artifact-unit definition ID.
-- HOST-CAP-003: ONNX is unavailable in the validated repository-local environment.
+- HOST-CAP-003: genuine ONNX tests pass, but formal procedural reconciliation remains pending.
 - PRE-08: operational signing key path and supervisor-only ACL provisioning remain unresolved.
-- HOST-CAP-001: native-extension compatibility remains unverified on the target host.
-- HOST-CAP-002: Unix resource-limit controls are unavailable on Windows.
-- OFFLINE-001: offline installation and zero-egress deployment validation remain pending.
-- TASK-023: UT-CAP-003 `list-deferred` display acceptance is unverified until the analyst CLI exists.
+- §18/Gate-4: remaining observed-result records and full validation acceptance require separate reconciliation.
 
 ## Public Evidence Boundaries
 

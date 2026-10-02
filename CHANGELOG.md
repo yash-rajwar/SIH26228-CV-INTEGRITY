@@ -1,5 +1,24 @@
 # Changelog
 
+## TASK-026 — Focused C3D Dispatch Acceptance (2026-10-02 reconciliation)
+
+- SEC-003 passes real child timeout/termination, schema-gated evidence persistence,
+  audit integrity, UNAVAILABLE finding propagation and subsequent-asset completion.
+- Corrected timeout cleanup at the existing dispatcher: drain/reap communication
+  after kill before removing the child working directory. No timeout, memory-cap,
+  worker, schema or trust-boundary redesign.
+- Added bounded MemoryError integration coverage explicitly distinguished from
+  SEC-002 OOM acceptance. SEC-002 remains OPEN under HOST-CAP-002; no over-limit
+  fixture was loaded without enforced containment.
+- Preserved 2026-09-29 validation: relevant 70 passed/1 skipped; security 89 passed/5
+  skipped; non-offline regression 485 passed/12 skipped, zero failures. Existing
+  Git grep was exposed in the test-shell PATH; no packages were installed.
+- Gate-2 PASS preserved. Gate-3/Gate-4, PRE-08, E-2 and HOST-CAP-003 remain open.
+  No offline execution, network changes, dashboard work or research-doc edits.
+- Updated public status summaries from their stale Stage 8 checkpoint. Historical
+  entries below remain unchanged. Detailed observations are in
+  docs/validation/task026_c3d_dispatch_acceptance.md.
+
 ## Stage 8 — Component Implementation Complete
 
 ### Added
