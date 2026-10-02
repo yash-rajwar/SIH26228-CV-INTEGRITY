@@ -2784,7 +2784,7 @@ For every major capability claim, the following contract defines the required ev
 | **Test condition** | FIX-008/FIX-009 hostile fixtures (seeded; reproducible) |
 | **Ground truth** | Known violations injected into fixture corpus; violation types and counts recorded in fixture manifest |
 | **Expected result** | All injected violation types appear in evidence record violations list; violation_count matches injected count |
-| **Observed result** | NOT YET OBTAINED |
+| **Observed result** | PASS (2026-10-02): seed-26228 FIX-008 / FIX-009-D / FIX-009-S yield exact 9 / 6 / 6 violations, manifest type maps and 10 / 7 / 7 all-box counts; pipeline/store/finding/export synthetic labels verified. [Observation record](validation/task026_gate4_experiment_observations.md#181--m01-geometry). |
 | **Evidence** | COMP-W-C2A evidence record from fixture run; is_synthetic=1 |
 | **Bounded conclusion** | "M01 detects the injected structural and geometry violation types in FIX-008/FIX-009 fixtures. It does NOT establish detection of semantic poisoning, T05d, or violations that conform to the annotation format spec." |
 | **Limitations on conclusion** | Fixture population is synthetic; conclusion bounded to fixture types; does not establish real-world detection coverage |
@@ -2798,7 +2798,7 @@ For every major capability claim, the following contract defines the required ev
 | **Test condition** | FIX-001 hostile pickle (LOAD_BLOCKED test); FIX-015 benign model (LOAD_SUCCESS test) |
 | **Ground truth** | FIX-001: known hostile pickle that triggers UnpicklingError with weights_only=True. FIX-015: benign PyTorch model that loads cleanly |
 | **Expected result** | FIX-001 → LOAD_BLOCKED; FIX-015 → LOAD_SUCCESS; fallback_attempted=False in both |
-| **Observed result** | NOT YET OBTAINED |
+| **Observed result** | PASS (2026-10-02): real seed-26228 FIX-001 LOAD_BLOCKED and FIX-015 LOAD_SUCCESS; fallback_attempted=false in both; production unsafe-load guards zero-match. [Observation record](validation/task026_gate4_experiment_observations.md#182--c3d-restricted-load). |
 | **Evidence** | C3D evidence records from fixture runs; grep test output (0 matches for weights_only=False) |
 | **Bounded conclusion** | "C3D blocks the FIX-001 hostile pickle class. weights_only=False was not invoked in any test path. LOAD_BLOCKED ≠ PROVEN_MALICIOUS; LOAD_SUCCESS ≠ behavioral safety." |
 
@@ -2808,7 +2808,7 @@ For every major capability claim, the following contract defines the required ev
 |---|---|
 | **Test condition** | FIX-004 (absolute path), FIX-005 (traversal), FIX-006 (symlink) |
 | **Expected result** | ONNX_PATH_CONTAINMENT_VIOLATION for all three fixture types |
-| **Observed result** | NOT YET OBTAINED |
+| **Observed result** | PASS (2026-10-02): genuine seed-26228 FIX-004/005/006 all yield persisted ONNX_PATH_CONTAINMENT_VIOLATION and stop C3 dispatch; synthetic labels preserved. [Observation record](validation/task026_gate4_experiment_observations.md#183--c3a-containment). |
 | **Bounded conclusion** | "C3A detects FIX-004/005/006 path containment violation types. Detection is based on path string analysis and os.path.realpath resolution; it does not establish that all path traversal variants are covered." |
 
 ## 18.4 Audit chain integrity claim
@@ -2817,7 +2817,7 @@ For every major capability claim, the following contract defines the required ev
 |---|---|
 | **Test condition** | UT-AUD-002 modified-event test |
 | **Expected result** | Chain integrity check detects modification; CHAIN_CORRUPT emitted |
-| **Observed result** | NOT YET OBTAINED |
+| **Observed result** | PASS (2026-10-02): UT-AUD-002/004 and SEC-010 detect modified chain-link/payload digest, emit CHAIN_CORRUPT, retain original events and expose no reset path; tail limitation unchanged. [Observation record](validation/task026_gate4_experiment_observations.md#184--audit-corruption). |
 | **Bounded conclusion** | "The hash chain detects modification of events within the chain body. Tail truncation (events appended after the last legitimate event) is not detectable by the chain alone; COMPLETENESS_UNAVAILABLE applies." |
 
 ## 18.5 UNAVAILABLE propagation claim
@@ -2826,7 +2826,7 @@ For every major capability claim, the following contract defines the required ev
 |---|---|
 | **Test condition** | FIX-013: UNAVAILABLE injected at each of 4 pipeline layers |
 | **Expected result** | C5 finding: detection_status=UNAVAILABLE; analyst_disposition_prompt=UNAVAILABLE_NO_DECISION for each injection point |
-| **Observed result** | NOT YET OBTAINED |
+| **Observed result** | PASS (2026-10-02): VS-004 confirms ingestion/C2/C3/C4 injections remain UNAVAILABLE / UNAVAILABLE_NO_DECISION; negative tests and real supervisor C3B injection also pass. [Observation record](validation/task026_gate4_experiment_observations.md#185--unavailable-propagation). |
 | **Bounded conclusion** | "UNAVAILABLE propagates through the pipeline without conversion to any positive assurance state, at the tested injection points." |
 
 ## 18.6 Validation evaluation procedure

@@ -2,7 +2,7 @@
 
 ## Current Milestone
 
-Gate-2 and Gate-3 are PASS. TASK-026 remains IN PROGRESS; Gate-4 is NOT PASSED and was not adjudicated here. E-2 / SP-002-ONNX is RESOLVED by the owner-frozen definition and real C3A/C3B identity acceptance. SEC-002, SEC-003 and SEC-008 real target-host acceptance remain PASS.
+Gate-2, Gate-3 and Gate-4 are PASS. TASK-026 is TESTED after the all-of validation review on 2026-10-02. E-2 / SP-002-ONNX remains RESOLVED; C3A/B/C/D remain TESTED and SEC-001..012 functional acceptance remains PASS. Gate-5 is NOT PASSED and TASK-024 is NOT STARTED. No new feature or production repair was needed.
 
 The dispatcher creates Windows workers suspended under a restricted primary token, assigns the existing configured Job, then resumes them without an unrestricted fallback. Explicit deployment-only evidence ACLs deny real worker writes while supervisor persistence and normal IPC succeed. Memory/timeout semantics remain unchanged. This is committed-memory enforcement and a scoped evidence-path DACL boundary, not an RSS/RLIMIT_AS or whole-host sandbox claim.
 
@@ -18,6 +18,7 @@ The dispatcher creates Windows workers suspended under a restricted primary toke
 - TASK-019 Part A: unsigned provenance construction, canonicalization, replay rejection, sequence recovery, and explicit signing-unavailable handling.
 - TASK-020: bounded capability declaration tested; downstream CLI display accepted by TASK-023 integration coverage.
 - TASK-021, TASK-022, TASK-023 and TASK-025: interpretation, supervisor, CLI and read-only exporter tested.
+- TASK-026: VS-001..007, all §18 observations, synthetic pipeline/export labels, REPRO-001..006 and INT-001..005 accepted; Gate-4 PASS with existing target-host OFF evidence.
 - TASK-027: offline validation recorded TESTED for the frozen Windows AMD64 / CPython 3.13.12 tuple. OFF-002 acceptance PASS, historical recovery-marker FAIL and independent final-state PASS remain separate.
 
 ## Validation Summary
@@ -32,18 +33,19 @@ The dispatcher creates Windows workers suspended under a restricted primary toke
 | Definition/configuration | 18 passed |
 | C3A / C3B / C3C targeted | 30 / 18 / 18 passed |
 | Real ONNX identity / restricted supervisor | 10 / 2 passed |
-| Relevant integration/negative regression | 57 passed, 4 skipped, 0 failed |
+| VS / experiment / REPRO / INT / synthetic-export batteries | 7 / 17 / 15 / 6 / 17 passed |
+| Relevant integration/negative regression | 79 passed, 4 skipped, 0 failed |
 | Security suite | 92 passed, 4 skipped, 0 failed |
-| Non-offline regression | 530 passed, 11 skipped, 0 failed |
+| Non-offline regression | 552 passed, 11 skipped, 0 failed |
 | Prior full Gate-2 checkpoint | 483 passed, 20 skipped, 0 failed (historical) |
 
-The non-offline run explicitly excludes tests/offline and executes no OFF-002/network isolation. The remaining skips are unchanged historical/conditional placeholders, including PRE-08-gated HMAC and non-applicable Ed25519; none count as passes. [ONNX identity and final Gate-3 adjudication](docs/validation/e2_onnx_identity_acceptance.md) accompanies ignored `build/e2-onnx/` reports. [SEC-008 observations and prior Gate-3 decision](docs/validation/task026_sec008_windows_acl.md), [earlier C3D observations](docs/validation/task026_c3d_dispatch_acceptance.md) and their local reports remain historical evidence.
+The non-offline run explicitly excludes tests/offline and executes no OFF-002/network isolation. All 22 new validation cases pass. The remaining skips are unchanged historical/conditional placeholders, including PRE-08-gated HMAC and non-applicable Ed25519; none count as passes. [Gate-4 criterion review](docs/validation/task026_gate4_evaluation.md) and [§18 observations](docs/validation/task026_gate4_experiment_observations.md) record the exact sources, results and local hashes under ignored `build/task026-gate4/`. [ONNX identity / Gate-3](docs/validation/e2_onnx_identity_acceptance.md), [SEC-008](docs/validation/task026_sec008_windows_acl.md) and [C3D history](docs/validation/task026_c3d_dispatch_acceptance.md) remain unchanged historical records.
 
 ## Pending Components
 
 - TASK-019 Part B operational signing (blocked on PRE-08).
-- TASK-024 dashboard: dependency-eligible after Gate-2, not authorized by this packet.
-- TASK-026: §18/Gate-4 observed-result reconciliation remains incomplete; E-2 and the all-C3-complete Gate-3 trigger are now satisfied.
+- TASK-024 dashboard / analyst visual interface preparation for Gate-5: next logical candidate after Gate-4; not started and requires its own implementation packet.
+- Gate-5 demo acceptance: NOT PASSED; no dashboard or demo work performed.
 
 Each pending task requires its own dependency review and execution packet.
 
@@ -51,7 +53,12 @@ Each pending task requires its own dependency review and execution packet.
 
 - HOST-CAP-003: factual ONNX capability passes, but formal TASK-027-C re-entry remains procedural-pending; its recorded Required Next Action specifies full re-entry with zero-egress evidence, outside this packet. This is not an E-2 or C3 component runtime blocker.
 - PRE-08: operational signing key path and supervisor-only ACL provisioning remain unresolved.
-- §18/Gate-4: remaining observed-result records and full validation acceptance require separate reconciliation.
+
+The former §18/Gate-4 evidence blocker is closed by the complete criterion
+evaluation. PRE-08 and the historical HOST-CAP-003 procedural note remain open;
+neither is an invented additional Gate-4 criterion. The accepted OFF-002
+acceptance PASS / original recovery-marker FAIL / independent restored-state
+PASS remain separate; no offline run or network control was touched.
 
 ## Public Evidence Boundaries
 

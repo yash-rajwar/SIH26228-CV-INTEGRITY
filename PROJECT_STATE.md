@@ -12,7 +12,7 @@ Update this file at the end of every coding session before committing.
 ## PROJECT
 
 **Name:** Trustworthy Computer Vision Integrity Assurance — SIH 2026 PS 26228  
-**Current stage:** E-2 / SP-002-ONNX resolved by real identity acceptance; C3A/C3B `TESTED`; GATE-2 `PASS`; GATE-3 `PASS`; GATE-4 `NOT PASSED` and outside this packet
+**Current stage:** TASK-026 `TESTED`; GATE-2 / GATE-3 / GATE-4 `PASS`; GATE-5 `NOT PASSED`; TASK-024 `NOT STARTED`; PRE-08 `PARTIAL`
 **Repository created:** [DATE TO BE FILLED ON REPO INIT]  
 **Five-day window start:** [DATE — begins after P1 conditions resolved]
 
@@ -61,12 +61,46 @@ Status codes: `NOT STARTED` | `IN PROGRESS` | `IMPLEMENTED` | `TESTED` | `VALIDA
 | CLI entry points | TASK-023 | `TESTED` | Seven argparse entry points implemented; complete stored findings/evidence/deferred records remain visible, audit corruption is surfaced before events, assessment delegates to COMP-SUP, and export delegates to COMP-EXPORT. The unimplemented TASK-024 command remains explicitly unavailable. Original TASK-023 acceptance and current TASK-025 CLI regression pass. |
 | Dashboard (SHOULD BUILD) | TASK-024 | `NOT STARTED` | GATE-2 now passes, so the MVP dependency gate no longer blocks TASK-024; dashboard work was not started by this reconciliation and still requires its own execution packet |
 | Evidence bundle exporter | TASK-025 | `TESTED` | Deterministic read-only six-document ZIP packaging, complete field/state preservation, non-mutating audit verification, path and overwrite controls, secret/prohibited-field rejection, and CLI delegation are validated. Targeted: 27 passed; relevant regression: 107 passed, 3 expected skips. |
-| End-to-end integration test | TASK-026 | `IN PROGRESS` | GATE-2 PASS preserved; GATE-3 PASS after E-2 closure and complete MVP §14 checklist review. All C3 workers complete/tested; SEC-001..012 functional PASS retained. §10 §18/GATE-4 reconciliation remains open and is not authorized here. Non-offline regression: 530 passed, 11 skipped, 0 failed. |
+| End-to-end integration test | TASK-026 | `TESTED` | GATE-4 all-of PASS: VS-001..007; §18.1..18.5 actual observations; production synthetic-label/export acceptance; REPRO-001..006; INT-001..005; accepted OFF-001..004 evidence. Security 92 passed/4 skipped; integration/negative 79 passed/4 skipped; non-offline 552 passed/11 skipped, 0 failed. No production changes or OFF/network rerun. |
 | Offline validation (target host) | TASK-027 | `TESTED` | OFF-001, OFF-003, and OFF-004 have target-host exit-zero evidence from `task027-run-20260928-215709`; OFF-002 has a zero-byte non-loopback acceptance window from TASK-027-S. The original recovery marker remains `FAIL`, while independent post-run verification confirms exact restored host state. The offline result is bounded to the frozen Windows AMD64 / CPython 3.13.12 tuple. |
 
 ---
 
 ## CURRENT TASK
+
+TASK-026 / GATE-4 final validation reconciliation COMPLETE (2026-10-02).
+Starting HEAD `8ce7569da5a4e88ccc575ff11593245f9af7a3c2`, clean worktree and
+`feature/vertical-slice` verified before synchronized pull (already current).
+Read-only criterion inventory preceded changes. Only explicit coverage gaps
+were filled: one new 22-case validation file; no production defect or repair.
+
+Ordered validation: VS 7 passed; experiment/audit/unavailability 17 passed;
+REPRO battery 15 passed; INT/secret-environment 6 passed; synthetic/export
+17 passed; security 92 passed/4 skipped; integration/negative 79 passed/4 skipped;
+non-offline 552 passed/11 skipped, zero failures. All unchanged skips remain
+distinct from passes. All 45 fixture/injection evidence records and 15 findings
+in the explicit Gate-4 runs retain synthetic labels through storage/export.
+Universal guards and Fabric/HyperLedger exclusion are clean.
+
+See `docs/validation/task026_gate4_experiment_observations.md` and
+`docs/validation/task026_gate4_evaluation.md` for each criterion, bounded
+conclusions, exact observations and raw evidence hashes. The maintained
+Technical §18 observed-result rows and MVP TASK-026/GATE-4 markers are updated;
+immutable historical sources and validation decisions remain unchanged.
+
+TASK-026 TESTED; GATE-4 PASS. GATE-2/GATE-3 PASS retained; E-2 RESOLVED;
+C3A/B/C/D TESTED retained; SEC-001..012 functional PASS retained. PRE-08 PARTIAL,
+SIGNING_UNAVAILABLE, and HOST-CAP-003 factual runtime PASS / historical
+TASK-027-C formal procedural re-entry pending remain distinct. Accepted OFF
+evidence is reused only: OFF-002 acceptance PASS (0 packets/0 bytes), original
+recovery marker FAIL, independent restored-state PASS. No offline test,
+network/PktMon change, package installation, signing or protected research edit.
+
+GATE-5 NOT PASSED; TASK-024 NOT STARTED. Next logical candidate: TASK-024
+dashboard / analyst visual interface preparation for Gate-5 under its own
+implementation packet. Do not start it automatically.
+
+### Prior E-2 closure checkpoint (historical; superseded for TASK-026/Gate-4 only)
 
 E-2 / SP-002-ONNX closure COMPLETE. Starting HEAD
 `1a7c21919475cdc0bc4ce2432910852709937819`, clean worktree and
@@ -169,6 +203,7 @@ Validated behavior:
 | TASK-026 Windows memory containment | Recorded ACC-2026-10-02-01 before implementation; added configured Windows Jobs, suspended creation, assignment before resume, memory-limit detection/termination, and deterministic Job/process-handle cleanup. Real FIX-002 supervisor persistence/C5/audit/continuation acceptance passes; historical probe and supplemental MemoryError evidence remain distinct. | Job unit/capability 6 passed; SEC-002 1 passed; existing SEC-003 1 passed; relevant 51 passed; security 90 passed/4 skipped; non-offline 492 passed/11 skipped. GATE-3 remains NOT PASSED due SEC-008; E-2 remains OPEN; GATE-4 remains NOT PASSED. | This TASK-026 Windows containment commit (parent `9338f1a`) |
 | TASK-026 Windows evidence ACL isolation | ACC-2026-10-02-02 recorded before implementation. Added restricted-primary-token launch with no fallback, explicit inheritable deployment ACLs and reversible snapshot, real supervisor-write/restricted-worker OS-denial acceptance, handle/failure cleanup and unchanged Job ordering. Original insecure ACL/child ALLOWED preserved. | Token 14 passed; ACL/SEC-008 2 passed; SEC-002 1 passed; SEC-003 1 passed; relevant 71 passed; security 92 passed/4 skipped; non-offline 508 passed/11 skipped. SEC-008 PASS; GATE-3 NOT PASSED due E-2 all-C3-complete trigger; GATE-4 NOT PASSED. | This SEC-008 commit (parent `1da72cd`) |
 | E-2 / SP-002-ONNX closure | Owner-frozen referenced-member definition, approved supervisor format ID and mismatch rejection; completed-only C3A-to-C3B handoff prevents partial-unit hashes. Recursive traversal and C3B algorithm unchanged; real ONNX acceptance and full Gate-3 adjudication recorded. | C3A 30; C3B 18; C3C 18; real identity 10; supervisor 2; security 92 passed/4 skipped; non-offline 530 passed/11 skipped; zero failures. C3A/C3B TESTED, E-2 RESOLVED, Gate-3 PASS. | This E-2 closure commit (parent `1a7c219`) |
+| TASK-026 final Gate-4 validation | Added only exact missing validation assertions and §18 observation / all-of evaluation records; reconciled maintained/public status. No production change. Accepted offline evidence reused without network execution. | VS 7; experiments 17; REPRO 15; INT 6; synthetic/export 17; security 92 passed/4 skipped; integration/negative 79 passed/4 skipped; non-offline 552 passed/11 skipped, zero failures. TASK-026 TESTED; Gate-4 PASS. | This TASK-026 completion commit (parent `8ce7569`) |
 
 ---
 
@@ -178,7 +213,10 @@ Validated behavior:
 |---|---|---|---|
 | PRE-08 | HMAC-SHA256 parameters are frozen, but a Windows target-host absolute key path and supervisor-only ACL verification are not yet provisioned | TASK-019 operational signing | Project owner / deployment owner |
 | HOST-CAP-003 / TASK-014 packet E-3 | PROCEDURAL-PENDING ONLY: genuine ONNX 1.23.0 / protobuf 7.36.2 C3A/C3B/C3C target-host acceptance passes. `docs/task027c_gate2_validation.md` Required Next Action still requires a distinct full TASK-027-C re-entry with zero-egress evidence; this packet prohibits that execution. No missing-runtime claim is retained. | Formal TASK-027-C procedural reconciliation, not E-2 or passing C3 component/Gate-3 acceptance | Dependency / deployment owner |
-| TASK-026-VALIDATION-EVIDENCE | Technical Specification §18.1–§18.5 still says `NOT YET OBTAINED`; named observed-result records and the remaining GATE-4 reproducibility/integration evidence have not been formally reconciled | Full TASK-026 acceptance, capability claims, and GATE-4 | TASK-026 validation owner |
+
+TASK-026-VALIDATION-EVIDENCE is CLOSED by the 2026-10-02 all-of Gate-4 evaluation:
+all §18 observed results and named reproducibility/integration/synthetic/offline
+criteria have evidence. PRE-08 and HOST-CAP-003 procedural history are not closed.
 
 ---
 
@@ -206,10 +244,10 @@ Validated behavior:
 ## LATEST VALIDATED COMMIT
 
 ```
-Commit: This E-2 closure commit (parent: 1a7c21919475cdc0bc4ce2432910852709937819)
+Commit: This TASK-026 Gate-4 completion commit (parent: 8ce7569da5a4e88ccc575ff11593245f9af7a3c2)
 Branch: feature/vertical-slice
 Date: 2026-10-02
-Tests: E-2 real identity 10 passed; supervisor 2 passed; C3A/B/C 30/18/18 passed; SEC-004/005/006 6 passed; SEC-002/003 1 each; SEC-008 2 passed; security 92 passed/4 skipped; integration/negative 57 passed/4 skipped; non-offline 530 passed/11 skipped, 0 failed. Gate-3 PASS; Gate-4 not adjudicated. Universal guards clean. Prior Gate-2/OFF evidence and recovery distinctions unchanged.
+Tests: VS 7; experiments 17; REPRO 15; INT 6; synthetic/export 17; security 92 passed/4 skipped; integration/negative 79 passed/4 skipped; non-offline 552 passed/11 skipped, 0 failed. Gate-4 PASS; Task-026 TESTED. Universal guards clean. Gate-2/Gate-3/OFF evidence and separate recovery facts retained; no production changes.
 ```
 
 ---
@@ -218,17 +256,17 @@ Tests: E-2 real identity 10 passed; supervisor 2 passed; C3A/B/C 30/18/18 passed
 
 ```
 Date: 2026-10-02
-Latest validation: E-2 / SP-002-ONNX real byte-identity acceptance and Gate-3 checklist.
-Executed checks: 13 ordered runs in owner packet; approved CPython 3.13.12 / ONNX 1.23.0 / protobuf 7.36.2 / pytest 9.1.1; actual restricted Windows supervisor pipeline; universal guards.
-Result: Definition/config 18; C3A 30; C3B 18; C3C 18; real identity 10; supervisor 2; SEC-004/005/006 6; SEC-002 1; SEC-003 1; SEC-008 2; security 92 passed/4 skipped; integration/negative 57 passed/4 skipped; non-offline 530 passed/11 skipped, 0 failed. tests/offline explicitly excluded.
-Environment: Existing approved environment and unchanged Windows restricted-token/Job/ACL mechanisms; no packages installed. Incomplete-unit handoff defect fixed without changing C3B hashing or recursive traversal.
-Evidence: docs/validation/e2_onnx_identity_acceptance.md; ignored build/e2-onnx/ JUnit and supervisor observations, report hashes committed in validation record. Prior SEC-008/C3D evidence remains historical.
+Latest validation: TASK-026 / Gate-4 all-of criterion reconciliation and actual §18 observations.
+Executed checks: 8 ordered runs; approved CPython 3.13.12 / ONNX 1.23.0 / protobuf 7.36.2 / pytest 9.1.1; real restricted Windows dispatch/storage/export; universal guards.
+Result: VS 7; experiments 17; REPRO 15; INT 6; synthetic/export 17; security 92 passed/4 skipped; integration/negative 79 passed/4 skipped; non-offline 552 passed/11 skipped, 0 failed. tests/offline explicitly excluded; accepted OFF evidence reused.
+Environment: Existing approved environment and unchanged Windows restricted-token/Job/ACL mechanisms; no packages installed; no production defect/change, network operation or signing.
+Evidence: docs/validation/task026_gate4_evaluation.md and task026_gate4_experiment_observations.md; ignored build/task026-gate4/ reports/observations with committed hashes. Prior E-2/SEC-008/C3D/OFF records remain historical.
 
 Integration gates:
   GATE-1 (Foundation):       prerequisite components TESTED; not re-adjudicated in this reconciliation
   GATE-2 (Vertical Slice):   PASS
   GATE-3 (Capability):       PASS — all-C3-complete trigger and every MVP §14 criterion supported
-  GATE-4 (Validation):       NOT PASSED — full TASK-026/§18 evidence remains open
+  GATE-4 (Validation):       PASS — every MVP §14 criterion has accepted evidence
   GATE-5 (Demo):             NOT PASSED
 ```
 
@@ -670,7 +708,7 @@ The Stage 6 rule permits exit when every requirement is either satisfied with ev
 
 ## NEXT TASK
 
-**Next required action (not new implementation authorization):** Obtain a separate packet for §10 §18/GATE-4 observed-result reconciliation and, separately, HOST-CAP-003 formal procedural re-entry if required. E-2 is resolved and Gate-3 PASS; accepted SEC-002/003/008 need not be reopened. This packet authorizes no subsequent task or Gate-4 work; TASK-024 remains not started. PRE-08 PARTIAL and historical OFF/recovery distinctions remain unchanged.
+**Next logical authorized candidate (not started here):** TASK-024 dashboard / analyst visual interface preparation for GATE-5, under its own implementation packet. TASK-026 TESTED and Gate-4 PASS satisfy validation prerequisites; Gate-5 is NOT PASSED. PRE-08 PARTIAL and the distinct HOST-CAP-003 historical procedural re-entry remain carried, not fabricated Gate-4 blockers. Gate-2/Gate-3 and historical OFF/recovery distinctions remain unchanged. Do not start TASK-024 automatically.
 
 Critical path reminder:
 ```
@@ -698,7 +736,9 @@ SP-002-ONNX / E-2 is approved by the current project-owner packet with the exact
 ID `onnx-main-referenced-external-data-v1` and decision date 2026-10-05. The
 definition and decision-log entry freeze the existing AC-03 membership contract.
 E-2 is RESOLVED by real C3A/C3B and restricted supervisor acceptance executed
-2026-10-02. C3A/C3B are TESTED and Gate-3 PASS; Gate-4 is not adjudicated.
+2026-10-02. C3A/C3B are TESTED and Gate-3 PASS. Subsequent TASK-026 Gate-4
+evaluation on 2026-10-02 is PASS; this does not resolve operational signing
+or rewrite the prior procedural/acceptance history.
 
 ACC-2026-10-02-02 is approved by the current project-owner packet and recorded
 before implementation in the architecture/build documents. Windows restricted
@@ -706,8 +746,9 @@ primary-token launch and explicit evidence-store ACL provisioning are in scope.
 SEC-008 is now PASS based on real target-host OS denial and passing regressions.
 The original unrestricted child write ALLOWED is preserved as precondition
 evidence. That prior checkpoint's Gate-3 NOT PASSED decision is historical;
-the subsequent E-2 closure now satisfies the all-C3-complete trigger. Gate-4,
-PRE-08 and OFF-002 statuses remain unchanged.
+the subsequent E-2 closure now satisfies the all-C3-complete trigger. The final
+TASK-026 evaluation separately passes Gate-4. PRE-08 and OFF-002 facts remain
+unchanged.
 
 *(Only genuine project decisions — not implementation questions)*
 
@@ -740,6 +781,11 @@ PRE-08 and OFF-002 statuses remain unchanged.
 ---
 
 ## HANDOFF NOTES
+
+**Current TASK-026 Gate-4 session:** Starting HEAD `8ce7569da5a4e88ccc575ff11593245f9af7a3c2` verified clean/current. Added 22 exact validation cases only; no production defects or code changes. VS 7, experiments 17, REPRO 15, INT 6, synthetic/export 17 pass; security 92 passed/4 skipped; integration/negative 79 passed/4 skipped; non-offline 552 passed/11 skipped, zero failures. All Gate-4 rows PASS; TASK-026 TESTED, Gate-4 PASS. Gate-2/Gate-3 PASS and E-2 RESOLVED retained; PRE-08 PARTIAL; HOST-CAP-003 factual runtime PASS / historical procedural re-entry pending; Gate-5 NOT PASSED; TASK-024 NOT STARTED. Accepted OFF evidence reused; acceptance PASS/recovery-marker FAIL/independent-restoration PASS remain distinct. No OFF/network run, installation, signing or research change. Next candidate TASK-024 needs its own packet; do not start automatically.
+
+The prior session notes below are historical; their Gate-4 pending wording is
+superseded only by the current all-of evaluation. Other unresolved items remain.
 
 **Current E-2 closure session:** Starting HEAD `1a7c21919475cdc0bc4ce2432910852709937819` verified clean/current. Frozen owner ID and decision record accepted by real ONNX identity and production restricted supervisor tests. C3A/C3B TESTED, E-2 RESOLVED, Gate-3 PASS from the complete MVP checklist; Gate-2 PASS preserved, Gate-4 NOT PASSED, TASK-026 IN PROGRESS, PRE-08 PARTIAL, TASK-024 NOT STARTED. HOST-CAP-003 remains procedural-pending only due the separately required TASK-027-C re-entry. Security 92 passed/4 skipped; non-offline 530 passed/11 skipped, zero failures. No OFF/network rerun, package installation, C3D/schema/constant/fixture/protected-research modification. Historical SEC-008/Job/OFF records below remain intact and are superseded only where the new E-2/Gate-3 decision applies. No subsequent task authorized.
 

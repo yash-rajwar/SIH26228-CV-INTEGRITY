@@ -993,7 +993,14 @@ Items permanently excluded. No change-control path exists for these specific exc
 **Tests:** VS-001 through VS-007 (self-describing)
 **Acceptance criteria:** All 7 vertical-slice tests pass; ALL §10 §18 experiment validation contracts have observed results recorded; UNAVAILABLE propagation confirmed at all 4 injection points; security fixture tests (SEC-001 through SEC-012) pass
 **Risk/blockers:** Blocked until all upstream MUST BUILD tasks complete; is the integration gate
-**Completion state:** `[ ] NOT STARTED`
+**Completion state:** `[x] TESTED — 2026-10-02; GATE-4 PASS`
+
+Maintained validation state: [criterion-by-criterion Gate-4 evaluation](validation/task026_gate4_evaluation.md).
+VS 7 passed; §18.1–§18.5 observations recorded; synthetic propagation,
+REPRO-001..006 and INT-001..005 pass; accepted OFF-001..004 evidence reused
+without network execution. Non-offline regression: 552 passed / 11 unchanged
+skips / 0 failures. Original expected outputs above remain historical task text;
+the approved frozen vocabulary and bounded observation record govern findings.
 
 ---
 
@@ -1340,12 +1347,19 @@ Gate-4 acceptance or authorization for another task.
 
 **Trigger:** After TASK-026 (full vertical slice test battery) passes
 **Criteria:**
-- [ ] All VS-001 through VS-007 pass
-- [ ] All §10 §18 experiment validation contracts have observed results recorded
-- [ ] Evidence records are_synthetic=1 for all fixture-derived results
-- [ ] REPRO-001 through REPRO-006 pass (reproducibility)
-- [ ] INT-001 through INT-005 (orchestrator integration) pass
-- [ ] Offline tests OFF-001 through OFF-004 pass [conditional on PRE-01 resolved]
+- [x] All VS-001 through VS-007 pass
+- [x] All §10 §18 experiment validation contracts have observed results recorded
+- [x] Evidence records are_synthetic=1 for all fixture-derived results (frozen field: `is_synthetic`)
+- [x] REPRO-001 through REPRO-006 pass (reproducibility)
+- [x] INT-001 through INT-005 (orchestrator integration) pass
+- [x] Offline tests OFF-001 through OFF-004 pass [conditional on PRE-01 resolved]
+
+**GATE-4: PASS — 2026-10-02**, all-of evaluation and exact evidence in
+[TASK-026 Gate-4 review](validation/task026_gate4_evaluation.md). Accepted
+target-host OFF evidence was reused; OFF-002 acceptance PASS, original recovery
+marker FAIL and independent restored-state PASS remain separate. PRE-08 PARTIAL
+and HOST-CAP-003's historical procedural re-entry remain carried. GATE-5 is
+NOT PASSED and TASK-024 is NOT STARTED; neither is executed by this review.
 
 ## GATE-5: Demo Gate
 
@@ -1419,23 +1433,23 @@ The following must be complete before any final demo, PPT, or public-facing clai
 
 | Category | Required item | Status |
 |---|---|---|
-| Core functionality | GATE-4 (validation gate) passed | Pending |
+| Core functionality | GATE-4 (validation gate) passed | PASS — TASK-026 Gate-4 evaluation, 2026-10-02 |
 | Core functionality | All MUST BUILD tasks complete | Pending |
-| Security | SEC-001 through SEC-012 all pass | Pending |
-| Security | weights_only=False grep: 0 matches | Pending |
-| Security | Evidence store ACL test (SEC-008) | Pending |
-| Security | Replay nonce rejection (SEC-009) | Pending |
-| Evidence | All §10 §18 experiment contracts have OBSERVED RESULTS | Pending |
-| Evidence | All fixture records carry is_synthetic=True | Pending |
-| Evidence | is_synthetic flag verified in export bundle | Pending |
-| Offline | Target host tuple documented | Pending (PRE-01) |
-| Offline | OFF-001 through OFF-004 pass on target host | Pending (PRE-01) |
+| Security | SEC-001 through SEC-012 all pass | PASS — functional acceptance retained; current security regression passes |
+| Security | weights_only=False grep: 0 matches | PASS — current universal guards |
+| Security | Evidence store ACL test (SEC-008) | PASS — accepted frozen Windows deployment/worker boundary |
+| Security | Replay nonce rejection (SEC-009) | PASS — current provenance security regression |
+| Evidence | All §10 §18 experiment contracts have OBSERVED RESULTS | PASS — maintained §18 observation rows and validation record |
+| Evidence | All fixture records carry is_synthetic=True | PASS — explicit real pipeline acceptance |
+| Evidence | is_synthetic flag verified in export bundle | PASS — existing six-document export path |
+| Offline | Target host tuple documented | PASS — resolved PRE-01; accepted frozen Windows AMD64 / CPython 3.13.12 scope |
+| Offline | OFF-001 through OFF-004 pass on target host | PASS — accepted TASK-027 evidence reused; no rerun |
 | Claims | No claim broader than observed fixture evidence | Ongoing |
 | Claims | No R01 benchmark metrics presented as project results | Ongoing |
 | Claims | All project capability claims bounded to fixture scope | Ongoing |
 | Repository | License attribution comments for R17 + R27 reuse | Pending |
 | Repository | `NOTICES.md` or equivalent for MIT/BSD attribution | Pending |
-| Repository | REUSE-015 exclusion verified: grep for Fabric/HyperLedger in codebase → 0 matches | Pending |
+| Repository | REUSE-015 exclusion verified: grep for Fabric/HyperLedger in codebase → 0 matches | PASS — zero production Python matches in Gate-4 review |
 | Repository | Architecture change control log: any change-control decisions recorded | Ongoing |
 | Reproducibility | REPRO-001 through REPRO-006 pass | Pending |
 | Demo | GATE-5 (demo gate) passed | Pending |

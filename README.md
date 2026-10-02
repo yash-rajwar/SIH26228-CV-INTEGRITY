@@ -32,7 +32,7 @@ The architectural authority is `docs/ARCHITECTURE_SPECIFICATION.md`; the build c
 - Worker IPC/output base and schema validation.
 - Seed-pinned hostile and benign fixture families.
 - C2A structural geometry validation, C2B exact duplicate hashing, C2C source-concentration statistics, and C2D image-level SHA-256 identity.
-- C3A artifact-unit resolution, C3B model hashing, and C3C ONNX structural-validation contracts, with their named ONNX blockers retained.
+- Tested C3A artifact-unit resolution, C3B ordered whole-member hashing under the frozen ONNX definition, and C3C structural-only ONNX validation; historical procedural reconciliation remains separately documented.
 - C3D PyTorch safe-loading gate using one restricted `torch.load` path with `weights_only=True` and `map_location="cpu"`, with no unsafe fallback.
 - COMP-REF reference registration, approved R0–R7 gate enforcement, FORMAT_ASSET boundaries, and audited staleness transitions.
 - COMP-C4 unsigned provenance records with canonicalization, replay rejection, sequence recovery, and explicit `SIGNING_UNAVAILABLE` status.
@@ -41,7 +41,7 @@ The architectural authority is `docs/ARCHITECTURE_SPECIFICATION.md`; the build c
 
 ## Current Status
 
-Gate-2 and Gate-3 are PASS. The supervisor, interpretation, CLI and exporter are implemented; VS-001 through VS-007 have passing evidence. Full TASK-026 validation and Gate-4 remain incomplete.
+Gate-2, Gate-3 and Gate-4 are PASS. TASK-026 is TESTED: VS-001..007, all §18 experiment observations, synthetic storage/export propagation, REPRO-001..006, INT-001..005 and accepted target-host OFF evidence satisfy the all-of Gate-4 checklist. [Gate-4 evaluation](docs/validation/task026_gate4_evaluation.md) and [observations](docs/validation/task026_gate4_experiment_observations.md) bound every conclusion to actual evidence. Gate-5 is NOT PASSED; TASK-024 is NOT STARTED.
 
 E-2 is RESOLVED: `onnx-main-referenced-external-data-v1` freezes the existing referenced-file membership contract. C3A/C3B real ONNX identity and restricted Windows supervisor acceptance pass; all Gate-3 criteria are supported by observed evidence. SEC-002 Job containment, SEC-003 timeout and SEC-008 evidence-store ACL denial remain PASS. See [ONNX identity and final Gate-3 evidence](docs/validation/e2_onnx_identity_acceptance.md), the [historical SEC-008 checkpoint](docs/validation/task026_sec008_windows_acl.md) and [C3D acceptance history](docs/validation/task026_c3d_dispatch_acceptance.md).
 
@@ -52,9 +52,10 @@ TASK-019 Part B signing remains deferred on PRE-08; no signing material or runti
 - Windows Job Object unit/capability tests: 6 passed; targeted SEC-002 and retained SEC-003: 1 passed each.
 - Restricted-token tests: 14 passed; explicit ACL verification and real SEC-008 acceptance: 2 passed.
 - Real ONNX identity acceptance: 10 passed; restricted supervisor acceptance: 2 passed. C3A/C3B/C3C targeted suites: 30/18/18 passed.
-- Relevant integration/negative regression: 57 passed, 4 unchanged skips, 0 failures.
+- Gate-4 batteries: VS 7, experiments 17, REPRO 15, INT/secret-environment 6, synthetic/export 17 passed. All 22 new validation cases pass; no production change was needed.
+- Relevant integration/negative regression: 79 passed, 4 unchanged skips, 0 failures.
 - Security suite: 92 passed, 4 historical skips, 0 failures.
-- Non-offline regression: 530 passed, 11 skips, 0 failures. Offline tests were explicitly excluded; OFF-002 was not rerun.
+- Non-offline regression: 552 passed, 11 unchanged skips, 0 failures. Offline tests were explicitly excluded; OFF-002 was not rerun and no network/PktMon control was touched.
 - Prior full Gate-2 checkpoint: 483 passed, 20 skipped, 0 failures (historical evidence, not this run).
 - Target-host TASK-027 offline acceptance is recorded as TESTED for the frozen Windows AMD64 / CPython 3.13.12 tuple. OFF-002's original recovery-marker FAIL and independent restored-state PASS remain distinct.
 - Current test execution and public status: 2026-10-02. Historical 2026-09-29 timeout evidence is retained. Skips are not counted as passed.
@@ -88,6 +89,6 @@ Six protected evaluator-facing research dossiers are tracked under `docs/researc
 
 ## Future Roadmap
 
-Future work requires task-specific authorization: remaining §18/Gate-4 evidence, formal host-capability procedural reconciliation, operational signing, and separately authorized dashboard/demo work. Gate-3 PASS does not establish Gate-4 or authorize TASK-024.
+Next logical candidate: TASK-024 dashboard / analyst visual interface preparation for Gate-5, under its own implementation packet; it was not started by Gate-4 reconciliation. Formal host-capability procedural history and operational signing remain separately pending. Gate-4 PASS does not establish demo/Gate-5 acceptance or authorize automatic dashboard/signing work.
 
 For current implementation evidence and blockers, see `PROJECT_STATUS.md` and `PROJECT_STATE.md`.

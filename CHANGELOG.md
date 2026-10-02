@@ -1,5 +1,27 @@
 # Changelog
 
+## TASK-026 — Final Gate-4 Validation (2026-10-02)
+
+- Completed the read-only criterion inventory at `8ce7569`, then added 22
+  focused validation cases only: genuine fixture/store/finding/export synthetic
+  propagation, real combined COCO/model continuation, C3 unavailability injection,
+  repeated M01 violations, semantic C5 findings and canonical bytes.
+- Recorded actual §18.1–§18.5 observations and the complete all-of Gate-4 matrix
+  with exact executed/accepted sources and evidence hashes. Updated maintained
+  Technical observed-result rows and MVP TASK-026/Gate-4 markers only.
+- Ordered results: VS 7; experiments 17; REPRO 15; INT 6; synthetic/export 17;
+  security 92 passed/4 skipped; integration/negative 79 passed/4 skipped;
+  non-offline 552 passed/11 skipped, zero failures; universal guards clean.
+- TASK-026 TESTED and Gate-4 PASS. Gate-2/Gate-3 PASS, E-2 RESOLVED, all C3
+  workers TESTED and accepted SEC-001..012 results retained. No production defect
+  was found or fixed; existing tests and protected research are unchanged.
+- Accepted offline evidence reused without execution: OFF-002 acceptance PASS
+  (0 packets/0 bytes), original recovery marker FAIL and independently restored
+  state PASS remain distinct. No network/PktMon operation, package installation,
+  signing, dashboard or demo work. PRE-08 PARTIAL and HOST-CAP-003 factual PASS /
+  historical procedural re-entry pending remain separate. Gate-5 NOT PASSED;
+  TASK-024 NOT STARTED, next logical candidate under its own packet.
+
 ## E-2 / SP-002-ONNX — Frozen Identity and Gate-3 (validation 2026-10-02)
 
 - Recorded the owner-specified 2026-10-05 decision freezing the existing AC-03
