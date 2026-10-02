@@ -1312,6 +1312,13 @@ class ReferenceManager:
 ```python
 class AuditChainWriter:
 
+    def inspect_chain_integrity(self) -> ChainVerificationResult:
+        """
+        ACC-2026-10-02-03: complete event/hash/predecessor/sequence and durable
+        chain-state checks; SELECT-only. No audit events, reset or repair.
+        Used by dashboard and read-only show-audit-trail.
+        """
+
     def append_event(self, event_type: str, payload: dict) -> str:
         """
         1. Serialize payload as canonical JSON (sort_keys=True).
@@ -1338,6 +1345,8 @@ class AuditChainWriter:
         Returns ChainVerificationResult(intact=bool, violations=[...]).
         NEVER resets chain on corruption.
         If corruption detected: emits CHAIN_CORRUPT audit event (appended to end).
+        ACC-2026-10-02-03: calls the shared inspect_chain_integrity algorithm;
+        retains SEQUENCE_GAP_DETECTED where applicable. Trusted supervisor use.
         """
 
     GENESIS_HASH = 'GENESIS'  # Sentinel for first event's previous_event_digest
@@ -1553,6 +1562,9 @@ class EvidenceStore:
 - `show-audit-trail` always reports `CHAIN_CORRUPT` if detected; never suppresses it.
 
 **Dashboard (MVP value feature):** Lightweight Python stdlib HTTP server serving a self-contained single-file HTML page. The HTML page:
+- ACC-2026-10-02-03: uses non-mutating `inspect_chain_integrity()` for audit
+  integrity display; read-only `show-audit-trail` also uses inspection. Trusted
+  verification retains corruption diagnostics and SEC-010 behavior.
 - Reads from evidence store via a local read-only HTTP endpoint (supervisor-provided).
 - Displays DETECTION_STATUS, INTERPRETATION_STATUS, LIMITATIONS, NON_CLAIMS for each finding.
 - Never displays a scalar risk score or aggregate assurance indicator.
@@ -2593,7 +2605,14 @@ class EvidenceStore:
     def query_evidence(self, asset_id: str, method_id: str) -> dict | None: ...
     def query_audit_trail(self, limit: int = None) -> list[dict]: ...
     def query_deferred(self) -> list[dict]: ...
+    # ACC-2026-10-02-03: narrow SELECT-only analyst queries.
+    def query_all_evidence(self) -> list[dict]: ...
+    def query_provenance_records(self) -> list[dict]: ...
+    def query_chain_state(self) -> dict | None: ...
     def export_bundle(self, asset_id: str) -> bytes: ...            # Returns ZIP bytes
+
+class AuditChainWriter:  # COMP-AUDIT, not an EvidenceStore mutation API.
+    def inspect_chain_integrity(self) -> ChainVerificationResult: ...  # Zero writes
     def verify_chain_integrity(self) -> ChainVerificationResult: ...
 ```
 

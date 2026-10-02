@@ -4,6 +4,32 @@ This log records approved changes under Architecture Specification §23. It does
 not replace the architecture or technical specification; approved entries are
 also incorporated into those authoritative documents before implementation.
 
+## ACC-2026-10-02-03 — Read-only audit-chain inspection for COMP-IFACE
+
+**Status:** APPROVED by the project-owner TASK-024 continuation packet.
+**Scope:** Audit inspection, read-only analyst CLI and TASK-024 dashboard.
+Recorded before implementation; resolves TASK-024-AUDIT-READONLY.
+
+`inspect_chain_integrity()` reads audit events and durable chain state, performs
+the complete existing integrity checks and returns `ChainVerificationResult`
+without writing, resetting or repairing anything. Dashboard and read-only
+`show-audit-trail` use this operation. `verify_chain_integrity()` uses that same
+inspection implementation and preserves trusted supervisor diagnostics:
+`SEQUENCE_GAP_DETECTED` where applicable and `CHAIN_CORRUPT` on violations.
+AuditWriteError remains fail-closed and is never swallowed.
+
+No hash-chain algorithm, corruption semantics, stored record, assessment
+vocabulary or trust boundary changes. SEC-010 still exercises the trusted
+verification path, persists corruption diagnostics and retains historical
+events. Historical SEC-010 evidence is not rewritten. Narrow SELECT-only store
+queries expose chain state, evidence and provenance to the analyst interface;
+no generic SQL access or analyst persistence authority is introduced.
+
+**Acceptance (2026-10-02):** audit unit 12 passed, existing SEC-010 1 passed,
+CLI 9 passed and dashboard 27 passed. Full non-offline regression 588 passed /
+11 unchanged skips, zero failures. Historical discovery is retained in
+PROJECT_STATE.md. Browser visual acceptance is static-only (input access denied).
+
 ## SP-002-ONNX / E-2 — Freeze the existing ONNX artifact-unit contract
 
 **Decision date:** 2026-10-05, as specified by the project-owner execution packet.

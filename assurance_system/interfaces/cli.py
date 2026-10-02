@@ -207,7 +207,7 @@ class AssuranceCLI:
 
     def _show_audit_trail(self, arguments: argparse.Namespace) -> int:
         store = self._open_store()
-        verification = self._audit_chain_factory(store).verify_chain_integrity()
+        verification = self._audit_chain_factory(store).inspect_chain_integrity()
         if not verification.intact:
             print("CHAIN_CORRUPT", file=self._stdout)
         self._print_json(store.query_audit_trail(arguments.limit))
@@ -244,7 +244,9 @@ class AssuranceCLI:
             print("dashboard requires TASK-024", file=self._stdout)
             return 1
 
-        dashboard = Dashboard(self._open_store())
+        dashboard = Dashboard(
+            self._open_store(), audit_chain_factory=self._audit_chain_factory
+        )
         if arguments.port is None:
             dashboard.run()
         else:

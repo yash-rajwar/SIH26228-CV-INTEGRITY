@@ -38,16 +38,56 @@ The architectural authority is `docs/ARCHITECTURE_SPECIFICATION.md`; the build c
 - COMP-C4 unsigned provenance records with canonicalization, replay rejection, sequence recovery, and explicit `SIGNING_UNAVAILABLE` status.
 - COMP-CAP bounded capability declarations and persisted missing-coverage records with required limitations and non-claims.
 - COMP-C5 interpretation, supervisor orchestration, analyst CLI, and read-only evidence export.
+- TASK-024 read-only offline analyst dashboard with non-mutating audit inspection.
 
 ## Current Status
 
-Gate-2, Gate-3 and Gate-4 are PASS. TASK-026 is TESTED: VS-001..007, all §18 experiment observations, synthetic storage/export propagation, REPRO-001..006, INT-001..005 and accepted target-host OFF evidence satisfy the all-of Gate-4 checklist. [Gate-4 evaluation](docs/validation/task026_gate4_evaluation.md) and [observations](docs/validation/task026_gate4_experiment_observations.md) bound every conclusion to actual evidence. Gate-5 is NOT PASSED; TASK-024 is NOT STARTED.
+Gate-2, Gate-3 and Gate-4 are PASS. TASK-026 is TESTED: VS-001..007, all §18 experiment observations, synthetic storage/export propagation, REPRO-001..006, INT-001..005 and accepted target-host OFF evidence satisfy the all-of Gate-4 checklist. [Gate-4 evaluation](docs/validation/task026_gate4_evaluation.md) and [observations](docs/validation/task026_gate4_experiment_observations.md) bound every conclusion to actual evidence. TASK-024 is now TESTED; Gate-5 remains NOT PASSED.
 
 E-2 is RESOLVED: `onnx-main-referenced-external-data-v1` freezes the existing referenced-file membership contract. C3A/C3B real ONNX identity and restricted Windows supervisor acceptance pass; all Gate-3 criteria are supported by observed evidence. SEC-002 Job containment, SEC-003 timeout and SEC-008 evidence-store ACL denial remain PASS. See [ONNX identity and final Gate-3 evidence](docs/validation/e2_onnx_identity_acceptance.md), the [historical SEC-008 checkpoint](docs/validation/task026_sec008_windows_acl.md) and [C3D acceptance history](docs/validation/task026_c3d_dispatch_acceptance.md).
 
 TASK-019 Part B signing remains deferred on PRE-08; no signing material or runtime signing is implemented. Capability declarations remain bounded and explicitly deny malware detection, model safety guarantees and complete integrity assurance.
 
 ## Validation Evidence
+
+Latest TASK-024 validation: dashboard 27, audit unit 12, SEC-010 1, CLI 9,
+store 7 and exporter 27 passed. Security: 92 passed/4 unchanged skips;
+integration/negative: 107 passed/4 unchanged skips; full non-offline regression:
+588 passed/11 unchanged skips, zero failures. The 552-test checkpoint below is
+historical Gate-4 evidence, not the latest total. No OFF/network run occurred.
+
+## Offline Analyst Dashboard
+
+Run with the approved Python environment:
+
+```powershell
+python cli.py dashboard --port 8080
+```
+
+Open `127.0.0.1:8080` in a local browser. The default is IPv4 loopback-only;
+non-loopback binding is rejected. Python stdlib HTTP serving delivers one
+self-contained navy/slate console: Overview, Findings, Evidence Explorer,
+Audit Timeline, Coverage & Deferred and Provenance. Inline CSS, SVG and vanilla
+JavaScript require no npm, external fonts, images, frameworks, remote APIs or
+CDN. There is no browser storage or polling; manual Refresh reads current data.
+
+The interface has no mutation controls. Non-GET/HEAD verbs return 405.
+UNAVAILABLE, DEFERRED_IN_SCOPE, REFERENCE_UNAVAILABLE, SIGNING_UNAVAILABLE and
+CHAIN_CORRUPT remain explicit text. No safety/confidence scoring is displayed.
+Observed Pipeline State derives only persisted observations; missing ingestion
+telemetry and missing record correlations remain UNAVAILABLE. Limitations,
+non-claims, full identifiers and raw signals remain accessible.
+
+[ACC-2026-10-02-03](docs/ARCHITECTURE_CHANGE_LOG.md#acc-2026-10-02-03--read-only-audit-chain-inspection-for-comp-iface)
+separates complete read-only chain inspection from trusted diagnostic
+verification. Dashboard and `show-audit-trail` never append audit events;
+trusted verification still persists corruption/sequence-gap diagnostics.
+Stored values render through DOM text nodes, with hash-based CSP and local
+response protections. Visual acceptance is static/CSS review only: Windows
+browser input access failed, so browser rendering/screenshot inspection is not
+claimed. Gate-5/demo acceptance needs its own packet.
+
+### Historical Gate-4 validation evidence
 
 - Windows Job Object unit/capability tests: 6 passed; targeted SEC-002 and retained SEC-003: 1 passed each.
 - Restricted-token tests: 14 passed; explicit ACL verification and real SEC-008 acceptance: 2 passed.
@@ -89,6 +129,6 @@ Six protected evaluator-facing research dossiers are tracked under `docs/researc
 
 ## Future Roadmap
 
-Next logical candidate: TASK-024 dashboard / analyst visual interface preparation for Gate-5, under its own implementation packet; it was not started by Gate-4 reconciliation. Formal host-capability procedural history and operational signing remain separately pending. Gate-4 PASS does not establish demo/Gate-5 acceptance or authorize automatic dashboard/signing work.
+Next logical candidate: separate Gate-5 demo preparation/acceptance packet. TASK-024 is TESTED, but no demo script or Gate-5 acceptance was executed. Formal host-capability procedural history and operational signing remain separately pending. Neither dashboard nor Gate-4 acceptance authorizes automatic signing or further offline/network execution.
 
 For current implementation evidence and blockers, see `PROJECT_STATUS.md` and `PROJECT_STATE.md`.

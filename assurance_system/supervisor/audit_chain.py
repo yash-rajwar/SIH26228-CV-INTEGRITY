@@ -55,12 +55,7 @@ class AuditChainWriter:
 
     def _read_chain_state(self) -> dict:
         try:
-            row = self._store._conn.execute(
-                """SELECT last_event_id, last_chain_link_hash,
-                          last_sequence_number
-                   FROM chain_state WHERE id = ?""",
-                (1,),
-            ).fetchone()
+            row = self._store.query_chain_state()
         except Exception as exc:
             raise AuditWriteError("Failed to read audit chain state") from exc
         if row is None:
@@ -119,17 +114,16 @@ class AuditChainWriter:
             "found_hash": str(found),
         }
 
-    def verify_chain_integrity(self) -> ChainVerificationResult:
+    def inspect_chain_integrity(self) -> ChainVerificationResult:
+        """ACC-2026-10-02-03: complete inspection without diagnostic writes."""
         events = self._store.query_audit_trail()
         violations: list[dict] = []
-        sequence_gap = False
         expected_event_id = 1
         expected_predecessor = self.GENESIS_HASH
 
         for event in events:
             event_id = event["event_id"]
             if event_id != expected_event_id:
-                sequence_gap = True
                 violations.append(
                     self._violation(
                         event_id, "SEQUENCE_GAP", expected_event_id, event_id
@@ -164,7 +158,6 @@ class AuditChainWriter:
             state["last_event_id"] != expected_last_id
             or state["last_sequence_number"] != expected_last_id
         ):
-            sequence_gap = True
             violations.append(
                 self._violation(
                     expected_last_id,
@@ -183,15 +176,24 @@ class AuditChainWriter:
                 )
             )
 
-        if violations:
-            if sequence_gap:
+        return ChainVerificationResult(intact=not violations, violations=violations)
+
+    def verify_chain_integrity(self) -> ChainVerificationResult:
+        """Trusted verification retains required diagnostics and write failures."""
+        result = self.inspect_chain_integrity()
+        if result.violations:
+            if any(
+                violation["violation_type"] in (
+                    "SEQUENCE_GAP", "CHAIN_STATE_SEQUENCE_MISMATCH"
+                )
+                for violation in result.violations
+            ):
                 self.append_event(
                     AuditEventType.SEQUENCE_GAP_DETECTED,
-                    {"violations_count": len(violations)},
+                    {"violations_count": len(result.violations)},
                 )
             self.append_event(
                 AuditEventType.CHAIN_CORRUPT,
-                {"violations_count": len(violations)},
+                {"violations_count": len(result.violations)},
             )
-            return ChainVerificationResult(intact=False, violations=violations)
-        return ChainVerificationResult(intact=True, violations=[])
+        return result

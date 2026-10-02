@@ -916,6 +916,12 @@ Items permanently excluded. No change-control path exists for these specific exc
 
 ### TASK-024 — COMP-IFACE Dashboard: Read-only Evidence Dashboard
 
+**Approved contract clarification ACC-2026-10-02-03:** Dashboard and read-only
+`show-audit-trail` use `inspect_chain_integrity()` with zero persistence. Trusted
+`verify_chain_integrity()` shares the complete algorithm and retains corruption
+and sequence-gap diagnostics; SEC-010 is unchanged. Narrow SELECT-only evidence,
+provenance and chain-state queries are permitted for this task.
+
 **Name:** Implement read-only stdlib http.server dashboard (MVP value feature)
 **Purpose:** Visual analyst interface; offline; no npm/CDN; execution state visualization only (no assurance confidence implied)
 **Source specification:** §09 §2.1 (MVP value features); §10 §2.1 (stdlib http.server); §09 §16.2 (C5 analyst disposition mapping)
@@ -937,7 +943,12 @@ Items permanently excluded. No change-control path exists for these specific exc
   - INT-DASH-003: no CDN URLs in served HTML (offline requirement)
 **Acceptance criteria:** Starts offline; UNAVAILABLE findings visible; no CDN; no npm; CHAIN_CORRUPT visible in Audit Timeline; Pipeline Visualization (if built) shows execution state only with no assurance confidence labels
 **Risk/blockers:** Lower priority than MB items; cut if time is constrained — CLI covers analyst access
-**Completion state:** `[ ] NOT STARTED`
+**Completion state:** `[x] TESTED` (2026-10-02): INT-DASH-001..015 and additional
+cases, 27 passed. Approved read-only inspection and trusted SEC-010 pass;
+non-offline regression 588 passed/11 unchanged skips. Visual acceptance is
+static/CSS composition review only; Windows browser input access denied.
+Observed pipeline derives stored observations, not live telemetry. Gate-5 remains
+NOT PASSED; its demonstration criteria were not executed by TASK-024.
 
 ---
 

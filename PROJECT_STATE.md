@@ -12,7 +12,7 @@ Update this file at the end of every coding session before committing.
 ## PROJECT
 
 **Name:** Trustworthy Computer Vision Integrity Assurance — SIH 2026 PS 26228  
-**Current stage:** TASK-026 `TESTED`; GATE-2 / GATE-3 / GATE-4 `PASS`; GATE-5 `NOT PASSED`; TASK-024 `NOT STARTED`; PRE-08 `PARTIAL`
+**Current stage:** TASK-024 and TASK-026 `TESTED`; GATE-2 / GATE-3 / GATE-4 `PASS`; GATE-5 `NOT PASSED`; PRE-08 `PARTIAL`
 **Repository created:** [DATE TO BE FILLED ON REPO INIT]  
 **Five-day window start:** [DATE — begins after P1 conditions resolved]
 
@@ -58,8 +58,8 @@ Status codes: `NOT STARTED` | `IN PROGRESS` | `IMPLEMENTED` | `TESTED` | `VALIDA
 | COMP-CAP (capability declaration) | TASK-020 | `TESTED` | Component acceptance: fail-closed bounded method declarations, fixed non-claims, schema-gated persistence of 15 coverage-gap records, architecture-specific unavailable states, and mandatory audit events pass 53 tests; downstream list-deferred display is accepted by TASK-023 INT-CLI-003. No signing or worker changes. |
 | COMP-C5 (interpretation engine) | TASK-021 | `TESTED` | Part A rule engine uses the frozen `v1.0` vocabulary; Part B unit and FIX-013 negative validation passed 20/20 using the existing approved offline pytest 9.1.1 package source. |
 | COMP-SUP (orchestrator) | TASK-022 | `TESTED` | Parts A-B implemented and validated COMP-SUP; Part C final trust-boundary, isolation, secret-access, evidence/schema/audit ownership, C5, failure-state, resource, import, and prohibited-field review passed. Part B: 21 targeted tests and 149 relevant-regression tests pass with 9 expected dependency/task-gated skips; Part C focused security tests pass 6/6. |
-| CLI entry points | TASK-023 | `TESTED` | Seven argparse entry points implemented; complete stored findings/evidence/deferred records remain visible, audit corruption is surfaced before events, assessment delegates to COMP-SUP, and export delegates to COMP-EXPORT. The unimplemented TASK-024 command remains explicitly unavailable. Original TASK-023 acceptance and current TASK-025 CLI regression pass. |
-| Dashboard (SHOULD BUILD) | TASK-024 | `NOT STARTED` | GATE-2 now passes, so the MVP dependency gate no longer blocks TASK-024; dashboard work was not started by this reconciliation and still requires its own execution packet |
+| CLI entry points | TASK-023 | `TESTED` | Seven entry points preserved; TASK-024 dashboard delegates through existing --port contract. ACC-2026-10-02-03 makes show-audit-trail non-mutating while preserving corruption visibility. CLI 9 passed. |
+| Dashboard (SHOULD BUILD) | TASK-024 | `TESTED` | Self-contained stdlib HTTPServer, loopback-only, six-view dark console, read-only fresh snapshots, observed pipeline, safe text rendering and hash-based CSP. INT-DASH-001..015 plus additional cases: 27 passed; non-offline 588 passed/11 unchanged skips. Browser input unavailable (0x80070005); visual acceptance is static/CSS composition review only. Audit blocker resolved by ACC-2026-10-02-03. |
 | Evidence bundle exporter | TASK-025 | `TESTED` | Deterministic read-only six-document ZIP packaging, complete field/state preservation, non-mutating audit verification, path and overwrite controls, secret/prohibited-field rejection, and CLI delegation are validated. Targeted: 27 passed; relevant regression: 107 passed, 3 expected skips. |
 | End-to-end integration test | TASK-026 | `TESTED` | GATE-4 all-of PASS: VS-001..007; §18.1..18.5 actual observations; production synthetic-label/export acceptance; REPRO-001..006; INT-001..005; accepted OFF-001..004 evidence. Security 92 passed/4 skipped; integration/negative 79 passed/4 skipped; non-offline 552 passed/11 skipped, 0 failed. No production changes or OFF/network rerun. |
 | Offline validation (target host) | TASK-027 | `TESTED` | OFF-001, OFF-003, and OFF-004 have target-host exit-zero evidence from `task027-run-20260928-215709`; OFF-002 has a zero-byte non-loopback acceptance window from TASK-027-S. The original recovery marker remains `FAIL`, while independent post-run verification confirms exact restored host state. The offline result is bounded to the frozen Windows AMD64 / CPython 3.13.12 tuple. |
@@ -67,6 +67,56 @@ Status codes: `NOT STARTED` | `IN PROGRESS` | `IMPLEMENTED` | `TESTED` | `VALIDA
 ---
 
 ## CURRENT TASK
+
+### TASK-024 completion (2026-10-02)
+
+Starting HEAD `4e13c8f7a074928f4487ea9a08f468b71aed0159`, branch
+`feature/vertical-slice` and the sole authorized PROJECT_STATE.md blocker edit
+were verified before synchronization (already current). Project-owner approval
+is recorded as ACC-2026-10-02-03 in maintained architecture/build/task documents
+before code. `inspect_chain_integrity()` performs the complete existing checks
+without writes; trusted `verify_chain_integrity()` uses that same algorithm and
+retains corruption/sequence-gap diagnostics and fail-closed AuditWriteError.
+CLI show-audit-trail now inspects read-only. No historical SEC-010 evidence erased.
+
+TASK-024 TESTED: six-view responsive navy/slate analyst console, inline CSS/SVG/JS,
+127.0.0.1:8080 default (--port configurable), fresh GET snapshots, no mutation
+endpoints, textual unavailable/deferred/corruption/signing states, no scoring.
+Observed Pipeline State is persisted observation only, never fabricated live
+telemetry. C4 correlation requires stored evidence digests. Audit payloads are
+stored as digests, so evidence-to-audit correlation is explicitly UNAVAILABLE
+where record identifiers are absent. Dynamic data uses textContent, not HTML;
+response headers and hash-based CSP bound the self-contained frontend.
+
+Ordered validation: audit unit 12; SEC-010 1; CLI 9; dashboard 27; store 7;
+exporter 27; security 92 passed/4 skipped; integration/negative 107 passed/4
+skipped; non-offline 588 passed/11 unchanged skips, zero failures. Embedded JS
+syntax passes using the existing development runtime (no application dependency).
+Visual boundary: Computer Use discovered Chrome but input failed twice with
+GetCursorPos access denied (0x80070005); recovery capture was blank. No browser
+dashboard inspection claimed. Static review confirms required layout/sections,
+responsive targets, keyboard/focus/reduced-motion and loading/error/empty states.
+No packages installed, protected research modified, network controls touched,
+OFF execution, signing, worker/schema/constant/C5 changes or Gate-5 work.
+Gate-2/Gate-3/Gate-4 PASS, E-2 RESOLVED, PRE-08 PARTIAL and the distinct historical
+HOST-CAP-003 procedural re-entry remain carried unchanged.
+
+### Historical TASK-024 entry review — stopped before implementation (2026-10-02)
+
+The following is preserved as discovery history, superseded only by the approved
+resolution and completion above.
+
+Starting HEAD `4e13c8f7a074928f4487ea9a08f468b71aed0159` and branch
+`feature/vertical-slice` verified; worktree initially clean; fast-forward-only
+pull left HEAD unchanged and matching origin. TASK-005 and TASK-023 are recorded
+TESTED. The current dashboard packet is authorized, but its audit requirements
+conflict at the existing interface contract (TASK-024-AUDIT-READONLY below).
+Per AGENTS.md and CODEX_BUILD_PROTOCOL.md architecture change control, record
+the proposal and stop before code. TASK-024 remains NOT STARTED, not TESTED.
+No tests, browser inspection, network-isolation operation or Gate-5 execution
+performed; the preceding validated results remain historical evidence only.
+
+### Prior TASK-026 / GATE-4 final validation reconciliation (historical)
 
 TASK-026 / GATE-4 final validation reconciliation COMPLETE (2026-10-02).
 Starting HEAD `8ce7569da5a4e88ccc575ff11593245f9af7a3c2`, clean worktree and
@@ -159,6 +209,7 @@ Validated behavior:
 
 | Task | What was done | Tests | Commit |
 |---|---|---|---|
+| TASK-024 | Implemented six-view read-only offline dashboard and approved ACC-2026-10-02-03 audit inspection split; narrow SELECT APIs and non-mutating CLI audit display. Original blocker discovery preserved. No signing, network or worker changes; static visual review only. | Audit 12; SEC-010 1; CLI 9; dashboard 27; store 7; exporter 27; security 92/4; integration-negative 107/4; non-offline 588/11, zero failures; universal guards clean | This TASK-024 completion commit (parent 4e13c8f) |
 | TASK-001 | Recorded PRE-01–PRE-09 dispositions; froze PRE-03/04/05/06/07/09; selected HMAC-SHA256; initially preserved PRE-01 and PRE-08 blockers. PRE-01 was subsequently resolved by verified target-host measurements; PRE-08 remains partial. | JSON parse for touched schemas; security literal guards; documentation/config review | `431b92f` plus current PRE-01 resolution commit |
 | TASK-002 | Replaced premature scaffold content with task-scoped stubs; added the authoritative structure test, placeholder tests, package metadata, and wheelhouse README | Structure: 59 passed; full suite: 123 passed, 19 skipped; imports and security greps passed | `1d5225c` |
 | TASK-003 | Implemented the exception hierarchy, PRE-04-aligned state groups, audit event types, fixed constants, and exact PF-002 non-claim | Targeted: 11 passed; full suite: 134 passed, 14 skipped; security greps passed | `699a74b` |
@@ -214,6 +265,10 @@ Validated behavior:
 | PRE-08 | HMAC-SHA256 parameters are frozen, but a Windows target-host absolute key path and supervisor-only ACL verification are not yet provisioned | TASK-019 operational signing | Project owner / deployment owner |
 | HOST-CAP-003 / TASK-014 packet E-3 | PROCEDURAL-PENDING ONLY: genuine ONNX 1.23.0 / protobuf 7.36.2 C3A/C3B/C3C target-host acceptance passes. `docs/task027c_gate2_validation.md` Required Next Action still requires a distinct full TASK-027-C re-entry with zero-egress evidence; this packet prohibits that execution. No missing-runtime claim is retained. | Formal TASK-027-C procedural reconciliation, not E-2 or passing C3 component/Gate-3 acceptance | Dependency / deployment owner |
 
+TASK-024-AUDIT-READONLY is CLOSED by approved ACC-2026-10-02-03 and passing
+read-only inspection/CLI/dashboard and trusted SEC-010 regressions. Historical
+discovery and the approved resolution remain recorded under Pending Decisions.
+
 TASK-026-VALIDATION-EVIDENCE is CLOSED by the 2026-10-02 all-of Gate-4 evaluation:
 all §18 observed results and named reproducibility/integration/synthetic/offline
 criteria have evidence. PRE-08 and HOST-CAP-003 procedural history are not closed.
@@ -244,10 +299,10 @@ criteria have evidence. PRE-08 and HOST-CAP-003 procedural history are not close
 ## LATEST VALIDATED COMMIT
 
 ```
-Commit: This TASK-026 Gate-4 completion commit (parent: 8ce7569da5a4e88ccc575ff11593245f9af7a3c2)
+Commit: This TASK-024 completion commit (parent: 4e13c8f7a074928f4487ea9a08f468b71aed0159)
 Branch: feature/vertical-slice
 Date: 2026-10-02
-Tests: VS 7; experiments 17; REPRO 15; INT 6; synthetic/export 17; security 92 passed/4 skipped; integration/negative 79 passed/4 skipped; non-offline 552 passed/11 skipped, 0 failed. Gate-4 PASS; Task-026 TESTED. Universal guards clean. Gate-2/Gate-3/OFF evidence and separate recovery facts retained; no production changes.
+Tests: Audit 12; SEC-010 1; CLI 9; dashboard 27; store 7; exporter 27; security 92 passed/4 skipped; integration/negative 107 passed/4 skipped; non-offline 588 passed/11 skipped, 0 failed. TASK-024 TESTED. Universal guards clean; static-only visual acceptance. Gate-2/Gate-3/Gate-4/OFF evidence and separate recovery facts retained.
 ```
 
 ---
@@ -256,11 +311,11 @@ Tests: VS 7; experiments 17; REPRO 15; INT 6; synthetic/export 17; security 92 p
 
 ```
 Date: 2026-10-02
-Latest validation: TASK-026 / Gate-4 all-of criterion reconciliation and actual §18 observations.
-Executed checks: 8 ordered runs; approved CPython 3.13.12 / ONNX 1.23.0 / protobuf 7.36.2 / pytest 9.1.1; real restricted Windows dispatch/storage/export; universal guards.
-Result: VS 7; experiments 17; REPRO 15; INT 6; synthetic/export 17; security 92 passed/4 skipped; integration/negative 79 passed/4 skipped; non-offline 552 passed/11 skipped, 0 failed. tests/offline explicitly excluded; accepted OFF evidence reused.
-Environment: Existing approved environment and unchanged Windows restricted-token/Job/ACL mechanisms; no packages installed; no production defect/change, network operation or signing.
-Evidence: docs/validation/task026_gate4_evaluation.md and task026_gate4_experiment_observations.md; ignored build/task026-gate4/ reports/observations with committed hashes. Prior E-2/SEC-008/C3D/OFF records remain historical.
+Latest validation: TASK-024 dashboard and approved non-mutating audit inspection.
+Executed checks: Ordered audit, SEC-010, CLI, dashboard, store, exporter, security, integration/negative and full non-offline suites using approved CPython 3.13.12 / pytest 9.1.1 environment. Universal guards and diff check clean.
+Result: Audit 12; SEC-010 1; CLI 9; dashboard 27; store 7; exporter 27; security 92 passed/4 skipped; integration/negative 107 passed/4 skipped; non-offline 588 passed/11 unchanged skips, 0 failed. tests/offline explicitly excluded.
+Environment: Existing approved environment; no packages installed, network-isolation operation or signing. Browser input blocked by access denied; static/CSS review and embedded JS syntax validation only.
+Evidence: tests/integration/test_dashboard.py; extended audit/store/CLI tests; ACC-2026-10-02-03. Prior Gate-4/E-2/SEC-008/C3D/OFF records remain historical and unchanged.
 
 Integration gates:
   GATE-1 (Foundation):       prerequisite components TESTED; not re-adjudicated in this reconciliation
@@ -708,7 +763,7 @@ The Stage 6 rule permits exit when every requirement is either satisfied with ev
 
 ## NEXT TASK
 
-**Next logical authorized candidate (not started here):** TASK-024 dashboard / analyst visual interface preparation for GATE-5, under its own implementation packet. TASK-026 TESTED and Gate-4 PASS satisfy validation prerequisites; Gate-5 is NOT PASSED. PRE-08 PARTIAL and the distinct HOST-CAP-003 historical procedural re-entry remain carried, not fabricated Gate-4 blockers. Gate-2/Gate-3 and historical OFF/recovery distinctions remain unchanged. Do not start TASK-024 automatically.
+**Next logical candidate (requires its own authorization packet):** GATE-5 demo preparation and acceptance. TASK-024 and TASK-026 are TESTED, Gate-4 PASS; Gate-5 remains NOT PASSED and no demo script was created. Browser-rendered visual QA is not claimed. PRE-08 PARTIAL and HOST-CAP-003 historical procedural re-entry remain carried. Gate-2/Gate-3 and historical OFF/recovery distinctions are unchanged. Do not start Gate-5 automatically.
 
 Critical path reminder:
 ```
@@ -732,6 +787,16 @@ PRE-04 resolved
 
 ## PENDING DECISIONS
 
+### TASK-024-AUDIT-READONLY — approved resolution
+
+**RESOLVED 2026-10-02 by ACC-2026-10-02-03:** The project-owner continuation
+packet approves non-mutating `inspect_chain_integrity()` for dashboard/read-only
+CLI and shared-algorithm trusted verification with diagnostic writes unchanged.
+Maintained specifications were clarified before implementation. Audit 12,
+SEC-010 1 and CLI 9 pass; dashboard read-only/corruption acceptance passes.
+The proposal row below is retained as historical discovery only, not an open
+approval requirement. No corruption semantics or hash algorithm changed.
+
 SP-002-ONNX / E-2 is approved by the current project-owner packet with the exact
 ID `onnx-main-referenced-external-data-v1` and decision date 2026-10-05. The
 definition and decision-log entry freeze the existing AC-03 membership contract.
@@ -754,6 +819,7 @@ unchanged.
 
 | Decision | Description | Owner | Priority |
 |---|---|---|---|
+| TASK-024-AUDIT-READONLY | **RESOLVED by ACC-2026-10-02-03. Historical discovery preserved:** The original TASK-024 packet required both mutating `verify_chain_integrity()` and zero analyst writes; Technical section 3.14 and UT-AUD-002/005 enforced diagnostic persistence. Implementation stopped correctly and proposed a separate full non-mutating inspector. The exporter-only verifier was not a complete substitute because it did not inspect durable chain_state. The project owner subsequently approved the split; specifications were updated before code. Dashboard and CLI now inspect without writes; trusted verification retains all required diagnostics, fail-closed errors and one shared algorithm. No new vocabulary, reset or repair introduced. | Project owner / architecture owner | Closed; audit/SEC-010/CLI/dashboard regressions pass |
 | ACC-2026-10-02-02 / SEC-008 | **RESOLVED 2026-10-02 for validated Windows target:** approved restricted primary-token launch and explicit deployment-only evidence-store DACL provisioning implemented. Real supervisor write ALLOWED and production-restricted worker native writes/WRITE_DAC DENIED (WinError 5); original ACL snapshot and ordinary child ALLOWED retained. No unrestricted fallback or whole-host sandbox claim. | Project owner / architecture owner | Closed for scoped SEC-008; subsequent E-2 closure/Gate-3 PASS do not establish Gate-4 |
 | ACC-2026-10-02-01 / HOST-CAP-002 | **RESOLVED 2026-10-02 for validated Windows target:** approved Windows Job Objects enforce the existing per-worker committed-memory ceiling from `ResourceLimits.memory_limit_mb`; workers are created suspended, assigned before execution, then resumed, with process-memory notifications and `KILL_ON_JOB_CLOSE` cleanup. This is not RSS/RLIMIT_AS. The 128 MiB host probe and bounded 768 MiB real FIX-002 supervisor acceptance pass. | Project owner / architecture owner | Closed for the frozen Windows mechanism; Unix behavior unchanged |
 | PRE-01 | **RESOLVED 2026-09-27:** primary development/SIH demonstration target is Windows 10 Pro version 2009, build 22631, 64-bit; AMD64; Python 3.13.12; 16 GB RAM. `close_fds=True` verified; no C compiler or Python `resource` module detected. | Project owner / organizer | Closed as host-identification decision; capability validation remains separate |
@@ -781,6 +847,28 @@ unchanged.
 ---
 
 ## HANDOFF NOTES
+
+**Current TASK-024 completion (2026-10-02):** Exact starting HEAD 4e13c8f and sole
+authorized PROJECT_STATE.md blocker edit verified. ACC-2026-10-02-03 approved,
+documented before code and tested without weakening SEC-010. Dashboard six-view
+responsive/read-only/offline console TESTED; CLI audit is now non-mutating.
+Audit 12; SEC-010 1; CLI 9; dashboard 27; store 7; exporter 27; security 92/4;
+integration-negative 107/4; non-offline 588/11, zero failures. Browser inspection
+unavailable (Windows access denied); static visual and JS syntax review only.
+No installs, network/OFF controls, signing, workers/schemas/constants/C5/research
+changes. Gate-2/3/4 PASS, Gate-5 NOT PASSED, PRE-08 PARTIAL; historical procedural
+and OFF/recovery facts retained. Next candidate Gate-5 needs a separate packet.
+
+**Historical TASK-024 entry review (2026-10-02):** Exact starting HEAD
+`4e13c8f7a074928f4487ea9a08f468b71aed0159` verified clean and current on
+`feature/vertical-slice`. TASK-024-AUDIT-READONLY is a proposed contract
+reconciliation, not an implemented change. Only PROJECT_STATE.md changed.
+No dashboard/source/tests/specification/public-documentation/research changes,
+package installs, network controls, OFF execution or new runtime acceptance.
+TASK-024 remains NOT STARTED; Gate-2/Gate-3/Gate-4 PASS, Gate-5 NOT PASSED,
+PRE-08 PARTIAL and HOST-CAP-003 historical procedural re-entry remain unchanged.
+Await explicit review and approved specification/API clarification before
+implementation. No task-completion commit or push created.
 
 **Current TASK-026 Gate-4 session:** Starting HEAD `8ce7569da5a4e88ccc575ff11593245f9af7a3c2` verified clean/current. Added 22 exact validation cases only; no production defects or code changes. VS 7, experiments 17, REPRO 15, INT 6, synthetic/export 17 pass; security 92 passed/4 skipped; integration/negative 79 passed/4 skipped; non-offline 552 passed/11 skipped, zero failures. All Gate-4 rows PASS; TASK-026 TESTED, Gate-4 PASS. Gate-2/Gate-3 PASS and E-2 RESOLVED retained; PRE-08 PARTIAL; HOST-CAP-003 factual runtime PASS / historical procedural re-entry pending; Gate-5 NOT PASSED; TASK-024 NOT STARTED. Accepted OFF evidence reused; acceptance PASS/recovery-marker FAIL/independent-restoration PASS remain distinct. No OFF/network run, installation, signing or research change. Next candidate TASK-024 needs its own packet; do not start automatically.
 

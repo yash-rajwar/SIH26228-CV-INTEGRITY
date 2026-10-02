@@ -1,5 +1,36 @@
 # Changelog
 
+## TASK-024 — Read-only Offline Analyst Dashboard (2026-10-02)
+
+- Recorded approved ACC-2026-10-02-03 before implementation. One complete audit
+  inspection algorithm serves read-only inspection and trusted verification;
+  the latter retains CHAIN_CORRUPT / applicable SEQUENCE_GAP_DETECTED writes,
+  fail-closed AuditWriteError and unchanged SEC-010/no-reset behavior.
+- Read-only show-audit-trail now inspects without adding events. Added narrow,
+  deterministic SELECT-only evidence/provenance/chain-state APIs; no generic SQL.
+- Implemented stdlib HTTPServer dashboard with 127.0.0.1:8080 default and CLI
+  --port override. Self-contained navy/slate layout, inline SVG/CSS/vanilla JS,
+  six workspaces, observed (not fabricated live) pipeline, filters/master-detail,
+  temporal audit, coverage and unsigned provenance. No npm/CDN/fonts/images/API
+  dependencies, browser storage, polling, mutation controls or assurance scores.
+- All unavailable/deferred/signing/corruption states remain textual. Dynamic
+  records use textContent; hash-based CSP and local response headers apply.
+  Non-GET/HEAD requests return 405. Audit/evidence correlation is explicitly
+  unavailable where persisted identifiers are absent.
+- Validation: audit unit 12; SEC-010 1; CLI 9; dashboard 27; store 7; exporter 27;
+  security 92 passed/4 skipped; integration-negative 107 passed/4 skipped;
+  non-offline 588 passed/11 unchanged skips, zero failures. Universal guards clean.
+  Existing stub-import failure coverage is retained through a test-only simulated
+  ImportError; CLI corruption test double uses the approved inspection contract.
+- Static/CSS composition review and JS syntax validation only. Computer Use
+  browser input failed with access denied (0x80070005); no browser inspection
+  claimed. No package installation or application Node dependency introduced.
+- Original blocker discovery preserved and reconciled; TASK-024 TESTED. Gate-2,
+  Gate-3 and Gate-4 PASS retained; Gate-5 NOT PASSED, PRE-08 PARTIAL, HOST-CAP-003
+  historical procedural re-entry and OFF acceptance/recovery distinctions remain.
+  No signing, network/OFF run, worker/schema/constant/C5 or protected research
+  changes; no demo script or Gate-5 execution.
+
 ## TASK-026 — Final Gate-4 Validation (2026-10-02)
 
 - Completed the read-only criterion inventory at `8ce7569`, then added 22

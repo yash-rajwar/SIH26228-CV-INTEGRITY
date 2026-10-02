@@ -506,6 +506,28 @@ class EvidenceStore:
             raise StorageWriteError("Failed to write deferred record") from exc
         return record_id
 
+    def query_chain_state(self) -> dict | None:
+        """Narrow SELECT-only durable audit state; no connection exposure."""
+        row = self._conn.execute(
+            """SELECT last_event_id, last_chain_link_hash, last_sequence_number
+               FROM chain_state WHERE id = ?""", (1,),
+        ).fetchone()
+        return dict(row) if row is not None else None
+
+    def query_all_evidence(self) -> list[dict]:
+        """Read all persisted evidence, including older observations."""
+        rows = self._conn.execute(
+            "SELECT * FROM evidence_records ORDER BY created_at, record_id"
+        ).fetchall()
+        return [self._decode_row(row) for row in rows]
+
+    def query_provenance_records(self) -> list[dict]:
+        """Read provenance with decoded JSON and deterministic ordering."""
+        rows = self._conn.execute(
+            "SELECT * FROM provenance_records ORDER BY created_at, provenance_id"
+        ).fetchall()
+        return [self._decode_row(row) for row in rows]
+
     def query_findings(self, asset_id: str = None) -> list[dict]:
         if asset_id is None:
             rows = self._conn.execute(

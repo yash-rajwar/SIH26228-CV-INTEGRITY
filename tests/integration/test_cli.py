@@ -192,7 +192,7 @@ def test_int_cli_004_audit_corruption_is_printed_before_events() -> None:
 
     class CorruptAuditChain:
         @staticmethod
-        def verify_chain_integrity() -> ChainVerificationResult:
+        def inspect_chain_integrity() -> ChainVerificationResult:
             return ChainVerificationResult(
                 intact=False,
                 violations=[{"event_id": 1, "reason": "hash mismatch"}],
@@ -224,18 +224,40 @@ def test_show_evidence_displays_complete_stored_record(store: EvidenceStore) -> 
     assert '"non_claims"' in output.getvalue()
 
 
-@pytest.mark.parametrize(
-    ("arguments", "message"),
-    [
-        (["dashboard"], "dashboard requires TASK-024"),
-    ],
-)
 def test_unavailable_downstream_interfaces_fail_explicitly(
-    store: EvidenceStore, arguments: list[str], message: str,
+    store: EvidenceStore, monkeypatch,
 ) -> None:
+    # TASK-024 is now available. Retain unavailable-module error coverage by
+    # explicitly simulating ImportError instead of expecting the old stub.
+    import builtins
+    original = builtins.__import__
+    def unavailable(name, *args, **kwargs):
+        if name == "assurance_system.interfaces.dashboard":
+            raise ImportError("test-only unavailable dashboard")
+        return original(name, *args, **kwargs)
+    monkeypatch.setattr(builtins, "__import__", unavailable)
     output = io.StringIO()
-    assert _cli(store, output).run(arguments) == 1
-    assert output.getvalue().strip() == message
+    assert _cli(store, output).run(["dashboard"]) == 1
+    assert output.getvalue().strip() == "dashboard requires TASK-024"
+
+
+def test_aud_read_004_cli_corrupt_chain_does_not_write(store, monkeypatch):
+    from assurance_system.supervisor.audit_chain import AuditChainWriter
+    writer = AuditChainWriter(store)
+    writer.append_event("TEST_EVENT", {})
+    with store._conn:
+        store._conn.execute("UPDATE audit_events SET payload_digest='tampered'")
+    before = store.query_audit_trail(), store.query_chain_state()
+    def forbidden(*args, **kwargs):
+        pytest.fail("Analyst command attempted persistence")
+    for name in dir(store):
+        if name.startswith("write_"):
+            monkeypatch.setattr(store, name, forbidden)
+    monkeypatch.setattr(AuditChainWriter, "verify_chain_integrity", forbidden)
+    output = io.StringIO()
+    assert _cli(store, output).run(["show-audit-trail"]) == 0
+    assert output.getvalue().startswith("CHAIN_CORRUPT\n")
+    assert (store.query_audit_trail(), store.query_chain_state()) == before
 
 
 def test_missing_records_fail_closed_with_unavailable(store: EvidenceStore) -> None:

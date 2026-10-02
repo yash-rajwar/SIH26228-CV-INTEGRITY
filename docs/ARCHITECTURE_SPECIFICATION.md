@@ -535,6 +535,14 @@ The approved dataflow follows this sequence. Each step is described in detail in
 
 ## COMP-AUDIT — Audit Chain Writer
 
+**ACC-2026-10-02-03 (approved clarification):** Analyst/read-only consumers use
+`inspect_chain_integrity()`: complete event/hash/predecessor/sequence and durable
+chain-state inspection, returning violations with no writes, reset or repair.
+Trusted `verify_chain_integrity()` uses the same inspection algorithm and retains
+required `CHAIN_CORRUPT` and applicable `SEQUENCE_GAP_DETECTED` persistence.
+Dashboard and read-only CLI use inspection; SEC-010 retains trusted diagnostic
+verification. Hash-chain semantics, B4 and assessment vocabulary are unchanged.
+
 | Field | Specification |
 |---|---|
 | **Component ID** | COMP-AUDIT |
