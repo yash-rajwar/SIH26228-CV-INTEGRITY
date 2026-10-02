@@ -936,10 +936,28 @@ The isolation boundary (B2) is an OS subprocess boundary. The specific isolation
 | Resource | Limit | Rationale |
 |---|---|---|
 | Wall-clock timeout | Configurable (default 60s for model loading, 120s for large dataset scans) | Prevent timeout DoS |
-| Memory (RSS) | Configurable (default 2GB) | Prevent OOM DoS |
+| Memory | Configurable (default 2GB); Unix/Linux address-space limit, Windows per-process committed-memory ceiling | Prevent OOM DoS; platform semantics must be disclosed and must not be conflated with exact RSS |
 | File descriptors | Configurable (default 64) | Prevent descriptor exhaustion |
 | Subprocess children | 0 (workers must not spawn children) | Prevent process-tree escapes |
 | Network sockets | 0 | Enforce offline requirement |
+
+### 11.4.1 Approved Windows containment (ACC-2026-10-02-01)
+
+On the frozen Windows AMD64 target, COMP-SUP must enforce
+`ResourceLimits.memory_limit_mb` with a Windows Job Object configured with
+`JOB_OBJECT_LIMIT_PROCESS_MEMORY` and `JOB_OBJECT_LIMIT_KILL_ON_JOB_CLOSE`.
+The worker is created suspended, assigned to the configured Job, and only then
+resumed. Job creation, configuration, assignment, or resume failure is
+fail-closed; untrusted worker code must not execute outside the selected Job.
+The supervisor retains the Job through result collection and closes Job/thread/
+process resources on every path. Closing the Job provides cleanup containment.
+
+This is a per-process committed-memory ceiling, not Unix `RLIMIT_AS` and not an
+exact RSS claim. Unix/Linux RLIMIT behavior remains unchanged. The decision does
+not alter B2, the IPC/output schema, assessment vocabulary, evidence-store
+ownership, timeout behavior, or C3D restricted-loading semantics. The approved
+128 MiB host probe observed a 127.05 MiB peak and MemoryError at the boundary;
+SEC-002 still requires a complete supervisor/FIX-002 acceptance run.
 
 ## 11.5 PyTorch safe-loading constraint
 
@@ -1650,6 +1668,12 @@ After this document is approved, any change to the following requires an explici
 **Implementation agents:** Implementation agents (Codex, Antigravity, or similar) must not propose changes to this architecture without triggering the change-control process. If an implementation agent's proposal conflicts with any constraint in this specification, the conflict must be raised as a proposed change — not silently resolved in the implementation.
 
 **Repository code does not override this specification.** If the codebase diverges from this specification, the specification is the authority unless a formal change-control decision has been made.
+
+**Approved decision ACC-2026-10-02-01:** Windows Job Objects are the target-host
+implementation of the existing worker-memory containment requirement, with the
+constraints in §11.4.1. The decision supersedes only the earlier conclusion that
+no authorized Windows mechanism existed; historical HOST-CAP-002 evidence is
+preserved. The decision record is `docs/ARCHITECTURE_CHANGE_LOG.md`.
 
 ---
 

@@ -159,10 +159,33 @@ def test_dispatch_uses_controlled_subprocess_environment_and_cleans_up(
         def wait(self) -> int:
             return int(self.returncode or 0)
 
+    class FakeContainment:
+        creation_flags = 4
+
+        def __init__(self) -> None:
+            self.assigned = False
+            self.closed = False
+
+        def assign_and_resume(self, _process: FakeProcess) -> None:
+            self.assigned = True
+
+        def observe(self):
+            return type("Observation", (), {"process_memory_limit_hit": False})()
+
+        def close(self) -> None:
+            self.closed = True
+
+    containment = FakeContainment()
+
     monkeypatch.setenv("ASSURANCE_KEY_PATH", "C:/private/key.bin")
     monkeypatch.setenv("ASSURANCE_DB_PATH", "C:/private/evidence.db")
     monkeypatch.setattr(
         "assurance_system.supervisor.orchestrator.subprocess.Popen", FakeProcess
+    )
+    monkeypatch.setattr(
+        orchestrator,
+        "_create_worker_containment",
+        lambda _limits: containment,
     )
 
     limits = ResourceLimits(5, 64, 8)
@@ -181,6 +204,9 @@ def test_dispatch_uses_controlled_subprocess_environment_and_cleans_up(
     assert captured["kwargs"]["stdout"] is not None
     assert captured["kwargs"]["stderr"] is not None
     assert captured["kwargs"]["close_fds"] is True
+    assert captured["kwargs"]["creationflags"] == containment.creation_flags
+    assert containment.assigned is True
+    assert containment.closed is True
     assert "ASSURANCE_KEY_PATH" not in captured["kwargs"]["env"]
     assert "ASSURANCE_DB_PATH" not in captured["kwargs"]["env"]
     assert captured["timeout"] == limits.timeout_seconds

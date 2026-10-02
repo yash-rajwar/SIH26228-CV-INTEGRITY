@@ -12,7 +12,7 @@ Update this file at the end of every coding session before committing.
 ## PROJECT
 
 **Name:** Trustworthy Computer Vision Integrity Assurance — SIH 2026 PS 26228  
-**Current stage:** TASK-026 Gate-2 reconciliation complete; GATE-2 `PASS`; TASK-026 full validation acceptance and GATE-3/GATE-4 remain open
+**Current stage:** TASK-026 SEC-002 acceptance complete; GATE-2 `PASS`; GATE-3 remains blocked by SEC-008; GATE-4 remains open
 **Repository created:** [DATE TO BE FILLED ON REPO INIT]  
 **Five-day window start:** [DATE — begins after P1 conditions resolved]
 
@@ -51,7 +51,7 @@ Status codes: `NOT STARTED` | `IN PROGRESS` | `IMPLEMENTED` | `TESTED` | `VALIDA
 | COMP-W-C3A (artifact-unit resolver) | TASK-014 | `IMPLEMENTED` | Runtime compatibility fixed for ONNX 1.23.0 / protobuf 7.36.2; all 30 C3A tests now pass, including genuine ONNX external-data containment. E-2 intentionally keeps the ONNX definition ID `UNAVAILABLE`, so final identity acceptance remains blocked. |
 | COMP-W-C3B (model hasher) | TASK-015 | `IMPLEMENTED` | IMPLEMENTED WITH BLOCKER: deterministic whole-unit SHA-256, fail-closed ambiguity/containment/read-error handling, reference comparison, and PF-002 contract pass 18 targeted tests; ONNX identity path blocked pending ONNX artifact-unit definition ID (E-2) |
 | COMP-W-C3C (ONNX structural) | TASK-016 | `TESTED` | ONNX 1.23.0 / protobuf 7.36.2 descriptor compatibility is fixed without narrowing traversal; all 18 C3C tests pass, including genuine valid/absolute/traversal/symlink/malformed ONNX cases, checker/schema behavior, PF-002, EF-004, and no-ORT/no-execution boundaries. |
-| COMP-W-C3D (PyTorch safe-load gate) | TASK-017 | `TESTED` | Worker-level validation remains complete with Torch 2.10.0+cpu. TASK-026 now confirms SEC-003 real supervisor timeout/termination/persistence/continuation; SEC-002 remains OPEN because Windows memory-cap enforcement is unavailable (HOST-CAP-002). |
+| COMP-W-C3D (PyTorch safe-load gate) | TASK-017 | `TESTED` | Worker-level validation remains complete with Torch 2.10.0+cpu. TASK-026 confirms SEC-002 Windows Job Object memory containment and SEC-003 timeout/termination through real supervisor dispatch, persistence, C5 unavailability, cleanup, and continuation. |
 | COMP-REF (reference manager) | TASK-018 | `TESTED` | Approved SP-001 all-of R0–R7 gate enforcement, fail-closed default, FORMAT_ASSET boundary, audited transitions, staleness downgrade, and AuditWriteError rollback verified; 7 targeted tests and full regression pass |
 | COMP-C4 provenance record builder | TASK-019 Part A | `TESTED` | Provenance structure, canonicalization, replay rejection, durable sequence recovery, PF-002 binding, and explicit SIGNING_UNAVAILABLE behavior are tested. No signing primitive or key access is implemented. |
 | COMP-C4 operational signing | TASK-019 Part B | `DEFERRED` | PRE-08 target-specific key-path/ACL provisioning remains unresolved. PRE-02, PRE-04, and PRE-09 remain resolved; no signing key material, runtime signing, or fake signature is present. |
@@ -61,7 +61,7 @@ Status codes: `NOT STARTED` | `IN PROGRESS` | `IMPLEMENTED` | `TESTED` | `VALIDA
 | CLI entry points | TASK-023 | `TESTED` | Seven argparse entry points implemented; complete stored findings/evidence/deferred records remain visible, audit corruption is surfaced before events, assessment delegates to COMP-SUP, and export delegates to COMP-EXPORT. The unimplemented TASK-024 command remains explicitly unavailable. Original TASK-023 acceptance and current TASK-025 CLI regression pass. |
 | Dashboard (SHOULD BUILD) | TASK-024 | `NOT STARTED` | GATE-2 now passes, so the MVP dependency gate no longer blocks TASK-024; dashboard work was not started by this reconciliation and still requires its own execution packet |
 | Evidence bundle exporter | TASK-025 | `TESTED` | Deterministic read-only six-document ZIP packaging, complete field/state preservation, non-mutating audit verification, path and overwrite controls, secret/prohibited-field rejection, and CLI delegation are validated. Targeted: 27 passed; relevant regression: 107 passed, 3 expected skips. |
-| End-to-end integration test | TASK-026 | `IN PROGRESS` | GATE-2 remains PASS; SEC-003 controlled real-subprocess dispatch acceptance passes. SEC-002 remains OPEN under HOST-CAP-002, and §10 §18 observed-result reconciliation remains open. GATE-3/GATE-4 are not claimed. Non-offline regression: 485 passed, 12 skipped, 0 failed. |
+| End-to-end integration test | TASK-026 | `IN PROGRESS` | GATE-2 remains PASS; SEC-002 and SEC-003 real supervisor-dispatch acceptance pass. GATE-3 remains NOT PASSED because SEC-008 OS ACL denial evidence is pending; E-2 final ONNX identity acceptance and §10 §18/GATE-4 reconciliation remain open. Non-offline regression: 492 passed, 11 skipped, 0 failed. |
 | Offline validation (target host) | TASK-027 | `TESTED` | OFF-001, OFF-003, and OFF-004 have target-host exit-zero evidence from `task027-run-20260928-215709`; OFF-002 has a zero-byte non-loopback acceptance window from TASK-027-S. The original recovery marker remains `FAIL`, while independent post-run verification confirms exact restored host state. The offline result is bounded to the frozen Windows AMD64 / CPython 3.13.12 tuple. |
 
 ---
@@ -73,19 +73,19 @@ TASK: TASK-026 Focused C3D Supervisor Security Acceptance
 Owner: Codex
 Branch: feature/vertical-slice
 Started: 2026-09-29
-Status: PARTIAL — SEC-003 PASS; SEC-002 OPEN (HOST-CAP-002).
+Status: PARTIAL — SEC-002 PASS; SEC-003 PASS; GATE-3 blocked by SEC-008.
 
 Validated behavior:
   BASELINE: `d850f43`; prior full regression 483 passed, 20 skipped, 0 failed remains historical evidence.
   SEC-003: PASS — ready child runs FIX-003 at the restricted-load boundary; supervisor enforces 1-second test timeout, kills/reaps it, persists ASSESSMENT_ERROR/TIMEOUT, emits C5 UNAVAILABLE/NO_DECISION, cleans IPC/temp resources, and completes the next asset.
-  SEC-002: OPEN — no enforced Windows memory cap; over-limit FIX-002 was not loaded. Supplemental bounded MemoryError becomes LOAD_ERROR/UNAVAILABLE and does not prove OOM containment.
-  TESTS: Targeted SEC-002 1 named skip; targeted SEC-003 1 passed; relevant regression 70 passed/1 skipped; security 89 passed/5 skipped; non-offline regression 485 passed/12 skipped, 0 failed.
-  GATE-2: Prior PASS preserved, not re-adjudicated. GATE-3/GATE-4 remain NOT PASSED.
-  SKIPS: All 16 stale placeholders remain untouched (7 offline placeholders excluded from this run). Remaining included skips: 9 stale placeholders, SEC-002, PRE-08 HMAC, non-applicable Ed25519.
+  SEC-002: PASS — seed-42 FIX-002 crossed the enforced 768 MiB Windows Job committed-memory ceiling; supervisor persisted ASSESSMENT_ERROR/MEMORY_LIMIT_EXCEEDED, C5 stayed UNAVAILABLE/NO_DECISION, audit/cleanup completed, and following FIX-015 completed LOAD_SUCCESS.
+  TESTS: Job Object unit/capability 6 passed; targeted SEC-002 1 passed; targeted SEC-003 1 passed; relevant regression 51 passed; security 90 passed/4 skipped; non-offline regression 492 passed/11 skipped, 0 failed.
+  GATE-2: Prior PASS preserved, not re-adjudicated. GATE-3 remains NOT PASSED because authoritative SEC-008 OS ACL denial evidence is pending; final C3A/C3B ONNX identity acceptance also remains blocked by E-2. GATE-4 remains NOT PASSED.
+  SKIPS: No SEC-002 skip remains. Included skips are unchanged historical placeholders plus PRE-08-gated HMAC and non-applicable Ed25519; none are counted as passes.
   OFF-002: Acceptance PASS with 0 non-loopback physical-NIC Tx packets/bytes and assess exit 0. Original recovery marker remains FAIL; independent final-state verification passes with zero binding mismatches, adapter Up, temporary firewall absent, recovery task absent, and PktMon stopped.
-  TASK-026: Full acceptance remains IN PROGRESS because SEC-002 and §10 §18 observed-result records remain open.
-  SAFETY: Only timeout reader-drain cleanup changed in the existing dispatcher. No workers, fixtures, schemas, constants, specifications, network state, PktMon, protected research or historical evidence changed. OFF-002 was not rerun.
-  UNCHANGED: E-2 OPEN; PRE-08 PARTIAL; HOST-CAP-002 PARTIAL; HOST-CAP-003 formal reconciliation pending; protected research content unchanged.
+  TASK-026: Full acceptance remains IN PROGRESS because SEC-008 and §10 §18 observed-result records remain open.
+  SAFETY: Windows dispatch adds approved suspended-create/Job-assign/resume containment only. No workers, fixtures, schemas, constants, network state, PktMon, protected research or historical evidence changed. OFF-002 was not rerun.
+  UNCHANGED: E-2 OPEN; PRE-08 PARTIAL; HOST-CAP-003 formal reconciliation pending; protected research content unchanged.
 ```
 
 ---
@@ -135,6 +135,7 @@ Validated behavior:
 | TASK-027-H command-contract closure attempt | Applied the packet's authority clarifications by reviewing the verifier, durable runtime, frozen CLI command, fixture path, and CLI asset-ID output contract. Stopped at the mandatory durable-pytest gate and recorded the independently observed missing frozen fixture path without substituting another environment or fixture. | Approved Python 3.13.12 passes; both required pytest checks exit 1 (`No module named pytest`); durable pytest executable absent; frozen submission path absent. No runner/OFF/Gate execution. | This TASK-027-H blocker-record commit |
 | TASK-027-S + FIX-008 | Reconciled the authoritative OFF-002 acceptance window separately from recovery status, froze the repository COCO submission, and corrected the narrowly scoped pycocotools `KeyError("id")` malformed-annotation path without broad fallback or architecture changes. | OFF-002: 0 non-loopback Tx packets/bytes and assess exit 0; independent recovery state exact; VS-001–VS-007: 7 passed; full regression: 483 passed, 20 skipped, 0 failed. | `431f140`, `acb5b1e`, `cb6f0bc` |
 | TASK-026 Gate-2 formal reconciliation | Re-evaluated current evidence against the authoritative Section 11 and GATE-2 criteria, preserved every historical blocked record, documented the 20 skip classifications, and formally recorded GATE-2 PASS without claiming GATE-3/GATE-4 or resolving SEC-002/SEC-003. | Documentation-only reconciliation; targeted VS regression remains 7 passed and the established full regression remains 483 passed, 20 skipped, 0 failed. | This TASK-026 reconciliation commit |
+| TASK-026 Windows memory containment | Recorded ACC-2026-10-02-01 before implementation; added configured Windows Jobs, suspended creation, assignment before resume, memory-limit detection/termination, and deterministic Job/process-handle cleanup. Real FIX-002 supervisor persistence/C5/audit/continuation acceptance passes; historical probe and supplemental MemoryError evidence remain distinct. | Job unit/capability 6 passed; SEC-002 1 passed; existing SEC-003 1 passed; relevant 51 passed; security 90 passed/4 skipped; non-offline 492 passed/11 skipped. GATE-3 remains NOT PASSED due SEC-008; E-2 remains OPEN; GATE-4 remains NOT PASSED. | This TASK-026 Windows containment commit (parent `9338f1a`) |
 
 ---
 
@@ -143,10 +144,9 @@ Validated behavior:
 | Blocker ID | Description | Affects | Resolution owner |
 |---|---|---|---|
 | PRE-08 | HMAC-SHA256 parameters are frozen, but a Windows target-host absolute key path and supervisor-only ACL verification are not yet provisioned | TASK-019 operational signing | Project owner / deployment owner |
-| HOST-CAP-002 | `close_fds=True` subprocess isolation passes, but Python `resource`/Unix RLIMIT controls are unavailable and no authorized Windows replacement exists; capability remains PARTIAL | Resource-limit enforcement claims; later isolation hardening if required | Architecture / deployment owner |
 | E-2 / SP-002-ONNX | No frozen ONNX artifact-unit definition ID exists. C3A returns the resolved manifest as `ARTIFACT_UNIT_AMBIGUOUS` with definition ID `UNAVAILABLE`; no ID is inferred from PyTorch. | Final ONNX C3A acceptance and TASK-015 ONNX hashing | Project owner / architecture owner |
 | HOST-CAP-003 / TASK-014 packet E-3 | FORMAL RECONCILIATION PENDING: the protobuf 7.36.2 descriptor compatibility defect is fixed; real ONNX C3A/C3C tests pass without ONNX Runtime, with full containment traversal preserved. TASK-027-C itself has not been rerun, so this task does not silently close the recorded host-capability blocker. | TASK-027-C state reconciliation; E-2 remains separate for C3A identity | Dependency / deployment owner |
-| TASK-022-C3D-INTEGRATION | SEC-003 is PASS under controlled real C3D dispatch. SEC-002 remains OPEN: Windows C3D cannot enforce the configured memory cap; a bounded MemoryError test is not killed-worker OOM acceptance. HOST-CAP-002 must be addressed through approved resource enforcement and safe validation. | GATE-3 security acceptance and full TASK-026 acceptance | Architecture / deployment / validation owner |
+| SEC-008-EVIDENCE-ACL | The authoritative SEC-008 criterion requires a non-supervisor process to be denied writes by the evidence-store OS ACL. Source-level write-path isolation passes, but no accepted target-host ACL denial test is recorded. | GATE-3 security acceptance | Deployment / validation owner |
 | TASK-026-VALIDATION-EVIDENCE | Technical Specification §18.1–§18.5 still says `NOT YET OBTAINED`; named observed-result records and the remaining GATE-4 reproducibility/integration evidence have not been formally reconciled | Full TASK-026 acceptance, capability claims, and GATE-4 | TASK-026 validation owner |
 
 ---
@@ -158,11 +158,11 @@ Validated behavior:
 - Foundation and vertical-slice components through TASK-025 are implemented; VS-001 through VS-007 pass. TASK-014 genuine ONNX containment passes, but final C3A/C3B ONNX identity acceptance remains blocked by E-2.
 - TASK-027 offline validation is established only for the confirmed Windows AMD64 / CPython 3.13.12 target tuple and the exact staged binary set; it is not a portable or broader offline claim.
 - The target has no detected C compiler. The declared binary wheelhouse, including PyYAML 6.0.3, installs and imports without a source build; OFF-001 and OFF-003 have exit-zero target-host evidence, OFF-002 has zero-egress acceptance evidence, and OFF-004 has exit-zero SQLite-backed assess/show evidence.
-- Python `resource.setrlimit` and Unix `RLIMIT_AS`, `RLIMIT_NOFILE`, and `RLIMIT_NPROC` are unavailable. `subprocess.Popen(..., close_fds=True)` is verified working.
+- Python `resource.setrlimit` and Unix `RLIMIT_AS`, `RLIMIT_NOFILE`, and `RLIMIT_NPROC` are unavailable. On the validated Windows target, ACC-2026-10-02-01 supplies a Job Object per-process committed-memory ceiling from `ResourceLimits.memory_limit_mb`; it is not described as RSS or RLIMIT_AS. `subprocess.Popen(..., close_fds=True)` is verified working.
 - T05d clean-label poisoning coverage gap is a **permanent** non-claim. This will never change under the current baseline.
 - All references are UNAVAILABLE at MVP start. No reference-relative assessments are possible.
 - TorchScript loading is DEFERRED_IN_SCOPE — isolated worker not yet demonstrated on any target.
-- SEC-003 controlled supervisor timeout/termination/continuation is PASS on the validated target. SEC-002 remains OPEN; no kernel OOM or memory-cap enforcement is claimed. Test-only load instrumentation does not establish natural hostile-checkpoint hangs or process-tree containment.
+- SEC-002 Windows Job Object containment and SEC-003 controlled timeout/termination/continuation are PASS on the validated target. The committed-memory result is bounded to the approved Windows mechanism; test-only SEC-003 load instrumentation still does not establish natural hostile-checkpoint hangs.
 - C4 signing will ship as SIGNING_UNAVAILABLE shell until PRE-08 target-host key-path provisioning is resolved. PRE-02, PRE-04, and PRE-09 are resolved.
 - COMP-CAP declares scope without executing assessments. C3C is excluded from declared support while HOST-CAP-003 is open; supported model operations are bounded to the resolved PyTorch path.
 - TASK-020 uses the existing deferred-store and audit APIs, which commit separately. On failure, errors propagate and earlier committed rows remain; no batch-level atomicity is claimed.
@@ -174,10 +174,10 @@ Validated behavior:
 ## LATEST VALIDATED COMMIT
 
 ```
-Commit: This focused TASK-026 C3D dispatch commit (parent: d850f43)
+Commit: This TASK-026 Windows containment commit (parent: 9338f1a)
 Branch: feature/vertical-slice
-Date: Validation 2026-09-29; documentation finalized 2026-10-02
-Tests: SEC-003 PASS; SEC-002 OPEN; relevant 70 passed/1 skipped; security 89 passed/5 skipped; non-offline regression 485 passed/12 skipped, 0 failed. Universal production guards clean. Prior Gate-2/OFF evidence and recovery distinctions unchanged.
+Date: 2026-10-02
+Tests: SEC-002 PASS; SEC-003 remains PASS; relevant 51 passed; security 90 passed/4 skipped; non-offline regression 492 passed/11 skipped, 0 failed. Universal production guards clean. Prior Gate-2/OFF evidence and recovery distinctions unchanged.
 ```
 
 ---
@@ -185,17 +185,17 @@ Tests: SEC-003 PASS; SEC-002 OPEN; relevant 70 passed/1 skipped; security 89 pas
 ## LAST TEST STATUS
 
 ```
-Date: Validation 2026-09-29; documentation finalized 2026-10-02
-Latest validation: TASK-026 focused C3D real-subprocess timeout and bounded resource-failure handling.
-Executed checks: targeted SEC-002 then SEC-003; relevant TASK-022/C3D/base tests; security suite; approved CPython 3.13.12 / pytest 9.1.1 non-offline regression; universal guards.
-Result: relevant 70 passed/1 skipped; security 89 passed/5 skipped; non-offline regression 485 passed/12 skipped, 0 failed. tests/offline was explicitly excluded; no OFF-002/network-isolation execution occurred.
-Environment: two legacy security scans initially failed because grep was absent from PATH. Existing Git-bundled grep was exposed in the test shell only; subsequent security/regression passed without installations or test changes.
-Evidence: docs/validation/task026_c3d_dispatch_acceptance.md; raw JUnit/SQLite/observations preserved locally in ignored build/task026-c3d-dispatch/.
+Date: 2026-10-02
+Latest validation: TASK-026 real FIX-002 Windows Job Object containment through COMP-SUP.
+Executed checks: Windows Job unit/capability tests; targeted SEC-002; existing SEC-003; relevant TASK-022/C3D regression; security suite; approved CPython 3.13.12 / pytest 9.1.1 non-offline regression; universal guards.
+Result: Job tests 6 passed; SEC-002 1 passed; SEC-003 1 passed; relevant 51 passed; security 90 passed/4 skipped; non-offline regression 492 passed/11 skipped, 0 failed. tests/offline was explicitly excluded; no OFF-002/network-isolation execution occurred.
+Environment: legacy grep-dependent security scans were made platform-neutral without weakening their zero-match assertions. No package installation or network-isolation operation occurred.
+Evidence: docs/validation/task026_c3d_dispatch_acceptance.md; raw JUnit/SQLite/observations preserved locally in ignored build/task027-sec002/.
 
 Integration gates:
   GATE-1 (Foundation):       prerequisite components TESTED; not re-adjudicated in this reconciliation
   GATE-2 (Vertical Slice):   PASS
-  GATE-3 (Capability):       NOT PASSED — SEC-002 remains open; SEC-003 PASS
+  GATE-3 (Capability):       NOT PASSED — SEC-008 OS ACL denial evidence remains pending
   GATE-4 (Validation):       NOT PASSED — full TASK-026/§18 evidence remains open
   GATE-5 (Demo):             NOT PASSED
 ```
@@ -634,7 +634,7 @@ The Stage 6 rule permits exit when every requirement is either satisfied with ev
 
 ## NEXT TASK
 
-**Next required action (not new implementation authorization):** Project/architecture/deployment review of safe approved memory-cap enforcement for SEC-002 / HOST-CAP-002, followed by an explicitly authorized containment experiment. SEC-003 is accepted and need not be reopened. Separately authorize §10 §18 observed-result/GATE-4 evidence reconciliation. This packet authorizes no subsequent task; TASK-024 remains not started despite Gate-2 dependency eligibility. PRE-08, E-2 and HOST-CAP-003 remain unchanged.
+**Next required action (not new implementation authorization):** Provide a separate execution/review packet for SEC-008 target-host evidence-store ACL denial acceptance, then re-evaluate GATE-3. Separately authorize §10 §18 observed-result/GATE-4 evidence reconciliation. SEC-002 and SEC-003 are accepted and need not be reopened. This packet authorizes no subsequent implementation task; TASK-024 remains not started. PRE-08, E-2 and HOST-CAP-003 remain unchanged.
 
 Critical path reminder:
 ```
@@ -662,6 +662,7 @@ PRE-04 resolved
 
 | Decision | Description | Owner | Priority |
 |---|---|---|---|
+| ACC-2026-10-02-01 / HOST-CAP-002 | **RESOLVED 2026-10-02 for validated Windows target:** approved Windows Job Objects enforce the existing per-worker committed-memory ceiling from `ResourceLimits.memory_limit_mb`; workers are created suspended, assigned before execution, then resumed, with process-memory notifications and `KILL_ON_JOB_CLOSE` cleanup. This is not RSS/RLIMIT_AS. The 128 MiB host probe and bounded 768 MiB real FIX-002 supervisor acceptance pass. | Project owner / architecture owner | Closed for the frozen Windows mechanism; Unix behavior unchanged |
 | PRE-01 | **RESOLVED 2026-09-27:** primary development/SIH demonstration target is Windows 10 Pro version 2009, build 22631, 64-bit; AMD64; Python 3.13.12; 16 GB RAM. `close_fds=True` verified; no C compiler or Python `resource` module detected. | Project owner / organizer | Closed as host-identification decision; capability validation remains separate |
 | PRE-02 / XREG-002 | **RESOLVED 2026-09-27:** HMAC-SHA256 selected | Project owner | Closed |
 | PRE-03 / SP-002 | **RESOLVED 2026-09-27:** `pytorch-single-file-v1` | Project team | Closed |
@@ -690,7 +691,7 @@ PRE-04 resolved
 
 *(To be filled by the agent ending a session — for the agent starting the next session)*
 
-**Current session:** Focused TASK-026 C3D security acceptance is PARTIAL: SEC-003 PASS; SEC-002 OPEN under HOST-CAP-002. A real forced-termination test exposed a locked temporary-directory cleanup failure; the only production correction drains/reaps the existing child communication reader after kill, within the configured timeout. Real schema/store/audit/C5 and continuation tests pass. Relevant regression: 70 passed/1 skipped; security: 89 passed/5 skipped; non-offline regression: 485 passed/12 skipped, 0 failed. See the committed acceptance record for observation IDs, hashes and test-instrumentation limits. No host OOM was induced; the supplemental MemoryError experiment is not OOM acceptance. Gate-2 PASS and historical full 483/20 checkpoint remain preserved; GATE-3/GATE-4/full TASK-026 remain incomplete. OFF-002 was not rerun; its acceptance PASS, original recovery-marker FAIL and independent restored-state PASS remain separate. Protected research, workers, fixtures, schemas, constants, specifications and network controls are untouched. PRE-08 remains PARTIAL; E-2 OPEN; HOST-CAP-002 PARTIAL; HOST-CAP-003 formal reconciliation pending. No subsequent task is authorized by this packet. Documentation finalized 2026-10-02 from the preserved 2026-09-29 validation evidence.
+**Current session:** ACC-2026-10-02-01 formally approves Windows Job Object per-process committed-memory containment. COMP-SUP now creates workers suspended, assigns them to the configured Job, resumes only afterward, monitors the process-memory-limit event, and cleans Job/process resources fail closed. Real seed-42 FIX-002 under a bounded 768 MiB ceiling produces supervisor `ASSESSMENT_ERROR/MEMORY_LIMIT_EXCEEDED`, persisted schema/store/audit evidence, C5 `UNAVAILABLE/NO_DECISION`, complete cleanup, and a following FIX-015 `LOAD_SUCCESS`; SEC-002 is PASS. SEC-003 remains PASS. Job tests 6/6, targeted SEC-002 1/1, targeted SEC-003 1/1, relevant 51/51, security 90 passed/4 skipped, and non-offline 492 passed/11 skipped all pass. Gate-2 and historical OFF-002 distinctions remain preserved. GATE-3 remains NOT PASSED because SEC-008 OS ACL denial evidence is pending; final C3A/C3B ONNX identity acceptance remains blocked by E-2. GATE-4/full TASK-026 remain incomplete. OFF-002 was not rerun. Protected research, workers, fixtures, schemas, constants and network controls are untouched. PRE-08 remains PARTIAL; E-2 OPEN; HOST-CAP-003 formal reconciliation pending. No subsequent task is authorized by this packet.
 
 **TASK-020 specification reconciliation:** No separately saved Stage 8 packet was available in the repository or attachments; the current TASK-020 execution request and committed architecture/technical/MVP contracts supplied the scope. The MVP's §10 §3.17 citation points to COMP-FIX, so the concrete COMP-CAP API follows TASK-020 and the deferred persistence/audit contracts in §10 §§3.1, 3.15, 20.3. UT-CAP-001's generic deferred-count wording is met by enumerating drift/OOD and heavyweight methods separately while retaining M11=REFERENCE_UNAVAILABLE and tail=COMPLETENESS_UNAVAILABLE. T05d remains a permanent NON_CLAIM in persisted reason/non-claim text using the existing deferred-table envelope; no new assessment status was introduced.
 

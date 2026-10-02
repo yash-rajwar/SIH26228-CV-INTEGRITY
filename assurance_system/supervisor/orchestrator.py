@@ -42,6 +42,10 @@ from assurance_system.supervisor.interpretation import C5InterpretationEngine
 from assurance_system.supervisor.provenance import ProvenanceBuilder
 from assurance_system.supervisor.reference_manager import ReferenceManager
 from assurance_system.supervisor.schema_validator import EvidenceSchemaValidator
+from assurance_system.supervisor.windows_job import (
+    WindowsWorkerJob,
+    close_reaped_process_handle,
+)
 from assurance_system.workers.base import is_within_directory
 
 
@@ -100,6 +104,7 @@ class _PendingWorker:
     resource_limits: ResourceLimits
     temp_directory: pathlib.Path
     result_path: pathlib.Path
+    containment: WindowsWorkerJob | None = None
 
 
 @dataclasses.dataclass
@@ -481,6 +486,14 @@ class SupervisorOrchestrator:
         clean_env.pop("ASSURANCE_DB_PATH", None)
         return clean_env
 
+    @staticmethod
+    def _create_worker_containment(
+        resource_limits: ResourceLimits,
+    ) -> WindowsWorkerJob | None:
+        if sys.platform != "win32":
+            return None
+        return WindowsWorkerJob(resource_limits.memory_limit_mb)
+
     def _start_worker(
         self,
         worker_module: str,
@@ -488,6 +501,8 @@ class SupervisorOrchestrator:
         resource_limits: ResourceLimits,
     ) -> _PendingWorker | dict[str, Any]:
         temp_directory: pathlib.Path | None = None
+        process: subprocess.Popen | None = None
+        containment: WindowsWorkerJob | None = None
         try:
             if self._contains_prohibited_input(task_spec):
                 raise ValueError("worker task contains a prohibited field")
@@ -541,6 +556,10 @@ class SupervisorOrchestrator:
                 "--result-file",
                 str(result_path),
             ]
+            containment = self._create_worker_containment(resource_limits)
+            creation_flags = (
+                containment.creation_flags if containment is not None else 0
+            )
             process = subprocess.Popen(
                 command,
                 stdin=subprocess.DEVNULL,
@@ -549,24 +568,76 @@ class SupervisorOrchestrator:
                 close_fds=True,
                 cwd=str(temp_directory),
                 env=self._clean_worker_environment(temp_directory),
+                creationflags=creation_flags,
             )
+            if containment is not None:
+                containment.assign_and_resume(process)
             return _PendingWorker(
                 process=process,
                 task_spec=task_spec,
                 resource_limits=resource_limits,
                 temp_directory=temp_directory,
                 result_path=result_path,
+                containment=containment,
             )
         except AuditWriteError:
+            self._cleanup_failed_start(process, containment, resource_limits)
             if temp_directory is not None:
                 shutil.rmtree(temp_directory, ignore_errors=True)
             raise
         except Exception as exc:
+            self._cleanup_failed_start(process, containment, resource_limits)
             if temp_directory is not None:
                 shutil.rmtree(temp_directory, ignore_errors=True)
             return self._build_assessment_error(
                 task_spec, "SPAWN_ERROR", type(exc).__name__
             )
+
+    @staticmethod
+    def _cleanup_failed_start(
+        process: subprocess.Popen | None,
+        containment: WindowsWorkerJob | None,
+        resource_limits: ResourceLimits,
+    ) -> None:
+        if containment is not None:
+            containment.close()
+        if process is None:
+            return
+        try:
+            if process.poll() is None:
+                process.kill()
+            process.communicate(timeout=resource_limits.timeout_seconds)
+        except Exception:
+            # The worker was created suspended and never runs outside a failed
+            # containment setup. Cleanup failure is represented by SPAWN_ERROR.
+            try:
+                process.kill()
+                process.wait(timeout=resource_limits.timeout_seconds)
+            except Exception:
+                pass
+        finally:
+            if process.poll() is not None:
+                close_reaped_process_handle(process)
+
+    def _memory_limit_error(
+        self, task_spec: dict[str, Any], observation: Any
+    ) -> dict[str, Any]:
+        result = self._build_assessment_error(
+            task_spec,
+            "MEMORY_LIMIT_EXCEEDED",
+            "worker exceeded its configured committed-memory ceiling",
+        )
+        result["raw_signal"].update(
+            {
+                "resource_limit_mechanism": observation.mechanism,
+                "configured_process_memory_bytes": (
+                    observation.configured_process_memory_bytes
+                ),
+                "peak_process_memory_bytes": observation.peak_process_memory_bytes,
+                "process_memory_limit_hit": observation.process_memory_limit_hit,
+            }
+        )
+        return result
 
     def _collect_worker(self, pending: _PendingWorker) -> dict[str, Any]:
         try:
@@ -586,6 +657,11 @@ class SupervisorOrchestrator:
                     "TIMEOUT",
                     "worker exceeded its configured wall-clock limit",
                 )
+
+            if pending.containment is not None:
+                observation = pending.containment.observe()
+                if observation.process_memory_limit_hit:
+                    return self._memory_limit_error(pending.task_spec, observation)
 
             if pending.process.returncode != 0:
                 return self._build_assessment_error(
@@ -647,10 +723,23 @@ class SupervisorOrchestrator:
     def _cleanup_pending_worker(pending: _PendingWorker) -> None:
         try:
             if pending.process.poll() is None:
-                pending.process.kill()
-                pending.process.wait()
+                if pending.containment is not None:
+                    pending.containment.close()
+                else:
+                    pending.process.kill()
+                pending.process.communicate(
+                    timeout=pending.resource_limits.timeout_seconds
+                )
         finally:
-            shutil.rmtree(pending.temp_directory, ignore_errors=True)
+            try:
+                if pending.containment is not None:
+                    pending.containment.close()
+            finally:
+                try:
+                    if pending.process.poll() is not None:
+                        close_reaped_process_handle(pending.process)
+                finally:
+                    shutil.rmtree(pending.temp_directory, ignore_errors=True)
 
     def _dispatch_worker(
         self,

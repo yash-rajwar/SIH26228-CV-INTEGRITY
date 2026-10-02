@@ -8,11 +8,22 @@ All security tests require TASK-009 (hostile fixture suite) to be complete first
 """
 import pytest
 import pathlib
-import subprocess
-import sys
 
 
 REPO_ROOT = pathlib.Path(__file__).parent.parent.parent
+
+
+def _source_matches(pattern: str) -> list[str]:
+    """Return deterministic Python-source matches without a shell dependency."""
+
+    matches = []
+    for path in sorted((REPO_ROOT / "assurance_system").rglob("*.py")):
+        for line_number, line in enumerate(
+            path.read_text(encoding="utf-8").splitlines(), start=1
+        ):
+            if pattern in line:
+                matches.append(f"{path.relative_to(REPO_ROOT)}:{line_number}:{line}")
+    return matches
 
 
 def test_no_weights_only_false_in_codebase():
@@ -21,13 +32,10 @@ def test_no_weights_only_false_in_codebase():
     This test must pass from Day 1 and must never be disabled.
     Authority: 11_MVP_IMPLEMENTATION_PLAN_SIH26228.md MB-25; D-MVP-005
     """
-    result = subprocess.run(
-        ["grep", "-r", "--include=*.py", "weights_only=False", str(REPO_ROOT / "assurance_system")],
-        capture_output=True, text=True
-    )
-    assert result.returncode != 0, (
+    matches = _source_matches("weights_only=False")
+    assert not matches, (
         "SECURITY VIOLATION: weights_only=False found in codebase.\n"
-        "Matches:\n" + result.stdout +
+        "Matches:\n" + "\n".join(matches) +
         "\nThis is an absolute prohibition. See: RC-013 REJECTED; §09 §1.4"
     )
 
@@ -38,14 +46,10 @@ def test_no_risk_score_field_in_codebase():
     Authority: §09 §1.4 NB-02; G-07
     """
     for pattern in ["risk_score", "compromise_probability", "overall_assurance_score"]:
-        result = subprocess.run(
-            ["grep", "-r", "--include=*.py", pattern, str(REPO_ROOT / "assurance_system")],
-            capture_output=True, text=True
-        )
         # Only fail if the pattern appears as a field being SET or emitted — not in prohibition comments
         # Simple check: no match at all is cleanest
         matches = [
-            line for line in result.stdout.splitlines()
+            line for line in _source_matches(pattern)
             if not line.strip().startswith("#") and pattern in line
         ]
         assert not matches, (

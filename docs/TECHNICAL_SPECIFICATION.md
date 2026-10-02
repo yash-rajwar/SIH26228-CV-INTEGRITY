@@ -2253,7 +2253,24 @@ class ResourceLimits:
 # resource.setrlimit(resource.RLIMIT_NPROC, (0, 0))   # No subprocess spawning from workers
 ```
 
-On non-Linux platforms (PRE-01 CONDITIONAL): resource.setrlimit may be unavailable. Workers must log `resource_limits_applied=False` in evidence if limits cannot be applied. This limitation is recorded in the evidence record's `limitations` field.
+On Unix/Linux, worker-side `resource.setrlimit` behavior is unchanged. Workers
+must log whether those worker-side limits were applied.
+
+On Windows (ACC-2026-10-02-01), the supervisor additionally and independently
+enforces `ResourceLimits.memory_limit_mb` as a per-process committed-memory
+ceiling using a Job Object with `JOB_OBJECT_LIMIT_PROCESS_MEMORY` and
+`JOB_OBJECT_LIMIT_KILL_ON_JOB_CLOSE`. The worker is created suspended, assigned
+to the Job, and resumed only after successful assignment. Setup failure is
+fail-closed. The Job handle is retained through collection and closed on every
+path. A Job completion-port process-memory-limit notification terminates the Job;
+kill-on-close remains the cleanup backstop. This Windows mechanism must not be
+described as `RLIMIT_AS` or exact RSS;
+the worker's existing `resource_limits_applied` field continues to describe its
+worker-side Unix limit application, not supervisor Job containment.
+
+Approved HOST-CAP-002 probe evidence: 128 MiB configured, 127.05 MiB peak
+committed process memory, MemoryError at the boundary, child exit 42, PASS.
+This capability probe does not replace SEC-002's real supervisor/FIX-002 test.
 
 ## 11.3 weights_only=True enforcement (C3D)
 

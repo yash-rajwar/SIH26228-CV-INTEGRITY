@@ -5,6 +5,11 @@ Starting checkpoint: `d850f43` on `feature/vertical-slice`.
 Target: approved Windows AMD64 / CPython 3.13.12 environment, pytest 9.1.1,
 Torch 2.10.0+cpu. Gate-2 remains PASS; this is not a Gate-2 re-run.
 
+**Current disposition (2026-10-02): SEC-002 PASS; SEC-003 PASS.** The original
+SEC-002 OPEN record below is preserved as historical evidence and is superseded
+for the validated Windows target by ACC-2026-10-02-01 and the observed result
+recorded in the final section of this document.
+
 ## Authoritative contract
 
 - Technical Specification §17.3, SEC-002: FIX-002 OOM trigger → worker
@@ -125,3 +130,95 @@ SEC-002 remains OPEN; GATE-3 and GATE-4 remain NOT PASSED. PRE-08, E-2,
 HOST-CAP-002 and HOST-CAP-003 are not closed by this task. Historical OFF-002
 acceptance PASS, recovery-marker FAIL and independent restored-state PASS remain
 distinct and untouched. No subsequent implementation task is authorized here.
+
+## SEC-002 — PASS (Windows Job Object supervisor containment, 2026-10-02)
+
+ACC-2026-10-02-01 supersedes the historical lack of an approved Windows memory
+mechanism. COMP-SUP now creates each Windows worker suspended, configures and
+assigns it to a Job Object carrying `JOB_OBJECT_LIMIT_PROCESS_MEMORY` and
+`JOB_OBJECT_LIMIT_KILL_ON_JOB_CLOSE`, and resumes the worker only after successful
+assignment. The ceiling is the existing `ResourceLimits.memory_limit_mb` value.
+A completion-port monitor treats the process-memory-limit notification as a
+supervisor resource failure and terminates the Job. This is committed-process
+memory enforcement, not a Unix `RLIMIT_AS` or exact RSS claim. Unix behavior is
+unchanged.
+
+The target capability probe remains separate from acceptance: its 128 MiB Job
+reported a 127.05 MiB peak and a child `MemoryError`/exit 42. The acceptance run
+used the real seed-42 FIX-002, real COMP-SUP dispatch, and a bounded test-only
+768 MiB C3D ceiling. FIX-002 declares 805,306,372 bytes of storage, exceeding the
+805,306,368-byte ceiling. Windows reported the process-memory-limit event with a
+peak committed-process-memory observation of 247,291,904 bytes (235.84 MiB): the
+large pending allocation was rejected before the process could commit through
+the ceiling. The supervisor then terminated the Job with exit code 3,758,096,385
+(`0xE0000001`).
+
+Observed acceptance behavior:
+
+- schema-valid C3D evidence persisted through the normal supervisor path as
+  `ASSESSMENT_ERROR`, `failure_reason=MEMORY_LIMIT_EXCEEDED`,
+  `access_mode=UNAVAILABLE`, with configured/peak Job accounting and mandatory
+  limitations/non-claims;
+- C5 emitted `UNAVAILABLE` / `UNAVAILABLE_NO_DECISION`, retaining T05d and global
+  backdoor-absence non-claims;
+- the audit chain remained intact and ended in `PIPELINE_RUN_COMPLETE`;
+- worker pipes, processes, Job handles, and temporary directories were cleaned;
+- the following seed-42 FIX-015 benign PyTorch asset completed `LOAD_SUCCESS`
+  under the same 768 MiB limit with restricted loading and no fallback;
+- the two-asset run persisted 6/6 dispatched worker results, 2 findings, and 2
+  unsigned provenance records with zero schema rejections.
+
+Validation order and results: Job Object unit/capability 6 passed; targeted
+SEC-002 1 passed; existing SEC-003 1 passed; relevant COMP-SUP/C3D regression
+51 passed; security suite 90 passed / 4 historical skips; non-offline regression
+492 passed / 11 historical or conditional skips, zero failures. Offline tests,
+OFF-002, network controls, and TASK-024 were not run. The production scans have
+zero Python matches for `weights_only=False`, `risk_score`,
+`compromise_probability`, and `overall_assurance_score`.
+
+Local ignored evidence is under `build/task027-sec002/`:
+
+- `sec002-observed.json`:
+  `89cafa175f20bf15ce829bce8f5b799e5ff589b9f8bd8c27bedcb10a98a84acb`
+  (under `complete-sec002-temp/`);
+- `complete-sec002.xml`:
+  `e24a641bce95026514bc8b28e8336cce3b1ecda1aff0e57667917cb5f718541c`;
+- `complete-security.xml`:
+  `bb54b8114b6b0de4023cbc5653edada3fcc0c7a84d36f66150e063c04ea93c11`;
+- `complete-nonoffline.xml`:
+  `5b691df451021734945b9b49add7e699005156872f40c91b7441b80476a91ba6`.
+
+SEC-002 is PASS and HOST-CAP-002 is resolved for this frozen Windows mechanism
+and target. SEC-003 remains PASS and was not re-adjudicated. GATE-3 remains NOT
+PASSED because the authoritative checklist still records SEC-008 (OS ACL denial
+for a non-supervisor process) as pending. E-2 still blocks final C3A/C3B ONNX
+identity acceptance; those component statuses are not promoted. GATE-4 remains NOT PASSED pending its
+separate full validation/Section 18 reconciliation. Gate-2 and all historical
+OFF-002 distinctions are unchanged.
+
+### GATE-3 security criterion review
+
+The following maps Technical Specification §17.3 and MVP GATE-3 to actual tests
+executed in the current non-offline regression. Historical skipped stub names
+are not substituted for executable acceptance coverage.
+
+| Criterion | Result | Executed evidence |
+|---|---|---|
+| SEC-001 | PASS | `test_sec_001_hostile_pickle_boundary`; VS-003 real supervisor hostile-pickle path |
+| SEC-002 | PASS | Real FIX-002 / Windows Job / supervisor acceptance above |
+| SEC-003 | PASS retained | Existing controlled FIX-003 supervisor timeout acceptance |
+| SEC-004 | PASS | Genuine FIX-004 C3A/C3C tests, including containment before outside file access |
+| SEC-005 | PASS | Genuine FIX-005 C3A/C3C traversal tests |
+| SEC-006 | PASS | Genuine FIX-006 symlink escape and shared C3A/C3C containment tests |
+| SEC-007 | PASS | Exact and broad unsafe-load scans and platform-neutral production source scan |
+| SEC-008 | PENDING | No accepted target-host OS ACL test denying writes by a non-supervisor process; source/import ownership checks alone do not meet it |
+| SEC-009 | PASS | Duplicate replay nonce rejected with required audit event |
+| SEC-010 | PASS | Modified audit event detected; no reset path |
+| SEC-011 | PASS | Nested prohibited field rejected before store write |
+| SEC-012 | PASS | Non-boolean/false coverage label rejected before store write |
+
+All current C2/C3 worker unit tests pass, including all-box coverage. VS-004
+confirms every declared FIX-013 injection layer; C5 priority-one, T05d/PF-002
+non-claims, and score-field absence pass. The unresolved SEC-008 requirement
+prevents GATE-3 acceptance. E-2, PRE-08, HOST-CAP-003 procedural reconciliation,
+and Section 18/GATE-4 remain carried independently.

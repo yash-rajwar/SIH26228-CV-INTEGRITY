@@ -43,18 +43,19 @@ The architectural authority is `docs/ARCHITECTURE_SPECIFICATION.md`; the build c
 
 Gate-2 is PASS. The supervisor, interpretation, CLI and exporter are implemented; VS-001 through VS-007 have passing evidence. Full TASK-026 validation and Gate-3/Gate-4 remain incomplete.
 
-SEC-003 now passes controlled real-subprocess timeout/termination, persistence, unavailable propagation and pipeline continuation. SEC-002 remains OPEN because the validated Windows host has no enforced child memory cap. A bounded injected MemoryError test is not OOM containment evidence. See [the focused acceptance record](docs/validation/task026_c3d_dispatch_acceptance.md).
+SEC-002 now passes real FIX-002 supervisor dispatch under the approved Windows Job Object committed-memory ceiling, including fail-closed evidence persistence, unavailable propagation, cleanup and subsequent-asset continuation. SEC-003 controlled timeout acceptance remains PASS. Gate-3 is still not passed because SEC-008's target-host OS ACL denial evidence is pending. See [the focused acceptance record](docs/validation/task026_c3d_dispatch_acceptance.md).
 
 TASK-019 Part B signing remains deferred on PRE-08; no signing material or runtime signing is implemented. Capability declarations remain bounded and explicitly deny malware detection, model safety guarantees and complete integrity assurance.
 
 ## Validation Evidence
 
-- Focused TASK-022/C3D/base regression: 70 passed, 1 host-blocked skip.
-- Security suite: 89 passed, 5 skips, 0 failures.
-- Non-offline regression: 485 passed, 12 skips, 0 failures. Offline tests were explicitly excluded; OFF-002 was not rerun.
+- Windows Job Object unit/capability tests: 6 passed; targeted SEC-002 and retained SEC-003: 1 passed each.
+- Focused TASK-022/C3D regression: 51 passed, 0 failures.
+- Security suite: 90 passed, 4 historical skips, 0 failures.
+- Non-offline regression: 492 passed, 11 skips, 0 failures. Offline tests were explicitly excluded; OFF-002 was not rerun.
 - Prior full Gate-2 checkpoint: 483 passed, 20 skipped, 0 failures (historical evidence, not this run).
 - Target-host TASK-027 offline acceptance is recorded as TESTED for the frozen Windows AMD64 / CPython 3.13.12 tuple. OFF-002's original recovery-marker FAIL and independent restored-state PASS remain distinct.
-- Test execution evidence: 2026-09-29; public status reconciled 2026-10-02. Skips are not counted as passed.
+- Current test execution and public status: 2026-10-02. Historical 2026-09-29 timeout evidence is retained. Skips are not counted as passed.
 
 ## Security Boundaries
 
@@ -68,7 +69,8 @@ TASK-019 Part B signing remains deferred on PRE-08; no signing material or runti
 
 ## Known Limitations
 
-- SEC-002 OOM containment remains OPEN under HOST-CAP-002. SEC-003 controlled timeout dispatch is PASS; it does not establish natural hostile-checkpoint hangs or process-tree containment.
+- Windows SEC-002 is bounded to the approved Job Object per-process committed-memory mechanism and validated target; it is not an RSS/RLIMIT_AS or cross-platform claim. SEC-003 controlled timeout dispatch does not establish natural hostile-checkpoint hangs.
+- SEC-008 OS-level evidence-store ACL denial acceptance remains pending and blocks Gate-3.
 - The ONNX artifact-unit definition ID is not frozen, blocking final C3A/C3B ONNX identity acceptance.
 - Genuine C3A/C3C ONNX runtime tests pass after descriptor compatibility repair; HOST-CAP-003 formal procedural reconciliation remains pending, separate from E-2 identity-definition acceptance.
 - Windows does not provide the Unix `resource.setrlimit` controls used on supported Unix hosts.
@@ -84,6 +86,6 @@ Six protected evaluator-facing research dossiers are tracked under `docs/researc
 
 ## Future Roadmap
 
-Future work requires task-specific authorization: approved resource-containment validation for SEC-002, remaining §18/Gate-4 evidence, operational signing, ONNX identity-definition resolution, and separately authorized dashboard/demo work. Gate-2 does not establish Gate-3 or Gate-4.
+Future work requires task-specific authorization: SEC-008 target-host ACL acceptance, remaining §18/Gate-4 evidence, operational signing, ONNX identity-definition resolution, and separately authorized dashboard/demo work. Gate-2 does not establish Gate-3 or Gate-4.
 
 For current implementation evidence and blockers, see `PROJECT_STATUS.md` and `PROJECT_STATE.md`.

@@ -129,3 +129,23 @@ No unsupported Windows resource-enforcement mechanism was attempted.
 - GATE-2 impact: unchanged; GATE-2.1/GATE-2.2 remain blocked.
 - PRE-08 and E-2: open and unchanged.
 - TASK-024: not authorized.
+
+## Superseding HOST-CAP-002 decision — 2026-10-02
+
+The Phase 5 finding above remains historical evidence: at that checkpoint no
+authorized Windows replacement existed. Project-owner change control
+ACC-2026-10-02-01 subsequently approved Windows Job Objects for per-process
+committed-memory containment using the existing `memory_limit_mb` contract.
+
+The approved bounded capability probe configured 128 MiB plus
+KILL_ON_JOB_CLOSE, assigned a suspended child before resume, observed MemoryError
+at the boundary, exit code 42 and 127.05 MiB peak committed process memory. Probe
+result: PASS. This supersedes the prior "mechanism unavailable" conclusion for
+the current Windows target but does not itself establish SEC-002 acceptance.
+
+The subsequent real supervisor/FIX-002 acceptance completed on 2026-10-02 with
+a bounded 768 MiB ceiling, `MEMORY_LIMIT_EXCEEDED` persistence, C5 unavailable
+propagation, intact audit/cleanup, and a successful following FIX-015 asset.
+SEC-002 and HOST-CAP-002 are therefore closed for this frozen Windows mechanism
+and target; the 128 MiB probe remains capability evidence rather than being
+relabelled as the acceptance test.

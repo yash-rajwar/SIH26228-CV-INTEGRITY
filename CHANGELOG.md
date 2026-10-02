@@ -1,5 +1,29 @@
 # Changelog
 
+## TASK-026 — Windows C3D Memory Containment (2026-10-02)
+
+- Formally recorded ACC-2026-10-02-01: Windows workers use per-process
+  committed-memory Job Object limits sourced from the existing
+  `ResourceLimits.memory_limit_mb` contract; Unix behavior is unchanged.
+- Added suspended worker creation, assignment before execution, completion-port
+  memory-limit detection, fail-closed Job termination, and
+  `KILL_ON_JOB_CLOSE` cleanup to COMP-SUP.
+- Replaced the historical SEC-002 capability skip with a bounded real FIX-002
+  supervisor acceptance test at 768 MiB. The persisted result is
+  `ASSESSMENT_ERROR/MEMORY_LIMIT_EXCEEDED`; C5 remains
+  `UNAVAILABLE/UNAVAILABLE_NO_DECISION`; a following FIX-015 asset succeeds.
+- Preserved the existing SEC-003 timeout semantics while aligning its harness
+  with suspended-create/assign/resume ordering.
+- Made two legacy security literal scans platform-neutral; their zero-match
+  assertions were not weakened.
+- Validation: Job tests 6 passed; SEC-002 1 passed; SEC-003 1 passed; relevant
+  regression 51 passed; security 90 passed/4 skipped; non-offline regression
+  492 passed/11 skipped, zero failures.
+- Gate-2 remains PASS. Gate-3 remains NOT PASSED because SEC-008 OS ACL denial
+  evidence is pending; Gate-4 remains NOT PASSED. OFF-002, network state,
+  TASK-024, workers, schemas, constants, fixtures and protected research were
+  untouched.
+
 ## TASK-026 — Focused C3D Dispatch Acceptance (2026-10-02 reconciliation)
 
 - SEC-003 passes real child timeout/termination, schema-gated evidence persistence,

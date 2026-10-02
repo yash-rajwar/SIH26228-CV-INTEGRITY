@@ -20,6 +20,7 @@ from assurance_system.supervisor.audit_chain import AuditChainWriter
 from assurance_system.supervisor.evidence_store import EvidenceStore
 from assurance_system.supervisor.orchestrator import SupervisorOrchestrator
 from assurance_system.supervisor.interpretation import T05D_NON_CLAIM_TEXT
+from assurance_system.supervisor.windows_job import WindowsWorkerJob
 
 
 REPO_ROOT = pathlib.Path(__file__).parents[2]
@@ -94,23 +95,190 @@ def test_sec_001_hostile_pickle_boundary(tmp_path: pathlib.Path) -> None:
     assert "does not prove malicious intent" in " ".join(result["non_claims"])
 
 
-def test_sec_002_oom_dispatch_requires_task_022() -> None:
-    """Never load the over-limit FIX-002 without verified child containment.
+_SEC_002_MEMORY_LIMIT_MB = 768
 
-    The dispatcher now exists, but a generic error/exit does not prove an
-    enforced memory cap. The bounded MemoryError test below is supplemental,
-    not a substitute for the required killed-worker SEC-002 experiment.
-    """
 
-    if sys.platform == "win32":
+class _BoundedMemoryConfig(ConfigLoader):
+    def get_resource_limits(self, task_type):
+        limits = super().get_resource_limits(task_type)
+        if task_type == "C3D_SAFE_LOAD":
+            return dataclasses.replace(
+                limits, memory_limit_mb=_SEC_002_MEMORY_LIMIT_MB
+            )
+        return limits
+
+
+def test_sec_002_oom_dispatch_requires_task_022(tmp_path, monkeypatch) -> None:
+    """Real FIX-002 crosses the enforced Job ceiling through COMP-SUP."""
+
+    if sys.platform != "win32":
         pytest.skip(
-            "BLOCKED: HOST-CAP-002 — Windows C3D has no enforced memory cap; "
-            "loading the over-limit FIX-002 would risk uncontrolled host OOM"
+            "SEC-002 Windows acceptance requires the approved Windows target"
         )
-    pytest.skip(
-        "BLOCKED: HOST-CAP-002 — SEC-002 requires a validated resource-enforced "
-        "test host and observed FIX-002 worker termination"
+
+    oom_fixture = pickle_payload.generate_oom_trigger(
+        str(tmp_path / "fix002"),
+        seed=42,
+        memory_limit_mb=_SEC_002_MEMORY_LIMIT_MB,
     )
+    benign_fixture = pickle_payload.generate_benign_pytorch(
+        str(tmp_path / "fix015"), seed=42
+    )
+    manifest = tmp_path / "submission.json"
+    manifest.write_text(
+        json.dumps(
+            {
+                "schema_version": "submission-manifest-v1",
+                "asset_directory": str(tmp_path.resolve()),
+                "assets": [
+                    {
+                        "asset_id": "fix002-model",
+                        "asset_paths": [oom_fixture["path"]],
+                        "format": "PYTORCH",
+                        "is_synthetic": True,
+                        "artifact_unit_definition_id": "pytorch-single-file-v1",
+                    },
+                    {
+                        "asset_id": "fix015-control",
+                        "asset_paths": [benign_fixture["path"]],
+                        "format": "PYTORCH",
+                        "is_synthetic": True,
+                        "artifact_unit_definition_id": "pytorch-single-file-v1",
+                    },
+                ],
+            }
+        ),
+        encoding="utf-8",
+    )
+
+    real_popen = subprocess.Popen
+    processes = []
+
+    def capture_process(command, **kwargs):
+        process = real_popen(command, **kwargs)
+        processes.append((command[2], process, pathlib.Path(kwargs["cwd"])))
+        return process
+
+    monkeypatch.setattr(
+        "assurance_system.supervisor.orchestrator.subprocess.Popen",
+        capture_process,
+    )
+    jobs = []
+
+    def create_job(limits):
+        job = WindowsWorkerJob(limits.memory_limit_mb)
+        jobs.append(job)
+        return job
+
+    worker_temp = tmp_path / "worker-temp"
+    worker_temp.mkdir()
+    store = EvidenceStore(str(tmp_path / "sec002.sqlite3"))
+    audit = AuditChainWriter(store)
+    subject = SupervisorOrchestrator(
+        store,
+        audit,
+        config_loader=_BoundedMemoryConfig(),
+        worker_temp_dir_base=str(worker_temp),
+        python_executable=sys.executable,
+    )
+    monkeypatch.setattr(subject, "_create_worker_containment", create_job)
+    try:
+        summary = subject.run_pipeline(str(manifest))
+        evidence = store.query_evidence("fix002-model", "C3D")
+        finding = store.query_findings("fix002-model")[0]
+        control = store.query_evidence("fix015-control", "C3D")
+        audit_events = store.query_audit_trail()
+        c3d_processes = [
+            process
+            for module, process, _directory in processes
+            if module == "assurance_system.workers.c3d_safe_load"
+        ]
+
+        assert oom_fixture["expected_result"]["configured_memory_limit_mb"] == (
+            _SEC_002_MEMORY_LIMIT_MB
+        )
+        assert oom_fixture["expected_result"]["declared_storage_bytes"] > (
+            _SEC_002_MEMORY_LIMIT_MB * 1024 * 1024
+        )
+        assert summary.assets_processed == 2
+        assert summary.workers_dispatched == summary.evidence_records_written == 6
+        assert summary.worker_results_rejected == 0
+        assert summary.findings_written == 2
+        assert summary.provenance_records_written == 2
+        assert len(c3d_processes) == 2
+        assert c3d_processes[0].returncode != 0
+        assert c3d_processes[1].returncode == 0
+        assert all(process.poll() is not None for process in c3d_processes)
+        assert all(process.stderr.closed for process in c3d_processes)
+        assert all(process._handle.closed for _, process, _ in processes)
+        assert all(job.closed for job in jobs)
+        assert list(worker_temp.iterdir()) == []
+        assert all(not directory.exists() for _, _, directory in processes)
+
+        assert evidence["assessment_status"] == AssessmentStatus.ASSESSMENT_ERROR
+        assert evidence["access_mode"] == "UNAVAILABLE"
+        assert evidence["coverage_gap_clean_label"] == 1
+        assert evidence["is_synthetic"] == 1
+        assert evidence["record_digest"]
+        assert evidence["limitations"] and evidence["non_claims"]
+        signal = evidence["raw_signal"]
+        assert signal["failure_reason"] == "MEMORY_LIMIT_EXCEEDED", (
+            evidence["limitations"], evidence["non_claims"], signal
+        )
+        assert signal["resource_limit_mechanism"] == (
+            "WINDOWS_JOB_OBJECT_PROCESS_COMMITTED_MEMORY"
+        )
+        assert signal["configured_process_memory_bytes"] == (
+            _SEC_002_MEMORY_LIMIT_MB * 1024 * 1024
+        )
+        assert signal["process_memory_limit_hit"] is True
+        assert 0 < signal["peak_process_memory_bytes"] <= (
+            _SEC_002_MEMORY_LIMIT_MB * 1024 * 1024
+        )
+
+        assert finding["detection_status"] == "UNAVAILABLE"
+        assert finding["interpretation_status"] == "UNAVAILABLE"
+        assert finding["analyst_disposition_prompt"] == "UNAVAILABLE_NO_DECISION"
+        assert finding["coverage_gap_clean_label"] == 1
+        assert finding["global_backdoor_absence_not_established"] == 1
+        assert T05D_NON_CLAIM_TEXT in finding["non_claims"]
+        assert control["assessment_status"] == AssessmentStatus.LOAD_SUCCESS
+        assert control["raw_signal"]["weights_only_flag_used"] is True
+        assert control["raw_signal"]["fallback_attempted"] is False
+        assert audit.verify_chain_integrity().intact
+        assert audit_events[-1]["event_type"] == AuditEventType.PIPELINE_RUN_COMPLETE
+        assert AuditEventType.PIPELINE_RUN_ERROR not in {
+            event["event_type"] for event in audit_events
+        }
+        assert subject._pipeline_active is False
+        assert subject._accepted_records == subject._asset_synthetic == {}
+
+        report = {
+            "fixture_id": oom_fixture["fixture_id"],
+            "fixture_seed": 42,
+            "configured_memory_limit_mb": _SEC_002_MEMORY_LIMIT_MB,
+            "declared_storage_bytes": oom_fixture["expected_result"][
+                "declared_storage_bytes"
+            ],
+            "worker_exit_code": c3d_processes[0].returncode,
+            "control_worker_exit_code": c3d_processes[1].returncode,
+            "summary": dataclasses.asdict(summary),
+            "evidence": evidence,
+            "finding": finding,
+            "control_evidence": control,
+            "audit_events": audit_events,
+        }
+        (tmp_path / "sec002-observed.json").write_text(
+            json.dumps(report, indent=2, ensure_ascii=False), encoding="utf-8"
+        )
+    finally:
+        for _module, process, _directory in processes:
+            if process.poll() is None:
+                process.kill()
+            process.communicate(timeout=_CHILD_CLEANUP_DEADLINE_SECONDS)
+        for job in jobs:
+            job.close()
+        store._conn.close()
 
 
 _CI_TIMEOUT_SECONDS = 1
@@ -182,6 +350,7 @@ c3d_safe_load.main()
     processes = []
     readiness = []
     readiness_messages = []
+    readiness_state = {}
     watchdogs = []
     watchdog_fired = threading.Event()
 
@@ -204,36 +373,10 @@ c3d_safe_load.main()
 
             reader = threading.Thread(target=await_child_load, daemon=True)
             reader.start()
-            if not ready.wait(_CHILD_READY_DEADLINE_SECONDS):
-                process.kill()
-                process.wait(timeout=_CHILD_CLEANUP_DEADLINE_SECONDS)
-                reader.join(timeout=_CHILD_CLEANUP_DEADLINE_SECONDS)
-                pytest.fail("C3D did not reach the controlled load under the safety deadline")
-            reader.join(timeout=_CHILD_CLEANUP_DEADLINE_SECONDS)
-            readiness_messages.extend(received)
-            if received != [_READY_SIGNAL] and received != [
-                _READY_SIGNAL.replace(b"\n", b"\r\n")
-            ]:
-                if process.poll() is None:
-                    process.kill()
-                process.wait(timeout=_CHILD_CLEANUP_DEADLINE_SECONDS)
-                pytest.fail("child did not reach restricted load: " + repr(received))
-            readiness.append(True)
-            if condition == "timeout":
-                def safety_kill():
-                    if process.poll() is None:
-                        watchdog_fired.set()
-                        try:
-                            process.kill()
-                        except OSError:
-                            pass  # Child may have exited between poll() and kill().
-
-                watchdog = threading.Timer(
-                    _CI_TIMEOUT_SECONDS + _CHILD_CLEANUP_DEADLINE_SECONDS, safety_kill
-                )
-                watchdog.daemon = True
-                watchdog.start()
-                watchdogs.append(watchdog)
+            # The production dispatcher creates Windows workers suspended and
+            # assigns them to their Job before returning from Popen. Waiting in
+            # this Popen wrapper would deadlock before that trusted resume step.
+            readiness_state[process] = (ready, reader, received)
         return process
 
     monkeypatch.setattr(
@@ -251,6 +394,41 @@ c3d_safe_load.main()
     real_collect = subject._collect_worker
 
     def collect(pending):
+        if pending.task_spec["task"] == "C3D_SAFE_LOAD":
+            ready, reader, received = readiness_state[pending.process]
+            if not ready.wait(_CHILD_READY_DEADLINE_SECONDS):
+                pending.process.kill()
+                pending.process.wait(timeout=_CHILD_CLEANUP_DEADLINE_SECONDS)
+                reader.join(timeout=_CHILD_CLEANUP_DEADLINE_SECONDS)
+                pytest.fail(
+                    "C3D did not reach the controlled load under the safety deadline"
+                )
+            reader.join(timeout=_CHILD_CLEANUP_DEADLINE_SECONDS)
+            readiness_messages.extend(received)
+            if received != [_READY_SIGNAL] and received != [
+                _READY_SIGNAL.replace(b"\n", b"\r\n")
+            ]:
+                if pending.process.poll() is None:
+                    pending.process.kill()
+                pending.process.wait(timeout=_CHILD_CLEANUP_DEADLINE_SECONDS)
+                pytest.fail("child did not reach restricted load: " + repr(received))
+            readiness.append(True)
+            if condition == "timeout":
+                def safety_kill():
+                    if pending.process.poll() is None:
+                        watchdog_fired.set()
+                        try:
+                            pending.process.kill()
+                        except OSError:
+                            pass  # Child may have exited between poll() and kill().
+
+                watchdog = threading.Timer(
+                    _CI_TIMEOUT_SECONDS + _CHILD_CLEANUP_DEADLINE_SECONDS,
+                    safety_kill,
+                )
+                watchdog.daemon = True
+                watchdog.start()
+                watchdogs.append(watchdog)
         started = time.monotonic()
         result = real_collect(pending)
         if pending.task_spec["task"] == "C3D_SAFE_LOAD":
@@ -341,7 +519,7 @@ def test_sec_003_timeout_dispatch_requires_task_022(tmp_path, monkeypatch) -> No
 
 def test_supplemental_bounded_memory_error_is_not_oom_acceptance(tmp_path, monkeypatch):
     report = _run_controlled_c3d_pipeline(tmp_path, monkeypatch, "memory_error")
-    assert report["worker_exit_code"] == 0
+    assert report["worker_exit_code"] == 0, report
     assert report["evidence"]["assessment_status"] == AssessmentStatus.LOAD_ERROR
     signal = report["evidence"]["raw_signal"]
     assert signal["load_detail"] == "SAFE_LOAD_ERROR: MemoryError"

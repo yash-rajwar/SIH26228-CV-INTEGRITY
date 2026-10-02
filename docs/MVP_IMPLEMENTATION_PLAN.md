@@ -703,6 +703,10 @@ Items permanently excluded. No change-control path exists for these specific exc
   - SEC-001: hostile pickle → LOAD_BLOCKED; no code execution in supervisor; fallback_attempted=False
   - SEC-002: OOM → worker killed; ASSESSMENT_ERROR; supervisor continues
   - SEC-003: hang → ASSESSMENT_ERROR after timeout; supervisor not hung
+  - Windows SEC-002 uses approved ACC-2026-10-02-01 Job Object committed-memory
+    containment: configure from `ResourceLimits.memory_limit_mb`, create
+    suspended, assign before execution, then resume; Unix/Linux RLIMIT behavior
+    remains unchanged.
 - `tests/security/test_no_unsafe_fallback.py`:
   - SEC-007: grep weights_only=False in entire codebase → 0 matches
 **Acceptance criteria:** All tests pass; SEC-001 through SEC-003 pass; SEC-007 passes (0 matches for weights_only=False across entire codebase); fallback_attempted=False on all records
