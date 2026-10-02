@@ -41,9 +41,9 @@ The architectural authority is `docs/ARCHITECTURE_SPECIFICATION.md`; the build c
 
 ## Current Status
 
-Gate-2 is PASS. The supervisor, interpretation, CLI and exporter are implemented; VS-001 through VS-007 have passing evidence. Full TASK-026 validation and Gate-3/Gate-4 remain incomplete.
+Gate-2 and Gate-3 are PASS. The supervisor, interpretation, CLI and exporter are implemented; VS-001 through VS-007 have passing evidence. Full TASK-026 validation and Gate-4 remain incomplete.
 
-SEC-002 real FIX-002 Job Object containment and SEC-003 controlled timeout acceptance remain PASS. SEC-008 now passes real Windows evidence-store ACL denial using the production restricted-token worker launcher, while trusted supervisor writes and normal worker IPC succeed. Gate-3 remains NOT PASSED: E-2 blocks final C3A/C3B ONNX identity acceptance and the MVP's all-C3-complete trigger. See [SEC-008 and Gate-3 evidence](docs/validation/task026_sec008_windows_acl.md) and the preserved [C3D acceptance history](docs/validation/task026_c3d_dispatch_acceptance.md).
+E-2 is RESOLVED: `onnx-main-referenced-external-data-v1` freezes the existing referenced-file membership contract. C3A/C3B real ONNX identity and restricted Windows supervisor acceptance pass; all Gate-3 criteria are supported by observed evidence. SEC-002 Job containment, SEC-003 timeout and SEC-008 evidence-store ACL denial remain PASS. See [ONNX identity and final Gate-3 evidence](docs/validation/e2_onnx_identity_acceptance.md), the [historical SEC-008 checkpoint](docs/validation/task026_sec008_windows_acl.md) and [C3D acceptance history](docs/validation/task026_c3d_dispatch_acceptance.md).
 
 TASK-019 Part B signing remains deferred on PRE-08; no signing material or runtime signing is implemented. Capability declarations remain bounded and explicitly deny malware detection, model safety guarantees and complete integrity assurance.
 
@@ -51,9 +51,10 @@ TASK-019 Part B signing remains deferred on PRE-08; no signing material or runti
 
 - Windows Job Object unit/capability tests: 6 passed; targeted SEC-002 and retained SEC-003: 1 passed each.
 - Restricted-token tests: 14 passed; explicit ACL verification and real SEC-008 acceptance: 2 passed.
-- Relevant supervisor/Job/C3D regression: 71 passed, 0 failures.
+- Real ONNX identity acceptance: 10 passed; restricted supervisor acceptance: 2 passed. C3A/C3B/C3C targeted suites: 30/18/18 passed.
+- Relevant integration/negative regression: 57 passed, 4 unchanged skips, 0 failures.
 - Security suite: 92 passed, 4 historical skips, 0 failures.
-- Non-offline regression: 508 passed, 11 skips, 0 failures. Offline tests were explicitly excluded; OFF-002 was not rerun.
+- Non-offline regression: 530 passed, 11 skips, 0 failures. Offline tests were explicitly excluded; OFF-002 was not rerun.
 - Prior full Gate-2 checkpoint: 483 passed, 20 skipped, 0 failures (historical evidence, not this run).
 - Target-host TASK-027 offline acceptance is recorded as TESTED for the frozen Windows AMD64 / CPython 3.13.12 tuple. OFF-002's original recovery-marker FAIL and independent restored-state PASS remain distinct.
 - Current test execution and public status: 2026-10-02. Historical 2026-09-29 timeout evidence is retained. Skips are not counted as passed.
@@ -72,8 +73,8 @@ TASK-019 Part B signing remains deferred on PRE-08; no signing material or runti
 
 - Windows SEC-002 is bounded to the approved Job Object per-process committed-memory mechanism and validated target; it is not an RSS/RLIMIT_AS or cross-platform claim. SEC-003 controlled timeout dispatch does not establish natural hostile-checkpoint hangs.
 - SEC-008 is bounded to the explicitly provisioned evidence-store path on the validated Windows target. Deny-only privileged groups and reduced privileges are not a whole-host filesystem/GUI sandbox; unrelated user-owned paths and trusted elevated administrators are outside this acceptance claim. Audit/reference/key ACLs were not provisioned by this task.
-- The ONNX artifact-unit definition ID is not frozen, blocking final C3A/C3B ONNX identity acceptance.
-- Genuine C3A/C3C ONNX runtime tests pass after descriptor compatibility repair; HOST-CAP-003 formal procedural reconciliation remains pending, separate from E-2 identity-definition acceptance.
+- ONNX membership is frozen for byte identity only: main `.onnx` plus unique canonical referenced whole external files; no behavioral safety, semantic equivalence or trusted-provenance claim.
+- Genuine C3A/C3B/C3C ONNX runtime acceptance passes; HOST-CAP-003 formal TASK-027-C procedural re-entry remains pending separately. This packet authorizes no offline/network rerun.
 - Windows does not provide the Unix `resource.setrlimit` controls used on supported Unix hosts.
 - Operational signing awaits target-host key-path and ACL provisioning.
 - Capability CLI display is accepted by TASK-023 integration coverage; the historical UT-CAP-003 placeholder remains untouched.
@@ -87,6 +88,6 @@ Six protected evaluator-facing research dossiers are tracked under `docs/researc
 
 ## Future Roadmap
 
-Future work requires task-specific authorization: ONNX identity-definition resolution and final C3 completion/Gate-3 review, remaining §18/Gate-4 evidence, operational signing, and separately authorized dashboard/demo work. Gate-2 and SEC-008 do not establish Gate-3 or Gate-4.
+Future work requires task-specific authorization: remaining §18/Gate-4 evidence, formal host-capability procedural reconciliation, operational signing, and separately authorized dashboard/demo work. Gate-3 PASS does not establish Gate-4 or authorize TASK-024.
 
 For current implementation evidence and blockers, see `PROJECT_STATUS.md` and `PROJECT_STATE.md`.

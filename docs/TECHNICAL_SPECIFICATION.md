@@ -62,7 +62,7 @@ This document translates the approved architecture into build-level implementati
 |---|---|---|
 | PRE-01 | Target host (OS / CPU / Python version / RAM) not confirmed | All offline claims; ABI closure; subprocess isolation mechanism; resource-limit mechanism selection |
 | PRE-02 | XREG-002 (HMAC-SHA256 vs Ed25519) not decided | COMP-C4 signing module implementation; `cryptography` package requirement |
-| PRE-03 | SP-002 (artifact-unit definitions) not produced | COMP-W-C3A PyTorch path; COMP-W-C3B |
+| PRE-03 | RESOLVED: `pytorch-single-file-v1`; ONNX separately frozen as `onnx-main-referenced-external-data-v1` by SP-002-ONNX | No definition blocker for these frozen formats; incomplete units still fail closed |
 | PRE-04 | SP-003 (vocabulary contract) not produced | COMP-SCHEMA finalization; COMP-C5; COMP-C4; evidence schema version freeze |
 | PRE-05 | Mandatory format list not confirmed | YOLO task-variant scope for COMP-W-C2A; PyTorch scope for COMP-W-C3D |
 | PRE-06 | SP-001 (reference-health gate procedure) not produced | COMP-REF health-gate enforcement |
@@ -163,7 +163,7 @@ cli.py                               # Top-level entry point (delegates to inter
 setup.py / pyproject.toml           # Package setup
 requirements.txt                     # Pin list (frozen after PRE-01 confirmed)
 wheelhouse/                          # Pre-staged offline wheels (empty at repo creation)
-artifact_unit_defs/                  # SP-002 output (empty until PRE-03 resolved)
+artifact_unit_defs/                  # Frozen SP-002 PyTorch and ONNX definitions
 tests/
 ├── unit/
 ├── integration/
@@ -735,7 +735,9 @@ def run_assessment(task: dict) -> dict:
 ## 3.7 COMP-W-C3A — Artifact-Unit Resolver
 
 **Module:** `assurance_system/workers/c3a_artifact_unit.py`
-**[BLOCKED: PRE-03 for PyTorch path]**
+**Frozen definitions:** PyTorch `pytorch-single-file-v1` (PRE-03 resolved) and
+ONNX `onnx-main-referenced-external-data-v1` (owner SP-002-ONNX decision,
+2026-10-05). See `artifact_unit_defs/onnx_artifact_unit_spec.md`.
 
 **Algorithm — ONNX path (containment-first):**
 
@@ -745,8 +747,13 @@ def resolve_onnx_artifact_unit(model_path: str, asset_directory: str) -> dict:
     model_real     = os.path.realpath(model_path)
 
     # Step 1: model file itself must be within asset_directory
-    if not model_real.startswith(asset_dir_real + os.sep):
+    if not is_within_directory(model_real, asset_dir_real):
         return _path_containment_violation(model_path, 'MODEL_FILE_OUTSIDE_ASSET_DIR')
+
+    if not os.path.isfile(model_real):
+        return _assessment_error('MODEL_FILE_NOT_REGULAR_OR_MISSING')
+    if pathlib.Path(model_real).suffix.casefold() != '.onnx':
+        return _ambiguous_output('MODEL_FILE_SUFFIX_NOT_ONNX')
 
     # Step 2: Load protobuf header only (no external data loading)
     import onnx
@@ -755,39 +762,15 @@ def resolve_onnx_artifact_unit(model_path: str, asset_directory: str) -> dict:
     except Exception as e:
         return _assessment_error(f'ONNX_LOAD_HEADER_FAILED: {e}')
 
-    # Step 3: Extract external tensor file references
-    external_refs = []
-    for init in model_proto.graph.initializer:
-        if init.data_location == onnx.TensorProto.EXTERNAL:
-            for kv in init.external_data:
-                if kv.key == 'location':
-                    external_refs.append(kv.value)
+    # Step 3: Existing complete recursive protobuf TensorProto traversal.
+    # Includes initializers, sparse tensors, attributes, subgraphs and functions.
+    external_refs, manifest_inconsistencies = _external_references(model_proto, onnx)
 
-    # Step 4: Containment check for each external ref
-    violations = []
-    resolved_paths = []
-    for ref in external_refs:
-        # Check A: absolute path
-        if os.path.isabs(ref):
-            violations.append({'ref': ref, 'reason': 'ABSOLUTE_PATH'})
-            continue
-        # Check B: traversal string pattern
-        norm_ref = ref.replace('\\', '/')
-        if '..' in norm_ref.split('/'):
-            violations.append({'ref': ref, 'reason': 'TRAVERSAL_PATTERN'})
-            continue
-        # Check C: resolved canonical path still within asset_directory
-        candidate = os.path.realpath(os.path.join(asset_dir_real, ref))
-        if not candidate.startswith(asset_dir_real + os.sep):
-            violations.append({'ref': ref, 'reason': 'RESOLVES_OUTSIDE_ASSET_DIR'})
-            continue
-        # Check D: symlink resolution
-        if os.path.islink(os.path.join(asset_dir_real, ref)):
-            link_target = os.path.realpath(os.path.join(asset_dir_real, ref))
-            if not link_target.startswith(asset_dir_real + os.sep):
-                violations.append({'ref': ref, 'reason': 'SYMLINK_ESCAPE'})
-                continue
-        resolved_paths.append(candidate)
+    # Step 4: Existing containment-first helper; relative to main-file directory.
+    # Reject absolute/rooted/drive/UNC/traversal/canonical/symlink escapes.
+    # Return sorted unique canonical regular files, not globs or byte slices.
+    resolved_paths, violations, file_inconsistencies = _resolve_external_files(
+        external_refs, model_real, asset_directory)
 
     if violations:
         return build_worker_output(
@@ -800,6 +783,9 @@ def resolve_onnx_artifact_unit(model_path: str, asset_directory: str) -> dict:
                         "it indicates an external data path outside the asset directory."]
         )
 
+    if manifest_inconsistencies or file_inconsistencies:
+        return _ambiguous_output('ONNX_EXTERNAL_DATA_INCOMPLETE_OR_INCONSISTENT')
+
     return build_worker_output(
         worker_id='COMP-W-C3A',
         assessment_status='COMPLETED',
@@ -807,16 +793,26 @@ def resolve_onnx_artifact_unit(model_path: str, asset_directory: str) -> dict:
             'artifact_unit': {
                 'main_file': model_real,
                 'external_files': resolved_paths,
-                'artifact_unit_definition_id': 'UNAVAILABLE'  # SP-002 pending
+                'artifact_unit_definition_id': 'onnx-main-referenced-external-data-v1'
             }
         },
         access_mode='BLACK_BOX',
-        limitations=["Artifact-unit definition ID is UNAVAILABLE pending SP-002 resolution."],
+        artifact_unit_id='onnx-main-referenced-external-data-v1',
+        limitations=["Artifact-unit resolution checks membership and containment only."],
         non_claims=["ONNX path containment check does not establish safe content of the model."]
     )
 ```
 
-**Algorithm — PyTorch path [BLOCKED: PRE-03]:**
+The output builder also injects the unchanged mandatory PF-002 fields. The
+supervisor forwards membership to C3B only when C3A is COMPLETED; diagnostic
+partial membership in an ambiguous result is never authorization to hash.
+C3B hashes complete member bytes, including external-file bytes outside any
+declared offset/length; unreferenced neighbours are excluded.
+
+**Algorithm — PyTorch path (historical pre-PRE-03 outline):**
+
+PRE-03 is resolved by `pytorch-single-file-v1`; this retained outline explains
+the original fail-closed dependency, not the current state.
 
 ```python
 def resolve_pytorch_artifact_unit(model_path: str, asset_directory: str,
@@ -855,7 +851,8 @@ def resolve_torchscript_artifact_unit(model_path: str) -> dict:
 ## 3.8 COMP-W-C3B — Model Identity Hasher
 
 **Module:** `assurance_system/workers/c3b_model_hash.py`
-**[BLOCKED: PRE-03 for PyTorch artifact-unit definition]**
+**Frozen membership:** C3A supplies the approved format ID and complete unit;
+PRE-03 / SP-002-ONNX definitions are resolved. Ambiguous units still emit no hash.
 
 ```python
 def run_assessment(task: dict) -> dict:
@@ -863,7 +860,7 @@ def run_assessment(task: dict) -> dict:
     reference_digest = task.get('reference_digest')  # str | None
 
     if artifact_unit is None or artifact_unit.get('artifact_unit_definition_id') == 'UNAVAILABLE':
-        # SP-002 not frozen; cannot produce reproducible combined digest
+        # No resolved unit/definition supplied; cannot produce a complete digest.
         return build_worker_output(
             worker_id='COMP-W-C3B',
             assessment_status='ARTIFACT_UNIT_AMBIGUOUS',
@@ -1638,7 +1635,10 @@ format                        string (enum)   YES  COCO|YOLO_DETECTION|YOLO_SEG|
 task_variant                  string          NO   Task-sub-type where needed
 asset_directory               string          YES  Root of submitted asset directory; workers must
                                                    verify all paths against this before reading
-artifact_unit_definition_id   string          YES  "UNAVAILABLE" until SP-002 resolved (PRE-03)
+artifact_unit_definition_id   string          YES  Supervisor-approved format definition;
+                                                   ONNX: onnx-main-referenced-external-data-v1;
+                                                   PYTORCH: pytorch-single-file-v1;
+                                                   unsupported/unresolved: UNAVAILABLE
 resource_limits.timeout_s     integer         YES  Wall-clock timeout in seconds
 resource_limits.memory_mb     integer         YES  RSS cap in MB
 resource_limits.max_fds       integer         YES  File descriptor cap
@@ -1797,7 +1797,7 @@ timestamp                  string      Local system clock ISO 8601 (AF-003: trus
 | **Method ID** | C3A |
 | **Threat addressed** | T07 — model artifact tampering; G-08 path traversal via ONNX external data |
 | **Algorithm** | ONNX: protobuf header inspection + 4-check containment (absolute path / traversal string / canonical path escape / symlink escape) |
-| **PRE-03 dependency** | PyTorch artifact-unit definition → ARTIFACT_UNIT_AMBIGUOUS until SP-002 |
+| **SP-002 dependency** | Frozen PyTorch / ONNX definitions in artifact_unit_defs/; incomplete or undefined unit → ARTIFACT_UNIT_AMBIGUOUS |
 | **Does NOT prove** | Path containment ≠ safe content; no execution occurs |
 
 ## 5.6 Method C3B — Model Identity Hashing (REQ-05)
@@ -1889,7 +1889,7 @@ Submission manifest lists model artifact
           ↓
 COMP-SUP dispatches COMP-W-C3A (artifact-unit resolver + path containment)
           ↓ [if ONNX_PATH_CONTAINMENT_VIOLATION: stop; emit ESCALATE finding]
-COMP-SUP dispatches COMP-W-C3B (model identity hasher)  [BLOCKED: PRE-03]
+COMP-SUP dispatches COMP-W-C3B (model identity hasher)  [only resolved C3A membership is supplied; otherwise no hash]
           ↓
 COMP-SUP dispatches COMP-W-C3C (ONNX structural validator)  [ONNX only]
           ↓
@@ -2877,10 +2877,10 @@ TIER 3 — DATA-INTEGRITY WORKERS (parallel)
   T3-D: workers/c2a_structural.py   [CONDITIONAL on pycocotools (PRE-01); YOLO CONDITIONAL on PRE-05]
 
 TIER 4 — MODEL-INTEGRITY WORKERS (parallel within tier)
-  T4-A: workers/c3a_artifact_unit.py  [BLOCKED on PRE-03 for PyTorch path; ONNX path can proceed]
+  T4-A: workers/c3a_artifact_unit.py  [frozen SP-002 PyTorch and ONNX definitions; incomplete unit fails closed]
   T4-B: workers/c3c_onnx_structural.py [requires onnx wheel on target (PRE-01)]
   T4-C: workers/c3d_safe_load.py   [requires torch wheel (PRE-01, PRE-05); PRE-03 independent]
-  T4-D: workers/c3b_model_hash.py  [BLOCKED on PRE-03 for PyTorch; ONNX path requires T4-A]
+  T4-D: workers/c3b_model_hash.py  [requires COMPLETED T4-A membership; no digest for incomplete unit]
 
 TIER 5 — PROVENANCE + INTERPRETATION
   T5-A: supervisor/provenance.py (COMP-C4)  [BLOCKED on PRE-02, PRE-04, PRE-08, PRE-09]
@@ -2953,7 +2953,7 @@ PARALLEL-SAFE PAIRS (can run simultaneously):
 | pycocotools COCO parsing | C extension builds on target host (PRE-01) | BLOCKING |
 | torch CPU wheel | Target OS/arch confirmed (PRE-01); PRE-05 format list confirms PyTorch | BLOCKING |
 | YOLO format support | PRE-05 format list confirmed | BLOCKING |
-| PyTorch artifact-unit definition | SP-002 produced (PRE-03) | BLOCKING |
+| Artifact-unit definitions | PRE-03 PyTorch and SP-002-ONNX records frozen | RESOLVED for the two approved definitions; byte identity only |
 | C4 signing implementation | XREG-002 (PRE-02), SP-003 (PRE-04), SP-004 (PRE-08), SP-006 (PRE-09) all resolved | BLOCKING |
 | ONNX behavioral battery as MVP extension | Reference model + canonicalization + ORT telemetry all confirmed | Currently UNAVAILABLE |
 | Any offline capability claim | Target-host execution evidence (EVF-001 Layer 1) | Post-implementation |

@@ -70,7 +70,7 @@ Produce a **validated, integrated, offline-demonstrable assurance system** that:
 | PyTorch model scope | PRE-01 + PRE-05 (torch CPU wheel; format list confirms PyTorch) | BLOCKED |
 | YOLO task-variant scope (seg/pose/OBB) | PRE-05 (mandatory format list) | BLOCKED |
 | C4 signing module | PRE-02 + PRE-04 + PRE-08 + PRE-09 all resolved | BLOCKED |
-| PyTorch artifact-unit definition | PRE-03 (SP-002) | BLOCKED |
+| PyTorch / ONNX artifact-unit definitions | PRE-03 + SP-002-ONNX | RESOLVED: two frozen format-specific records in artifact_unit_defs/ |
 | Offline claim | PRE-01 confirmed + wheelhouse verified + zero-egress test passed | BLOCKED |
 | COCO/YOLO structural parsing beyond detection format | PRE-05 | BLOCKED |
 
@@ -592,14 +592,15 @@ Items permanently excluded. No change-control path exists for these specific exc
 
 ### TASK-014 — COMP-W-C3A: Artifact-Unit Resolver
 
-**Name:** Implement ONNX artifact-unit resolver (PyTorch path BLOCKED on PRE-03)
+**Name:** Implement ONNX artifact-unit resolver (frozen SP-002 format definitions)
 **Purpose:** Resolve which files constitute the artifact-unit for each model format; prerequisite for model hashing
 **Source specification:** §10 §3.7 (C3A algorithm); §09 §6 COMP-W-C3A; REUSE-008 (concept HARDEN; REIMPLEMENT)
 **Dependencies:** TASK-007 (base.py); PRE-03 (for PyTorch path)
 **Expected output:**
 - `assurance_system/workers/c3a_artifact_unit.py`
 - ONNX path (unblocked): resolves main `.onnx` + all external data files referenced in ExternalDataInfo; path containment check on each external data path; emits ONNX_PATH_CONTAINMENT_VIOLATION if any external data path escapes the asset directory
-- PyTorch path: BLOCKED on PRE-03 (SP-002); emit ARTIFACT_UNIT_AMBIGUOUS until PRE-03 resolved
+- PyTorch path: `pytorch-single-file-v1` (PRE-03 resolved); incomplete units remain ARTIFACT_UNIT_AMBIGUOUS
+- ONNX path: `onnx-main-referenced-external-data-v1` (SP-002-ONNX resolved); complete recursive reference discovery, unique canonical regular members, whole external-file bytes, no unreferenced neighbours
 - `access_mode` field: non-nullable; populated from task spec
 - PF-002 non-claim: `hash_match_not_safe = True` on every record
 **Files/modules affected:** `assurance_system/workers/c3a_artifact_unit.py`
@@ -613,9 +614,9 @@ Items permanently excluded. No change-control path exists for these specific exc
   - UT-C3A-005: FIX-006 symlink in external data → ONNX_PATH_CONTAINMENT_VIOLATION (SEC-006)
   - UT-C3A-006: access_mode non-null confirmed on all records
   - UT-C3A-007: pf_002_non_claim present and True on all records
-**Acceptance criteria:** All 7 tests pass; SEC-004, SEC-005, SEC-006 pass via this worker; access_mode non-null confirmed; PF-002 non-claim present; PyTorch path emits ARTIFACT_UNIT_AMBIGUOUS until PRE-03 resolved
-**Risk/blockers:** PRE-03 blocks PyTorch artifact-unit path; onnx package availability blocked on PRE-01
-**Completion state:** `[ ] NOT STARTED`
+**Acceptance criteria:** All 7 tests pass; SEC-004, SEC-005, SEC-006 pass via this worker; access_mode non-null confirmed; PF-002 non-claim present; unresolved/incomplete units emit ARTIFACT_UNIT_AMBIGUOUS
+**Risk/blockers:** Frozen definitions are resolved; missing ONNX runtime still fails closed. HOST-CAP-003 procedural re-entry remains separate from passing real component acceptance.
+**Completion state:** `[x] TESTED` — 30 targeted tests and real ONNX identity/supervisor acceptance pass; see `docs/validation/e2_onnx_identity_acceptance.md`.
 
 ---
 
@@ -641,8 +642,8 @@ Items permanently excluded. No change-control path exists for these specific exc
   - UT-C3B-004: PF-002 non-claim fields present and True on all records
   - REPRO-003: same artifact unit → same combined_digest on two runs
 **Acceptance criteria:** All 4 tests + REPRO-003 pass; PF-002 non-claim fields present; ARTIFACT_UNIT_AMBIGUOUS propagates correctly; combined_digest is deterministic
-**Risk/blockers:** Depends on C3A (TASK-014); onnx package blocked on PRE-01
-**Completion state:** `[ ] NOT STARTED`
+**Risk/blockers:** Depends on a COMPLETED C3A unit; ambiguous diagnostic partial membership is not forwarded for hashing. E-2 resolved; C3B remains stdlib-only and does not import ONNX.
+**Completion state:** `[x] TESTED` — 18 targeted tests plus real frozen-definition ONNX identity/supervisor acceptance pass; existing ordered inner/outer SHA-256 unchanged.
 
 ---
 
@@ -1319,16 +1320,21 @@ Five gates govern progression. A gate must pass before work beyond it begins.
 
 ## GATE-3: Capability Gate
 
+**Current adjudication: PASS**, validation executed 2026-10-02 after owner-approved
+SP-002-ONNX closure. See `docs/validation/e2_onnx_identity_acceptance.md` for
+criterion-level observations and historical checkpoint boundaries. This is not
+Gate-4 acceptance or authorization for another task.
+
 **Trigger:** After all C2 workers, all C3 workers, COMP-C4 (shell), COMP-C5, COMP-REF, COMP-CAP complete
 **Criteria:**
-- [ ] All C2 worker unit tests pass (including UT-C2A-004 all-box coverage)
-- [ ] All C3 worker unit tests pass
-- [ ] Security fixture tests SEC-001 through SEC-012 pass
-- [ ] UNAVAILABLE propagation at all 4 injection points confirmed (FIX-013)
-- [ ] C5 finding: priority rule 1 enforced; risk_score field absent; T05d non-claim present; PF-002 non-claim present on C3 findings
-- [ ] Audit chain: SEC-010 (CHAIN_CORRUPT on modification) passes
-- [ ] Replay nonce: SEC-009 passes
-- [ ] weights_only=False grep check: 0 matches
+- [x] All C2 worker unit tests pass (including UT-C2A-004 all-box coverage)
+- [x] All C3 worker unit tests pass
+- [x] Security fixture tests SEC-001 through SEC-012 pass
+- [x] UNAVAILABLE propagation at all 4 injection points confirmed (FIX-013)
+- [x] C5 finding: priority rule 1 enforced; risk_score field absent; T05d non-claim present; PF-002 non-claim present on C3 findings
+- [x] Audit chain: SEC-010 (CHAIN_CORRUPT on modification) passes
+- [x] Replay nonce: SEC-009 passes
+- [x] weights_only=False grep check: 0 matches
 
 ## GATE-4: Validation Gate
 

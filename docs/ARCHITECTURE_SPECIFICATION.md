@@ -244,7 +244,7 @@ The approved dataflow follows this sequence. Each step is described in detail in
 [2] INGESTION GATE
     Supervisor: format detection → path normalization → manifest hashing
     → contributor identity set to UNTRUSTED by default
-    → asset-unit definition applied (SP-002 BLOCKING)
+    → frozen format-specific asset-unit definition applied (SP-002)
          ↓
 [3] CAPABILITY DECLARATION
     Supervisor: for each asset × method combination:
@@ -420,10 +420,10 @@ The approved dataflow follows this sequence. Each step is described in detail in
 |---|---|
 | **Component ID** | COMP-W-C3A |
 | **Name** | Artifact-Unit Resolver |
-| **Responsibility** | Given a model artifact path and format, resolves the complete set of files constituting the artifact-unit (per SP-002 / GAP-004 definition). For ONNX with external tensor data: all `.onnx.data` and referenced external binary files are included. Emits ARTIFACT_UNIT_AMBIGUOUS when the unit cannot be frozen (e.g., external-data file manifest inconsistency). |
-| **Inputs** | Model artifact path; format declaration; artifact-unit definition table (from SP-002 — PRE-03 BLOCKING) |
+| **Responsibility** | Given a model artifact path and format, resolves the complete set of files constituting the artifact-unit (per SP-002 / GAP-004 definition). For ONNX with external tensor data: all referenced external files, including referenced `.onnx.data`, are included; unreferenced neighbours are excluded. Emits ARTIFACT_UNIT_AMBIGUOUS when the unit cannot be frozen (e.g., external-data file manifest inconsistency). |
+| **Inputs** | Model artifact path; format declaration; approved SP-002 definitions (`pytorch-single-file-v1`, `onnx-main-referenced-external-data-v1`) |
 | **Outputs** | Resolved artifact-unit file list; ARTIFACT_UNIT_AMBIGUOUS flag if unit undefined or ambiguous |
-| **Dependencies** | SP-002 artifact-unit definition (PRE-03 BLOCKING); `onnx` package for ONNX external-data manifest parsing |
+| **Dependencies** | Frozen SP-002 format definition; `onnx` package for ONNX external-data manifest parsing |
 | **Trust level** | Untrusted subprocess (receives model paths, does not load model code) |
 | **Failure behavior** | ARTIFACT_UNIT_AMBIGUOUS emitted; hashing blocked until unit is frozen |
 | **Security requirements** | Path traversal prevention: all resolved file paths must be within the submitted asset directory; ONNX external-data path containment enforced here |
@@ -634,10 +634,22 @@ The approved dataflow follows this sequence. Each step is described in detail in
 |---|---|
 | **Identity** | Artifact-unit SHA-256 (all files in the unit per SP-002) |
 | **Formats** | ONNX (supported); PyTorch `.pt/.pth` (supported, `weights_only=True`); TorchScript (DEFERRED_IN_SCOPE — isolated worker not demonstrated on target) |
-| **Artifact-unit** | ONNX: main `.onnx` + all external tensor data files; PyTorch: as per SP-002 definition (PRE-03 BLOCKING); ARTIFACT_UNIT_AMBIGUOUS if unit undefined |
+| **Artifact-unit** | ONNX: main `.onnx` + all referenced external tensor data files (`onnx-main-referenced-external-data-v1`); PyTorch: `pytorch-single-file-v1`; ARTIFACT_UNIT_AMBIGUOUS if unit unresolved/incomplete |
 | **Trust status** | UNTRUSTED; processed only in isolated worker subprocess |
 | **Hashing** | SHA-256 over complete artifact-unit (COMP-W-C3B) |
 | **Validation** | Structural check (COMP-W-C3C); safe-loading gate (COMP-W-C3D) |
+
+**SP-002-ONNX owner decision dated 2026-10-05:**
+`onnx-main-referenced-external-data-v1` freezes this existing ONNX contract.
+The unit is one contained regular main `.onnx` plus sorted unique canonical
+contained regular external files discovered through complete recursive
+TensorProto traversal (including sparse tensors, attributes, subgraphs and
+functions represented by the installed protobuf). Each member is hashed as a
+complete byte object; unrelated neighbours and offset/length-only slices are
+excluded. Missing/inconsistent members are ARTIFACT_UNIT_AMBIGUOUS; outside
+paths are containment violations. Only COMPLETED C3A membership is forwarded
+to C3B. See `artifact_unit_defs/onnx_artifact_unit_spec.md`. This freezes the
+existing membership semantics without changing B2/B3, schema or PF-002.
 
 ### AC-04 — Inference Records (if organizer-supplied — GAP-011 PENDING)
 
@@ -1609,7 +1621,7 @@ All hostile fixture tests (Section 20.3) double as failure injection points for 
 | PyTorch in MVP scope | PRE-05 mandatory format list confirmed; CPU wheel confirmed on target | PRE-01 + PRE-05 BLOCKING |
 | COCO API C extension build | C extension builds on target host; path handling reviewed | PRE-01 BLOCKING |
 | M01 structural validation BUILD claim | Parser fixture gate passes (EVF-001 Layer 1) | Post-implementation |
-| Model identity hash BUILD claim | SP-002 artifact-unit definitions frozen (PRE-03) | PRE-03 BLOCKING |
+| Model identity hash BUILD claim | SP-002 artifact-unit definitions frozen (PRE-03 + SP-002-ONNX) | RESOLVED for frozen PyTorch/ONNX definitions; byte identity only |
 | Provenance binding implementation | PRE-02 (XREG-002), PRE-04 (SP-003), PRE-08 (SP-004), PRE-09 (SP-006) all resolved | PRE-02, PRE-04, PRE-08, PRE-09 BLOCKING |
 | Any offline capability claim | C6 Level C target-host execution evidence (EVF-001 Layer 1) | Post-implementation on confirmed target |
 | ONNX behavioral battery as MVP extension | All four pre-conditions met before implementation day 1: qualified reference, canonicalization spec frozen, ORT telemetry confirmed, PDQ spike confirmed | Currently UNAVAILABLE |
@@ -1624,7 +1636,7 @@ All hostile fixture tests (Section 20.3) double as failure injection points for 
 |---|---|---|
 | PRE-01 / GAP-001: Target host | All offline claims; COMP-W-C3D isolation mechanism; wheel staging; zero-egress confirmation | Project owner / organizer decision |
 | PRE-02 / XREG-002: Signing mechanism (HMAC vs. Ed25519) | COMP-C4 design; key management design | Project owner decision |
-| PRE-03 / GAP-004 / SP-002: Artifact-unit definitions | COMP-W-C3A; COMP-W-C3B | SP-002 session |
+| PRE-03 / GAP-004 / SP-002: Artifact-unit definitions | COMP-W-C3A; COMP-W-C3B | RESOLVED: approved PyTorch definition and SP-002-ONNX owner decision; see artifact_unit_defs/ |
 | PRE-04 / GAP-005 / SP-003: Vocabulary contract | COMP-SCHEMA; COMP-C5; all cross-layer integration | SP-003 session |
 | PRE-05 / GAP-013: Mandatory format list | YOLO task-variant scope; PyTorch in/out scope; COMP-W-C2A test coverage | Project owner / organizer decision |
 | PRE-06 / GAP-009: Blockchain posture | (Expected: DEFER for MVP — but formally open) | Project owner decision |
@@ -1731,7 +1743,12 @@ Stage 10 — Architecture Specification
 
 ## OPEN QUESTIONS (from this stage)
 
-All P1 blocking conditions (PRE-01 through PRE-09) remain open and block specific components as identified in the implementation readiness matrix. The following are most urgently required:
+The following list and the original implementation-readiness matrix retain
+design-stage conditions, not current runtime status. Current decisions are in
+PROJECT_STATE.md and the approved decision records. In particular, PRE-03 and
+SP-002-ONNX are resolved by the two frozen artifact-unit definitions; their
+original blocked wording below is historical, not a current C3A/C3B blocker.
+The original design-stage priority list was:
 
 1. **PRE-01 / GAP-001:** Target host — blocks all offline claims, COMP-W-C3D isolation mechanism, and wheel staging
 2. **PRE-02 / XREG-002:** Signing mechanism — blocks COMP-C4 design

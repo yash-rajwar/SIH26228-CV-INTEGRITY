@@ -25,7 +25,8 @@ from assurance_system.workers.base import (
 
 WORKER_ID = "COMP-W-C3A"
 PYTORCH_ARTIFACT_UNIT_DEFINITION_ID = "pytorch-single-file-v1"
-ONNX_ARTIFACT_UNIT_DEFINITION_ID: str | None = None
+# Approved SP-002-ONNX decision: artifact_unit_defs/onnx_artifact_unit_spec.md.
+ONNX_ARTIFACT_UNIT_DEFINITION_ID = "onnx-main-referenced-external-data-v1"
 
 _WORKER_INPUT_SCHEMA = "worker-input-v1"
 _PYTORCH_SUFFIXES = frozenset({".pt", ".pth"})
@@ -272,6 +273,8 @@ def resolve_onnx_artifact_unit(
         )
     if not os.path.isfile(model_real):
         return _assessment_error("MODEL_FILE_NOT_REGULAR_OR_MISSING")
+    if pathlib.Path(model_real).suffix.casefold() != ".onnx":
+        return _ambiguous_output("MODEL_FILE_SUFFIX_NOT_ONNX")
 
     try:
         onnx_module = _load_onnx_module()
@@ -308,9 +311,7 @@ def resolve_onnx_artifact_unit(
     artifact_unit = {
         "main_file": model_real,
         "external_files": external_files,
-        "artifact_unit_definition_id": (
-            ONNX_ARTIFACT_UNIT_DEFINITION_ID or "UNAVAILABLE"
-        ),
+        "artifact_unit_definition_id": ONNX_ARTIFACT_UNIT_DEFINITION_ID,
     }
     inconsistencies = [*manifest_inconsistencies, *file_inconsistencies]
     if inconsistencies:
@@ -320,16 +321,6 @@ def resolve_onnx_artifact_unit(
             access_mode=AccessMode.BLACK_BOX,
             limitations=[
                 "The ONNX external-data manifest is incomplete or inconsistent."
-            ],
-        )
-
-    if ONNX_ARTIFACT_UNIT_DEFINITION_ID is None:
-        return _ambiguous_output(
-            "ONNX_ARTIFACT_UNIT_DEFINITION_ID_UNAVAILABLE",
-            artifact_unit=artifact_unit,
-            access_mode=AccessMode.BLACK_BOX,
-            limitations=[
-                "Artifact-unit definition ID is UNAVAILABLE pending SP-002."
             ],
         )
 

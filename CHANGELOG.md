@@ -1,5 +1,26 @@
 # Changelog
 
+## E-2 / SP-002-ONNX — Frozen Identity and Gate-3 (validation 2026-10-02)
+
+- Recorded the owner-specified 2026-10-05 decision freezing the existing AC-03
+  contract under `onnx-main-referenced-external-data-v1`; execution and decision
+  dates are explicit. Complete recursive TensorProto discovery is unchanged.
+- C3A now accepts complete contained regular `.onnx` units. The supervisor
+  supplies the approved format ID and rejects mismatches. A real missing-file
+  test exposed partial diagnostic membership reaching C3B; the handoff now
+  requires COMPLETED resolution. No incomplete-unit digest is produced.
+- C3B's whole-file ordered inner/outer SHA-256, containment, PF-002 and all
+  non-claims are unchanged. No execution, ONNX Runtime or schema change.
+- Validation: definition/config 18; C3A/B/C 30/18/18; real identity 10; real
+  restricted supervisor 2; SEC-004/005/006 6; SEC-002/003 1 each; SEC-008 2;
+  security 92 passed/4 skipped; integration/negative 57 passed/4 skipped;
+  non-offline 530 passed/11 skipped, zero failures; universal guards clean.
+- C3A/C3B TESTED, E-2 RESOLVED and Gate-3 PASS from the complete MVP checklist.
+  Gate-2 PASS preserved; Gate-4 NOT PASSED/not adjudicated; TASK-026 IN PROGRESS;
+  PRE-08 PARTIAL; HOST-CAP-003 distinct procedural re-entry pending;
+  TASK-024 NOT STARTED. Historical records and protected research retained.
+  No OFF/network rerun, package installation or subsequent task execution.
+
 ## TASK-026 — Windows Evidence-Store ACL Isolation (2026-10-02)
 
 - Recorded ACC-2026-10-02-02 before implementation: supported Win32 restricted

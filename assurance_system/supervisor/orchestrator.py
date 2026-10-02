@@ -348,11 +348,11 @@ class SupervisorOrchestrator:
             if format_name in _MODEL_FORMATS and len(normalized_paths) != 1:
                 raise IngestError("model asset entries require exactly one path")
 
-            artifact_definition = (
-                "pytorch-single-file-v1"
-                if format_name == "PYTORCH"
-                else "UNAVAILABLE"
-            )
+            # Trusted SP-002 definitions; submitters cannot select another ID.
+            artifact_definition = {
+                "PYTORCH": "pytorch-single-file-v1",
+                "ONNX": "onnx-main-referenced-external-data-v1",
+            }.get(format_name, "UNAVAILABLE")
             supplied_definition = asset.get("artifact_unit_definition_id")
             if (
                 supplied_definition is not None
@@ -973,7 +973,10 @@ class SupervisorOrchestrator:
         c3a_signal = c3a_for_c5.get("raw_signal")
         artifact_unit = (
             c3a_signal.get("artifact_unit")
-            if isinstance(c3a_signal, dict)
+            # Partial diagnostic membership is not a resolved artifact unit.
+            # A frozen definition ID must not authorize hashing an incomplete unit.
+            if c3a_for_c5.get("assessment_status") == AssessmentStatus.COMPLETED
+            and isinstance(c3a_signal, dict)
             else None
         )
         c3b_for_c5, c3b_record = self._run_one_worker(

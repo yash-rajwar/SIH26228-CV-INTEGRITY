@@ -12,7 +12,7 @@ Update this file at the end of every coding session before committing.
 ## PROJECT
 
 **Name:** Trustworthy Computer Vision Integrity Assurance — SIH 2026 PS 26228  
-**Current stage:** TASK-026 SEC-008 Windows ACL acceptance complete; GATE-2 `PASS`; GATE-3 `NOT PASSED` because E-2 prevents the all-C3-complete trigger; GATE-4 remains open
+**Current stage:** E-2 / SP-002-ONNX resolved by real identity acceptance; C3A/C3B `TESTED`; GATE-2 `PASS`; GATE-3 `PASS`; GATE-4 `NOT PASSED` and outside this packet
 **Repository created:** [DATE TO BE FILLED ON REPO INIT]  
 **Five-day window start:** [DATE — begins after P1 conditions resolved]
 
@@ -48,8 +48,8 @@ Status codes: `NOT STARTED` | `IN PROGRESS` | `IMPLEMENTED` | `TESTED` | `VALIDA
 | COMP-W-C2B (exact hash) | TASK-011 | `IMPLEMENTED` | Stdlib-only streaming SHA-256 duplicate grouping, per-file error handling, fail-closed all-failed state, and mandatory deferred PDQ disclosure implemented in the current TASK-011 commit; 10 targeted tests and full regression pass |
 | COMP-W-C2C (concentration) | TASK-012 | `TESTED` | Exact §3.5 HHI/entropy statistics, source shares/counts, UNTRUSTED-default SYBIL_UNRELIABLE behavior, fail-closed missing/prohibited input handling, and FIX-012 integration implemented in the current TASK-012 commit; 8 targeted tests and full regression pass |
 | COMP-W-C2D (image hash) | TASK-013 | `TESTED` | Stdlib-only streaming SHA-256, byte-identical image grouping, path containment, per-file error handling, mandatory PDQ deferral, and permanent T05d non-claims implemented in the current TASK-013 commit; 6 targeted tests and full regression pass |
-| COMP-W-C3A (artifact-unit resolver) | TASK-014 | `IMPLEMENTED` | Runtime compatibility fixed for ONNX 1.23.0 / protobuf 7.36.2; all 30 C3A tests now pass, including genuine ONNX external-data containment. E-2 intentionally keeps the ONNX definition ID `UNAVAILABLE`, so final identity acceptance remains blocked. |
-| COMP-W-C3B (model hasher) | TASK-015 | `IMPLEMENTED` | IMPLEMENTED WITH BLOCKER: deterministic whole-unit SHA-256, fail-closed ambiguity/containment/read-error handling, reference comparison, and PF-002 contract pass 18 targeted tests; ONNX identity path blocked pending ONNX artifact-unit definition ID (E-2) |
+| COMP-W-C3A (artifact-unit resolver) | TASK-014 | `TESTED` | Frozen `onnx-main-referenced-external-data-v1`; 30 targeted tests, complete recursive reference discovery and real ONNX identity/supervisor acceptance pass. Containment and incomplete-unit failure behavior preserved. E-2 resolved. |
+| COMP-W-C3B (model hasher) | TASK-015 | `TESTED` | 18 targeted tests and real frozen-definition ONNX identity acceptance pass, including whole-external-file tamper, excluded neighbours, deduplication and no digest for incomplete units. Ordered inner/outer SHA-256 and PF-002 unchanged. E-2 resolved. |
 | COMP-W-C3C (ONNX structural) | TASK-016 | `TESTED` | ONNX 1.23.0 / protobuf 7.36.2 descriptor compatibility is fixed without narrowing traversal; all 18 C3C tests pass, including genuine valid/absolute/traversal/symlink/malformed ONNX cases, checker/schema behavior, PF-002, EF-004, and no-ORT/no-execution boundaries. |
 | COMP-W-C3D (PyTorch safe-load gate) | TASK-017 | `TESTED` | Worker-level validation remains complete with Torch 2.10.0+cpu. TASK-026 confirms SEC-002 Windows Job Object memory containment and SEC-003 timeout/termination through real supervisor dispatch, persistence, C5 unavailability, cleanup, and continuation. |
 | COMP-REF (reference manager) | TASK-018 | `TESTED` | Approved SP-001 all-of R0–R7 gate enforcement, fail-closed default, FORMAT_ASSET boundary, audited transitions, staleness downgrade, and AuditWriteError rollback verified; 7 targeted tests and full regression pass |
@@ -61,12 +61,41 @@ Status codes: `NOT STARTED` | `IN PROGRESS` | `IMPLEMENTED` | `TESTED` | `VALIDA
 | CLI entry points | TASK-023 | `TESTED` | Seven argparse entry points implemented; complete stored findings/evidence/deferred records remain visible, audit corruption is surfaced before events, assessment delegates to COMP-SUP, and export delegates to COMP-EXPORT. The unimplemented TASK-024 command remains explicitly unavailable. Original TASK-023 acceptance and current TASK-025 CLI regression pass. |
 | Dashboard (SHOULD BUILD) | TASK-024 | `NOT STARTED` | GATE-2 now passes, so the MVP dependency gate no longer blocks TASK-024; dashboard work was not started by this reconciliation and still requires its own execution packet |
 | Evidence bundle exporter | TASK-025 | `TESTED` | Deterministic read-only six-document ZIP packaging, complete field/state preservation, non-mutating audit verification, path and overwrite controls, secret/prohibited-field rejection, and CLI delegation are validated. Targeted: 27 passed; relevant regression: 107 passed, 3 expected skips. |
-| End-to-end integration test | TASK-026 | `IN PROGRESS` | GATE-2 remains PASS; SEC-002, SEC-003 and SEC-008 real target-host acceptance pass. GATE-3 remains NOT PASSED: E-2 blocks final C3A/C3B ONNX identity acceptance and therefore the all-C3-complete trigger in MVP §14. §10 §18/GATE-4 reconciliation remains open. Non-offline regression: 508 passed, 11 skipped, 0 failed. |
+| End-to-end integration test | TASK-026 | `IN PROGRESS` | GATE-2 PASS preserved; GATE-3 PASS after E-2 closure and complete MVP §14 checklist review. All C3 workers complete/tested; SEC-001..012 functional PASS retained. §10 §18/GATE-4 reconciliation remains open and is not authorized here. Non-offline regression: 530 passed, 11 skipped, 0 failed. |
 | Offline validation (target host) | TASK-027 | `TESTED` | OFF-001, OFF-003, and OFF-004 have target-host exit-zero evidence from `task027-run-20260928-215709`; OFF-002 has a zero-byte non-loopback acceptance window from TASK-027-S. The original recovery marker remains `FAIL`, while independent post-run verification confirms exact restored host state. The offline result is bounded to the frozen Windows AMD64 / CPython 3.13.12 tuple. |
 
 ---
 
 ## CURRENT TASK
+
+E-2 / SP-002-ONNX closure COMPLETE. Starting HEAD
+`1a7c21919475cdc0bc4ce2432910852709937819`, clean worktree and
+`feature/vertical-slice` verified before pull (already current). The owner packet
+freezes `onnx-main-referenced-external-data-v1`, decision date 2026-10-05.
+Actual validation executed 2026-10-02; those dates are deliberately distinct.
+
+Real acceptance: 10 identity cases and 2 supervisor cases pass with production
+restricted-token launch, configured Windows Jobs, schema-gated persistence,
+C5/PF-002 propagation, intact audit and complete process/token/Job/temp cleanup.
+The missing-external integration exposed a genuine handoff defect: partial C3A
+diagnostic membership was forwarded to C3B. Only COMPLETED resolution now
+authorizes that handoff. C3B hashing, traversal, schemas and trust boundaries
+are unchanged; the main `.onnx` suffix is enforced after containment.
+
+Final ordered validation: definition/config 18; C3A 30; C3B 18; C3C 18; real
+identity 10; real supervisor 2; SEC-004/005/006 6; SEC-002 1; SEC-003 1; SEC-008 2;
+security 92 passed/4 skipped; integration/negative 57 passed/4 skipped;
+non-offline 530 passed/11 skipped; zero failures. Universal guards clean.
+See `docs/validation/e2_onnx_identity_acceptance.md` for hashes and Gate-3 criteria.
+
+E-2 RESOLVED; C3A/C3B TESTED; GATE-3 PASS. GATE-4 NOT PASSED; TASK-026 IN PROGRESS;
+PRE-08 PARTIAL; TASK-024 NOT STARTED. HOST-CAP-003 factual runtime capability
+passes, but formal TASK-027-C procedural re-entry remains pending: its recorded
+procedure requires a distinct full re-entry with zero-egress evidence, not
+authorized here. OFF-002 was not rerun; protected research is unchanged.
+No subsequent task is authorized by this packet.
+
+### Prior SEC-008 checkpoint (historical; superseded for E-2/Gate-3 only)
 
 ```
 TASK: TASK-026 Windows Evidence-Store ACL Isolation / SEC-008
@@ -139,6 +168,7 @@ Validated behavior:
 | TASK-026 Gate-2 formal reconciliation | Re-evaluated current evidence against the authoritative Section 11 and GATE-2 criteria, preserved every historical blocked record, documented the 20 skip classifications, and formally recorded GATE-2 PASS without claiming GATE-3/GATE-4 or resolving SEC-002/SEC-003. | Documentation-only reconciliation; targeted VS regression remains 7 passed and the established full regression remains 483 passed, 20 skipped, 0 failed. | This TASK-026 reconciliation commit |
 | TASK-026 Windows memory containment | Recorded ACC-2026-10-02-01 before implementation; added configured Windows Jobs, suspended creation, assignment before resume, memory-limit detection/termination, and deterministic Job/process-handle cleanup. Real FIX-002 supervisor persistence/C5/audit/continuation acceptance passes; historical probe and supplemental MemoryError evidence remain distinct. | Job unit/capability 6 passed; SEC-002 1 passed; existing SEC-003 1 passed; relevant 51 passed; security 90 passed/4 skipped; non-offline 492 passed/11 skipped. GATE-3 remains NOT PASSED due SEC-008; E-2 remains OPEN; GATE-4 remains NOT PASSED. | This TASK-026 Windows containment commit (parent `9338f1a`) |
 | TASK-026 Windows evidence ACL isolation | ACC-2026-10-02-02 recorded before implementation. Added restricted-primary-token launch with no fallback, explicit inheritable deployment ACLs and reversible snapshot, real supervisor-write/restricted-worker OS-denial acceptance, handle/failure cleanup and unchanged Job ordering. Original insecure ACL/child ALLOWED preserved. | Token 14 passed; ACL/SEC-008 2 passed; SEC-002 1 passed; SEC-003 1 passed; relevant 71 passed; security 92 passed/4 skipped; non-offline 508 passed/11 skipped. SEC-008 PASS; GATE-3 NOT PASSED due E-2 all-C3-complete trigger; GATE-4 NOT PASSED. | This SEC-008 commit (parent `1da72cd`) |
+| E-2 / SP-002-ONNX closure | Owner-frozen referenced-member definition, approved supervisor format ID and mismatch rejection; completed-only C3A-to-C3B handoff prevents partial-unit hashes. Recursive traversal and C3B algorithm unchanged; real ONNX acceptance and full Gate-3 adjudication recorded. | C3A 30; C3B 18; C3C 18; real identity 10; supervisor 2; security 92 passed/4 skipped; non-offline 530 passed/11 skipped; zero failures. C3A/C3B TESTED, E-2 RESOLVED, Gate-3 PASS. | This E-2 closure commit (parent `1a7c219`) |
 
 ---
 
@@ -147,8 +177,7 @@ Validated behavior:
 | Blocker ID | Description | Affects | Resolution owner |
 |---|---|---|---|
 | PRE-08 | HMAC-SHA256 parameters are frozen, but a Windows target-host absolute key path and supervisor-only ACL verification are not yet provisioned | TASK-019 operational signing | Project owner / deployment owner |
-| E-2 / SP-002-ONNX | No frozen ONNX artifact-unit definition ID exists. C3A returns the resolved manifest as `ARTIFACT_UNIT_AMBIGUOUS` with definition ID `UNAVAILABLE`; no ID is inferred from PyTorch. | Final ONNX C3A acceptance and TASK-015 ONNX hashing | Project owner / architecture owner |
-| HOST-CAP-003 / TASK-014 packet E-3 | FORMAL RECONCILIATION PENDING: the protobuf 7.36.2 descriptor compatibility defect is fixed; real ONNX C3A/C3C tests pass without ONNX Runtime, with full containment traversal preserved. TASK-027-C itself has not been rerun, so this task does not silently close the recorded host-capability blocker. | TASK-027-C state reconciliation; E-2 remains separate for C3A identity | Dependency / deployment owner |
+| HOST-CAP-003 / TASK-014 packet E-3 | PROCEDURAL-PENDING ONLY: genuine ONNX 1.23.0 / protobuf 7.36.2 C3A/C3B/C3C target-host acceptance passes. `docs/task027c_gate2_validation.md` Required Next Action still requires a distinct full TASK-027-C re-entry with zero-egress evidence; this packet prohibits that execution. No missing-runtime claim is retained. | Formal TASK-027-C procedural reconciliation, not E-2 or passing C3 component/Gate-3 acceptance | Dependency / deployment owner |
 | TASK-026-VALIDATION-EVIDENCE | Technical Specification §18.1–§18.5 still says `NOT YET OBTAINED`; named observed-result records and the remaining GATE-4 reproducibility/integration evidence have not been formally reconciled | Full TASK-026 acceptance, capability claims, and GATE-4 | TASK-026 validation owner |
 
 ---
@@ -157,7 +186,7 @@ Validated behavior:
 
 *(At repository creation — to be updated as implementation progresses)*
 
-- Foundation and vertical-slice components through TASK-025 are implemented; VS-001 through VS-007 pass. TASK-014 genuine ONNX containment passes, but final C3A/C3B ONNX identity acceptance remains blocked by E-2.
+- Foundation and vertical-slice components through TASK-025 are implemented; VS-001 through VS-007 pass. C3A/C3B real frozen-definition ONNX byte identity acceptance passes; E-2 is resolved. This establishes no model-safety or behavioral-equivalence claim.
 - TASK-027 offline validation is established only for the confirmed Windows AMD64 / CPython 3.13.12 target tuple and the exact staged binary set; it is not a portable or broader offline claim.
 - The target has no detected C compiler. The declared binary wheelhouse, including PyYAML 6.0.3, installs and imports without a source build; OFF-001 and OFF-003 have exit-zero target-host evidence, OFF-002 has zero-egress acceptance evidence, and OFF-004 has exit-zero SQLite-backed assess/show evidence.
 - Python `resource.setrlimit` and Unix `RLIMIT_AS`, `RLIMIT_NOFILE`, and `RLIMIT_NPROC` are unavailable. On the validated Windows target, ACC-2026-10-02-01 supplies a Job Object per-process committed-memory ceiling from `ResourceLimits.memory_limit_mb`; it is not described as RSS or RLIMIT_AS. `subprocess.Popen(..., close_fds=True)` is verified working.
@@ -177,10 +206,10 @@ Validated behavior:
 ## LATEST VALIDATED COMMIT
 
 ```
-Commit: This TASK-026 SEC-008 commit (parent: 1da72cd15e5d24e99d384c4ea9dac05e4c0917e5)
+Commit: This E-2 closure commit (parent: 1a7c21919475cdc0bc4ce2432910852709937819)
 Branch: feature/vertical-slice
 Date: 2026-10-02
-Tests: SEC-008 PASS; SEC-002/SEC-003 remain PASS; token 14 passed; ACL/SEC-008 2 passed; relevant 71 passed; security 92 passed/4 skipped; non-offline regression 508 passed/11 skipped, 0 failed. Universal production guards clean. Prior Gate-2/OFF evidence and recovery distinctions unchanged.
+Tests: E-2 real identity 10 passed; supervisor 2 passed; C3A/B/C 30/18/18 passed; SEC-004/005/006 6 passed; SEC-002/003 1 each; SEC-008 2 passed; security 92 passed/4 skipped; integration/negative 57 passed/4 skipped; non-offline 530 passed/11 skipped, 0 failed. Gate-3 PASS; Gate-4 not adjudicated. Universal guards clean. Prior Gate-2/OFF evidence and recovery distinctions unchanged.
 ```
 
 ---
@@ -189,16 +218,16 @@ Tests: SEC-008 PASS; SEC-002/SEC-003 remain PASS; token 14 passed; ACL/SEC-008 2
 
 ```
 Date: 2026-10-02
-Latest validation: TASK-026 real SEC-008 Windows DACL denial using the production restricted-worker launcher.
-Executed checks: token tests; deployment ACL verification; real supervisor write and restricted-worker denial; SEC-002; SEC-003; relevant supervisor/Job/C3D regression; full security; approved CPython 3.13.12 / pytest 9.1.1 non-offline regression; universal guards.
-Result: Token 14 passed; ACL/SEC-008 2 passed; SEC-002 1 passed; SEC-003 1 passed; relevant 71 passed; security 92 passed/4 skipped; non-offline 508 passed/11 skipped, 0 failed. tests/offline explicitly excluded; no OFF-002/network-isolation execution.
-Environment: Existing test hooks now capture the production launch seam; assertions retained. Python 3.13 Administrator-created test roots receive test-only READ/EXECUTE DACLs so submitted test assets remain readable, not writable. No packages installed. Startup default-token security and assigned-Job cleanup race corrected during focused validation; final runs pass.
-Evidence: docs/validation/task026_sec008_windows_acl.md; original ACL snapshot, observations and JUnit reports preserved locally in ignored build/task026-sec008/; historical C3D evidence retained separately.
+Latest validation: E-2 / SP-002-ONNX real byte-identity acceptance and Gate-3 checklist.
+Executed checks: 13 ordered runs in owner packet; approved CPython 3.13.12 / ONNX 1.23.0 / protobuf 7.36.2 / pytest 9.1.1; actual restricted Windows supervisor pipeline; universal guards.
+Result: Definition/config 18; C3A 30; C3B 18; C3C 18; real identity 10; supervisor 2; SEC-004/005/006 6; SEC-002 1; SEC-003 1; SEC-008 2; security 92 passed/4 skipped; integration/negative 57 passed/4 skipped; non-offline 530 passed/11 skipped, 0 failed. tests/offline explicitly excluded.
+Environment: Existing approved environment and unchanged Windows restricted-token/Job/ACL mechanisms; no packages installed. Incomplete-unit handoff defect fixed without changing C3B hashing or recursive traversal.
+Evidence: docs/validation/e2_onnx_identity_acceptance.md; ignored build/e2-onnx/ JUnit and supervisor observations, report hashes committed in validation record. Prior SEC-008/C3D evidence remains historical.
 
 Integration gates:
   GATE-1 (Foundation):       prerequisite components TESTED; not re-adjudicated in this reconciliation
   GATE-2 (Vertical Slice):   PASS
-  GATE-3 (Capability):       NOT PASSED — E-2 blocks final C3A/C3B ONNX identity acceptance and all-C3-complete trigger
+  GATE-3 (Capability):       PASS — all-C3-complete trigger and every MVP §14 criterion supported
   GATE-4 (Validation):       NOT PASSED — full TASK-026/§18 evidence remains open
   GATE-5 (Demo):             NOT PASSED
 ```
@@ -599,6 +628,10 @@ E-2 remains open and unchanged. It blocks the C3A/C3B ONNX identity path but has
 
 ## Stage 6 Exit Gate
 
+Historical Stage 6 exit record: the original blocked statuses and handoff below
+are retained, not current E-2/C3A/C3B/Gate-3 status. The later E-2 acceptance
+record and current status sections above supersede only those decisions.
+
 **Date:** 2026-09-27
 **Status:** `PASS-WITH-BLOCKERS`
 **Scope:** Verification and state reconciliation only. No TASK-014, TASK-015, TASK-016, or TASK-017 implementation was modified.
@@ -637,7 +670,7 @@ The Stage 6 rule permits exit when every requirement is either satisfied with ev
 
 ## NEXT TASK
 
-**Next required action (not new implementation authorization):** Project-owner/architecture decision and separate execution packet for E-2/final C3A/C3B ONNX identity acceptance, followed by GATE-3 review; separately authorize §10 §18/GATE-4 observed-result reconciliation. SEC-008, SEC-002 and SEC-003 are accepted and need not be reopened. This packet authorizes no subsequent implementation task; TASK-024 remains not started. PRE-08 and HOST-CAP-003 procedural reconciliation remain unchanged.
+**Next required action (not new implementation authorization):** Obtain a separate packet for §10 §18/GATE-4 observed-result reconciliation and, separately, HOST-CAP-003 formal procedural re-entry if required. E-2 is resolved and Gate-3 PASS; accepted SEC-002/003/008 need not be reopened. This packet authorizes no subsequent task or Gate-4 work; TASK-024 remains not started. PRE-08 PARTIAL and historical OFF/recovery distinctions remain unchanged.
 
 Critical path reminder:
 ```
@@ -661,19 +694,26 @@ PRE-04 resolved
 
 ## PENDING DECISIONS
 
+SP-002-ONNX / E-2 is approved by the current project-owner packet with the exact
+ID `onnx-main-referenced-external-data-v1` and decision date 2026-10-05. The
+definition and decision-log entry freeze the existing AC-03 membership contract.
+E-2 is RESOLVED by real C3A/C3B and restricted supervisor acceptance executed
+2026-10-02. C3A/C3B are TESTED and Gate-3 PASS; Gate-4 is not adjudicated.
+
 ACC-2026-10-02-02 is approved by the current project-owner packet and recorded
 before implementation in the architecture/build documents. Windows restricted
 primary-token launch and explicit evidence-store ACL provisioning are in scope.
 SEC-008 is now PASS based on real target-host OS denial and passing regressions.
 The original unrestricted child write ALLOWED is preserved as precondition
-evidence. Gate-3 remains NOT PASSED because E-2 prevents the all-C3-complete
-trigger; Gate-4, E-2, PRE-08 and OFF-002 statuses remain unchanged.
+evidence. That prior checkpoint's Gate-3 NOT PASSED decision is historical;
+the subsequent E-2 closure now satisfies the all-C3-complete trigger. Gate-4,
+PRE-08 and OFF-002 statuses remain unchanged.
 
 *(Only genuine project decisions — not implementation questions)*
 
 | Decision | Description | Owner | Priority |
 |---|---|---|---|
-| ACC-2026-10-02-02 / SEC-008 | **RESOLVED 2026-10-02 for validated Windows target:** approved restricted primary-token launch and explicit deployment-only evidence-store DACL provisioning implemented. Real supervisor write ALLOWED and production-restricted worker native writes/WRITE_DAC DENIED (WinError 5); original ACL snapshot and ordinary child ALLOWED retained. No unrestricted fallback or whole-host sandbox claim. | Project owner / architecture owner | Closed for the scoped SEC-008 boundary; E-2/GATE-3 and GATE-4 remain open |
+| ACC-2026-10-02-02 / SEC-008 | **RESOLVED 2026-10-02 for validated Windows target:** approved restricted primary-token launch and explicit deployment-only evidence-store DACL provisioning implemented. Real supervisor write ALLOWED and production-restricted worker native writes/WRITE_DAC DENIED (WinError 5); original ACL snapshot and ordinary child ALLOWED retained. No unrestricted fallback or whole-host sandbox claim. | Project owner / architecture owner | Closed for scoped SEC-008; subsequent E-2 closure/Gate-3 PASS do not establish Gate-4 |
 | ACC-2026-10-02-01 / HOST-CAP-002 | **RESOLVED 2026-10-02 for validated Windows target:** approved Windows Job Objects enforce the existing per-worker committed-memory ceiling from `ResourceLimits.memory_limit_mb`; workers are created suspended, assigned before execution, then resumed, with process-memory notifications and `KILL_ON_JOB_CLOSE` cleanup. This is not RSS/RLIMIT_AS. The 128 MiB host probe and bounded 768 MiB real FIX-002 supervisor acceptance pass. | Project owner / architecture owner | Closed for the frozen Windows mechanism; Unix behavior unchanged |
 | PRE-01 | **RESOLVED 2026-09-27:** primary development/SIH demonstration target is Windows 10 Pro version 2009, build 22631, 64-bit; AMD64; Python 3.13.12; 16 GB RAM. `close_fds=True` verified; no C compiler or Python `resource` module detected. | Project owner / organizer | Closed as host-identification decision; capability validation remains separate |
 | PRE-02 / XREG-002 | **RESOLVED 2026-09-27:** HMAC-SHA256 selected | Project owner | Closed |
@@ -684,12 +724,12 @@ trigger; Gate-4, E-2, PRE-08 and OFF-002 statuses remain unchanged.
 | PRE-07 / GAP-011 | **RESOLVED 2026-09-27:** ingestion excluded from MVP because no organizer source is established | Organizer | Closed for MVP |
 | PRE-08 / SP-004 | **PARTIAL 2026-09-27:** algorithm/key/encoding frozen; Windows target-host absolute path and supervisor-only ACL provisioning remain pending | Project team / deployment owner | P1 blocker for operational signing |
 | PRE-09 / SP-006 | **RESOLVED 2026-09-27:** C3→C4 field mapping frozen | Project team | Closed |
-| E-2 / SP-002-ONNX | Freeze the ONNX artifact-unit definition and its `artifact_unit_definition_id`; the PyTorch ID must not be reused or inferred | Project owner / architecture owner | Blocks final TASK-014 ONNX acceptance and TASK-015 ONNX hashing |
+| E-2 / SP-002-ONNX | **RESOLVED:** owner decision dated 2026-10-05 freezes `onnx-main-referenced-external-data-v1`; real acceptance executed 2026-10-02 proves complete referenced-unit hashing and incomplete-unit rejection. C3A/C3B TESTED; see definition and validation records. | Project owner / architecture owner | Closed; no new semantics or hashing algorithm |
 | E-3 / HOST-CAP-003 | **IMPLEMENTATION DEFECT RESOLVED 2026-09-28:** ONNX 1.23.0 / protobuf 7.36.2 C3A/C3C component tests pass using modern `is_repeated` descriptor cardinality with a legacy fallback; no ONNX Runtime or execution path was introduced. Formal host-capability status remains pending TASK-027-C re-entry. | Dependency / deployment owner | Component runtime acceptance passes; procedural re-entry reconciliation remains |
 | TASK-027-C PyYAML closure | **RESOLVED 2026-09-28 by TASK-027-E:** PyYAML 6.0.3 is declared, its official cp313 Windows AMD64 wheel is staged with matching SHA-256, the verifier exits 0, and production config/YAML manifest paths pass. Historical OFF/Gate results remain unchanged pending revalidation. | Dependency / deployment owner | Dependency blocker closed; OFF-002 evidence procedure and formal revalidation remain |
 | TASK-027-G/H runner command contract | **RESOLVED BY LATER AUTHORIZED WORK 2026-09-28:** pytest 9.1.1 was acquired into the approved wheelhouse and installed offline; the frozen COCO submission was generated through the repository fixture system and committed; autonomous runner evidence exists. The earlier missing-input state remains historical. | Project owner / dependency-deployment owner | Closed; final OFF evidence is reconciled under TASK-027-S |
-| E-5 | **RESOLVED BY AUTHORITY 2026-09-27:** malformed ONNX maps to `STRUCTURAL_INVALID`; Architecture and Technical Specification override the lower-ranked MVP test wording | Project team | Closed as a semantic decision; runtime test remains under HOST-CAP-003 |
-| E-6 identifier reconciliation | Preflight E-6 is the PF-002 explicit-injection constraint and is satisfied by C3A/C3B/C3C. The Stage 6 exit packet separately labels full external-reference traversal as E-6; implementation is reviewed, but genuine protobuf traversal remains blocked by HOST-CAP-003. The two meanings are recorded without silently renumbering either. | Project owner / architecture owner | Naming reconciliation pending; runtime traversal evidence remains blocked by HOST-CAP-003 |
+| E-5 | **RESOLVED BY AUTHORITY 2026-09-27:** malformed ONNX maps to `STRUCTURAL_INVALID`; Architecture and Technical Specification override the lower-ranked MVP test wording. Genuine C3C runtime test passes. | Project team | Closed, including runtime confirmation |
+| E-6 identifier reconciliation | Preflight E-6 is PF-002 injection; Stage 6 exit separately labels full external-reference traversal E-6. Both have passing genuine runtime evidence, including sparse/attribute/subgraph/function references. Historical label collision is retained without renumbering. | Project owner / architecture owner | Runtime concerns satisfied; historical naming distinction retained |
 | TASK-025 module/bundle contract | **RESOLVED 2026-09-28 by the explicit TASK-025 packets:** implementation remains at `assurance_system/export/exporter.py` with the six packet-named documents; TASK-023 now delegates to that class. Older Technical/MVP module/filename text remains historical and was not silently used to change the packet contract. | TASK-025 Part B owner / project owner | Closed for implementation; documentation maintenance may reconcile older path text separately |
 | S8-PRE06-CONFLICT | **RESOLVED 2026-09-27:** `docs/sp001_reference_health_gates.md` is the approved committed PRE-06 decision record, corroborated by `docs/p1_decisions.md`; the Stage 8 packet's unresolved statement is stale and does not reopen PRE-06 | Project team | Closed |
 | OQ-017 | Analyst authentication and authority hierarchy | Project owner | Post-MVP |
@@ -700,6 +740,8 @@ trigger; Gate-4, E-2, PRE-08 and OFF-002 statuses remain unchanged.
 ---
 
 ## HANDOFF NOTES
+
+**Current E-2 closure session:** Starting HEAD `1a7c21919475cdc0bc4ce2432910852709937819` verified clean/current. Frozen owner ID and decision record accepted by real ONNX identity and production restricted supervisor tests. C3A/C3B TESTED, E-2 RESOLVED, Gate-3 PASS from the complete MVP checklist; Gate-2 PASS preserved, Gate-4 NOT PASSED, TASK-026 IN PROGRESS, PRE-08 PARTIAL, TASK-024 NOT STARTED. HOST-CAP-003 remains procedural-pending only due the separately required TASK-027-C re-entry. Security 92 passed/4 skipped; non-offline 530 passed/11 skipped, zero failures. No OFF/network rerun, package installation, C3D/schema/constant/fixture/protected-research modification. Historical SEC-008/Job/OFF records below remain intact and are superseded only where the new E-2/Gate-3 decision applies. No subsequent task authorized.
 
 *(To be filled by the agent ending a session — for the agent starting the next session)*
 

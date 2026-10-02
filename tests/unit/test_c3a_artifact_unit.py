@@ -62,11 +62,13 @@ def test_ut_c3a_001_valid_onnx_without_external_data(tmp_path):
 
     result = c3a_artifact_unit.run_assessment(_task(model_path, tmp_path, "ONNX"))
 
-    assert result["assessment_status"] == AssessmentStatus.ARTIFACT_UNIT_AMBIGUOUS
+    assert result["assessment_status"] == AssessmentStatus.COMPLETED
+    assert result["access_mode"] == "BLACK_BOX"
+    assert result["artifact_unit_id"] == "onnx-main-referenced-external-data-v1"
     artifact_unit = result["raw_signal"]["artifact_unit"]
     assert artifact_unit["main_file"] == str(model_path.resolve())
     assert artifact_unit["external_files"] == []
-    assert artifact_unit["artifact_unit_definition_id"] == "UNAVAILABLE"
+    assert artifact_unit["artifact_unit_definition_id"] == "onnx-main-referenced-external-data-v1"
 
 
 @pytest.mark.skipif(not ONNX_AVAILABLE, reason=ONNX_SKIP_REASON)
@@ -78,13 +80,15 @@ def test_ut_c3a_002_valid_onnx_with_internal_external_data(tmp_path):
 
     result = c3a_artifact_unit.run_assessment(_task(model_path, tmp_path, "ONNX"))
 
-    assert result["assessment_status"] == AssessmentStatus.ARTIFACT_UNIT_AMBIGUOUS
+    assert result["assessment_status"] == AssessmentStatus.COMPLETED
+    assert result["access_mode"] == "BLACK_BOX"
+    assert result["artifact_unit_id"] == "onnx-main-referenced-external-data-v1"
     assert result["raw_signal"]["artifact_unit"]["external_files"] == [
         str(data_path.resolve())
     ]
     assert result["raw_signal"]["artifact_unit"][
         "artifact_unit_definition_id"
-    ] == "UNAVAILABLE"
+    ] == "onnx-main-referenced-external-data-v1"
 
 
 @pytest.mark.skipif(not ONNX_AVAILABLE, reason=ONNX_SKIP_REASON)

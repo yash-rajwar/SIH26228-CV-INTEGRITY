@@ -4,6 +4,27 @@ This log records approved changes under Architecture Specification §23. It does
 not replace the architecture or technical specification; approved entries are
 also incorporated into those authoritative documents before implementation.
 
+## SP-002-ONNX / E-2 — Freeze the existing ONNX artifact-unit contract
+
+**Decision date:** 2026-10-05, as specified by the project-owner execution packet.
+**Status:** APPROVED / RESOLVED by real ONNX acceptance executed 2026-10-02.
+**Record:** `artifact_unit_defs/onnx_artifact_unit_spec.md`.
+**Validation:** `docs/validation/e2_onnx_identity_acceptance.md`. The owner-specified
+decision date and actual execution date are intentionally recorded separately.
+
+The frozen ID is `onnx-main-referenced-external-data-v1`: exactly one contained
+regular main `.onnx` plus unique canonical referenced external tensor-data files
+discovered by the complete existing recursive TensorProto traversal. Members
+are complete byte objects; unreferenced neighbours and offset/length-only slices
+do not define membership. Containment and ambiguous-unit failure behavior,
+C3B's ordered inner/outer SHA-256 algorithm, schemas, trust boundaries, supported
+formats and PF-002 are unchanged. Supervisor ingestion rejects mismatching IDs
+and authorizes a C3B unit only from COMPLETED C3A resolution.
+
+This entry freezes the already specified Architecture AC-03 / §6 COMP-W-C3A
+contract; it is a pending-decision resolution, not an architecture amendment.
+Historical E-2 OPEN statements in earlier dated entries remain historical.
+
 ## ACC-2026-10-02-02 — Windows worker token isolation for SEC-008
 
 **Status:** APPROVED by the project owner's current SEC-008 execution packet.
