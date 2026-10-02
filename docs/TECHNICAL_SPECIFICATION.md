@@ -2560,6 +2560,19 @@ Every numeric value used in assessments must be:
 
 ## 16.1 Worker subprocess contract (B2 boundary)
 
+Windows clarification ACC-2026-10-02-02: COMP-SUP uses a supported Win32
+restricted-primary-token launcher instead of ordinary Popen token inheritance.
+It preserves command, cwd, clean environment, named-file IPC, DEVNULL/DEVNULL/PIPE,
+timeouts and Job memory containment. An explicit inherited-handle list implements
+close_fds discipline. Creation is suspended; Job assignment precedes resume.
+Required privileged SIDs are deny-only, unnecessary privileges are removed, and
+worker-specific default owner/DACL plus a private Win32 desktop support startup.
+The evidence-store write boundary remains the explicitly provisioned OS DACL;
+whole-host filesystem confinement is not claimed by this clarification.
+All setup failures use existing SPAWN_ERROR/ASSESSMENT_ERROR, with no unrestricted
+fallback. SEC-008 deployment ACLs are provisioned explicitly, not at startup.
+Unix/Linux retains its existing Popen path.
+
 Defined in Sections 4.1, 4.2, and 3.1. Summary:
 - Input via named temp file (JSON).
 - Output via named temp file (JSON).

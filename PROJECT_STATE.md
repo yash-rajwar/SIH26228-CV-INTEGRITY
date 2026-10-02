@@ -12,7 +12,7 @@ Update this file at the end of every coding session before committing.
 ## PROJECT
 
 **Name:** Trustworthy Computer Vision Integrity Assurance — SIH 2026 PS 26228  
-**Current stage:** TASK-026 SEC-002 acceptance complete; GATE-2 `PASS`; GATE-3 remains blocked by SEC-008; GATE-4 remains open
+**Current stage:** TASK-026 SEC-008 Windows ACL acceptance complete; GATE-2 `PASS`; GATE-3 `NOT PASSED` because E-2 prevents the all-C3-complete trigger; GATE-4 remains open
 **Repository created:** [DATE TO BE FILLED ON REPO INIT]  
 **Five-day window start:** [DATE — begins after P1 conditions resolved]
 
@@ -61,7 +61,7 @@ Status codes: `NOT STARTED` | `IN PROGRESS` | `IMPLEMENTED` | `TESTED` | `VALIDA
 | CLI entry points | TASK-023 | `TESTED` | Seven argparse entry points implemented; complete stored findings/evidence/deferred records remain visible, audit corruption is surfaced before events, assessment delegates to COMP-SUP, and export delegates to COMP-EXPORT. The unimplemented TASK-024 command remains explicitly unavailable. Original TASK-023 acceptance and current TASK-025 CLI regression pass. |
 | Dashboard (SHOULD BUILD) | TASK-024 | `NOT STARTED` | GATE-2 now passes, so the MVP dependency gate no longer blocks TASK-024; dashboard work was not started by this reconciliation and still requires its own execution packet |
 | Evidence bundle exporter | TASK-025 | `TESTED` | Deterministic read-only six-document ZIP packaging, complete field/state preservation, non-mutating audit verification, path and overwrite controls, secret/prohibited-field rejection, and CLI delegation are validated. Targeted: 27 passed; relevant regression: 107 passed, 3 expected skips. |
-| End-to-end integration test | TASK-026 | `IN PROGRESS` | GATE-2 remains PASS; SEC-002 and SEC-003 real supervisor-dispatch acceptance pass. GATE-3 remains NOT PASSED because SEC-008 OS ACL denial evidence is pending; E-2 final ONNX identity acceptance and §10 §18/GATE-4 reconciliation remain open. Non-offline regression: 492 passed, 11 skipped, 0 failed. |
+| End-to-end integration test | TASK-026 | `IN PROGRESS` | GATE-2 remains PASS; SEC-002, SEC-003 and SEC-008 real target-host acceptance pass. GATE-3 remains NOT PASSED: E-2 blocks final C3A/C3B ONNX identity acceptance and therefore the all-C3-complete trigger in MVP §14. §10 §18/GATE-4 reconciliation remains open. Non-offline regression: 508 passed, 11 skipped, 0 failed. |
 | Offline validation (target host) | TASK-027 | `TESTED` | OFF-001, OFF-003, and OFF-004 have target-host exit-zero evidence from `task027-run-20260928-215709`; OFF-002 has a zero-byte non-loopback acceptance window from TASK-027-S. The original recovery marker remains `FAIL`, while independent post-run verification confirms exact restored host state. The offline result is bounded to the frozen Windows AMD64 / CPython 3.13.12 tuple. |
 
 ---
@@ -69,22 +69,24 @@ Status codes: `NOT STARTED` | `IN PROGRESS` | `IMPLEMENTED` | `TESTED` | `VALIDA
 ## CURRENT TASK
 
 ```
-TASK: TASK-026 Focused C3D Supervisor Security Acceptance
+TASK: TASK-026 Windows Evidence-Store ACL Isolation / SEC-008
 Owner: Codex
 Branch: feature/vertical-slice
 Started: 2026-09-29
-Status: PARTIAL — SEC-002 PASS; SEC-003 PASS; GATE-3 blocked by SEC-008.
+Status: SEC-008 checkpoint COMPLETE; full TASK-026 remains IN PROGRESS.
 
 Validated behavior:
-  BASELINE: `d850f43`; prior full regression 483 passed, 20 skipped, 0 failed remains historical evidence.
+  BASELINE: `1da72cd15e5d24e99d384c4ea9dac05e4c0917e5`; clean exact starting HEAD verified. Prior full Gate-2 and Windows Job regressions remain historical evidence.
+  ACC-2026-10-02-02: Recorded before implementation. Supported Win32 restricted primary token; three required privileged groups deny-only; DISABLE_MAX_PRIVILEGE; suspended CreateProcessAsUserW; Job assignment before resume; no unrestricted fallback. Unix behavior unchanged.
+  SEC-008: PASS — explicit deployment-only SYSTEM-owned evidence directory/database DACL; trusted supervisor schema-gated write ALLOWED; real production-restricted worker marker/database/SQLite writes DENIED BY WINDOWS. Native marker/database/WAL/SHM write and WRITE_DAC attempts: WinError 5; CRT: errno 13; SQLite: SQLITE_CANTOPEN 14. Database/sidecar hashes unchanged across denial probe. Original unrestricted child write ALLOWED preserved.
   SEC-003: PASS — ready child runs FIX-003 at the restricted-load boundary; supervisor enforces 1-second test timeout, kills/reaps it, persists ASSESSMENT_ERROR/TIMEOUT, emits C5 UNAVAILABLE/NO_DECISION, cleans IPC/temp resources, and completes the next asset.
   SEC-002: PASS — seed-42 FIX-002 crossed the enforced 768 MiB Windows Job committed-memory ceiling; supervisor persisted ASSESSMENT_ERROR/MEMORY_LIMIT_EXCEEDED, C5 stayed UNAVAILABLE/NO_DECISION, audit/cleanup completed, and following FIX-015 completed LOAD_SUCCESS.
-  TESTS: Job Object unit/capability 6 passed; targeted SEC-002 1 passed; targeted SEC-003 1 passed; relevant regression 51 passed; security 90 passed/4 skipped; non-offline regression 492 passed/11 skipped, 0 failed.
-  GATE-2: Prior PASS preserved, not re-adjudicated. GATE-3 remains NOT PASSED because authoritative SEC-008 OS ACL denial evidence is pending; final C3A/C3B ONNX identity acceptance also remains blocked by E-2. GATE-4 remains NOT PASSED.
+  TESTS: Restricted-token 14 passed; deployment ACL + real SEC-008 2 passed; targeted SEC-002 1 passed; targeted SEC-003 1 passed; relevant regression 71 passed; security 92 passed/4 skipped; non-offline regression 508 passed/11 skipped, 0 failed.
+  GATE-2: Prior PASS preserved, not re-adjudicated. GATE-3 remains NOT PASSED despite SEC-001..012 functional acceptance: MVP §14 requires all C3 workers complete, while E-2 blocks final C3A/C3B ONNX identity acceptance. Test-only definition IDs do not satisfy that trigger. GATE-4 remains NOT PASSED.
   SKIPS: No SEC-002 skip remains. Included skips are unchanged historical placeholders plus PRE-08-gated HMAC and non-applicable Ed25519; none are counted as passes.
   OFF-002: Acceptance PASS with 0 non-loopback physical-NIC Tx packets/bytes and assess exit 0. Original recovery marker remains FAIL; independent final-state verification passes with zero binding mismatches, adapter Up, temporary firewall absent, recovery task absent, and PktMon stopped.
-  TASK-026: Full acceptance remains IN PROGRESS because SEC-008 and §10 §18 observed-result records remain open.
-  SAFETY: Windows dispatch adds approved suspended-create/Job-assign/resume containment only. No workers, fixtures, schemas, constants, network state, PktMon, protected research or historical evidence changed. OFF-002 was not rerun.
+  TASK-026: Full acceptance remains IN PROGRESS because E-2/C3 completion and §10 §18 observed-result/GATE-4 records remain open.
+  SAFETY: Only approved Windows launch/cleanup, explicit evidence ACL provisioning, tests and supporting documentation changed. No workers, fixtures, schemas, constants, network state, PktMon or protected research changed; historical evidence retained. OFF-002 was not rerun. No whole-host filesystem/GUI sandbox claim.
   UNCHANGED: E-2 OPEN; PRE-08 PARTIAL; HOST-CAP-003 formal reconciliation pending; protected research content unchanged.
 ```
 
@@ -136,6 +138,7 @@ Validated behavior:
 | TASK-027-S + FIX-008 | Reconciled the authoritative OFF-002 acceptance window separately from recovery status, froze the repository COCO submission, and corrected the narrowly scoped pycocotools `KeyError("id")` malformed-annotation path without broad fallback or architecture changes. | OFF-002: 0 non-loopback Tx packets/bytes and assess exit 0; independent recovery state exact; VS-001–VS-007: 7 passed; full regression: 483 passed, 20 skipped, 0 failed. | `431f140`, `acb5b1e`, `cb6f0bc` |
 | TASK-026 Gate-2 formal reconciliation | Re-evaluated current evidence against the authoritative Section 11 and GATE-2 criteria, preserved every historical blocked record, documented the 20 skip classifications, and formally recorded GATE-2 PASS without claiming GATE-3/GATE-4 or resolving SEC-002/SEC-003. | Documentation-only reconciliation; targeted VS regression remains 7 passed and the established full regression remains 483 passed, 20 skipped, 0 failed. | This TASK-026 reconciliation commit |
 | TASK-026 Windows memory containment | Recorded ACC-2026-10-02-01 before implementation; added configured Windows Jobs, suspended creation, assignment before resume, memory-limit detection/termination, and deterministic Job/process-handle cleanup. Real FIX-002 supervisor persistence/C5/audit/continuation acceptance passes; historical probe and supplemental MemoryError evidence remain distinct. | Job unit/capability 6 passed; SEC-002 1 passed; existing SEC-003 1 passed; relevant 51 passed; security 90 passed/4 skipped; non-offline 492 passed/11 skipped. GATE-3 remains NOT PASSED due SEC-008; E-2 remains OPEN; GATE-4 remains NOT PASSED. | This TASK-026 Windows containment commit (parent `9338f1a`) |
+| TASK-026 Windows evidence ACL isolation | ACC-2026-10-02-02 recorded before implementation. Added restricted-primary-token launch with no fallback, explicit inheritable deployment ACLs and reversible snapshot, real supervisor-write/restricted-worker OS-denial acceptance, handle/failure cleanup and unchanged Job ordering. Original insecure ACL/child ALLOWED preserved. | Token 14 passed; ACL/SEC-008 2 passed; SEC-002 1 passed; SEC-003 1 passed; relevant 71 passed; security 92 passed/4 skipped; non-offline 508 passed/11 skipped. SEC-008 PASS; GATE-3 NOT PASSED due E-2 all-C3-complete trigger; GATE-4 NOT PASSED. | This SEC-008 commit (parent `1da72cd`) |
 
 ---
 
@@ -146,7 +149,6 @@ Validated behavior:
 | PRE-08 | HMAC-SHA256 parameters are frozen, but a Windows target-host absolute key path and supervisor-only ACL verification are not yet provisioned | TASK-019 operational signing | Project owner / deployment owner |
 | E-2 / SP-002-ONNX | No frozen ONNX artifact-unit definition ID exists. C3A returns the resolved manifest as `ARTIFACT_UNIT_AMBIGUOUS` with definition ID `UNAVAILABLE`; no ID is inferred from PyTorch. | Final ONNX C3A acceptance and TASK-015 ONNX hashing | Project owner / architecture owner |
 | HOST-CAP-003 / TASK-014 packet E-3 | FORMAL RECONCILIATION PENDING: the protobuf 7.36.2 descriptor compatibility defect is fixed; real ONNX C3A/C3C tests pass without ONNX Runtime, with full containment traversal preserved. TASK-027-C itself has not been rerun, so this task does not silently close the recorded host-capability blocker. | TASK-027-C state reconciliation; E-2 remains separate for C3A identity | Dependency / deployment owner |
-| SEC-008-EVIDENCE-ACL | The authoritative SEC-008 criterion requires a non-supervisor process to be denied writes by the evidence-store OS ACL. Source-level write-path isolation passes, but no accepted target-host ACL denial test is recorded. | GATE-3 security acceptance | Deployment / validation owner |
 | TASK-026-VALIDATION-EVIDENCE | Technical Specification §18.1–§18.5 still says `NOT YET OBTAINED`; named observed-result records and the remaining GATE-4 reproducibility/integration evidence have not been formally reconciled | Full TASK-026 acceptance, capability claims, and GATE-4 | TASK-026 validation owner |
 
 ---
@@ -163,6 +165,7 @@ Validated behavior:
 - All references are UNAVAILABLE at MVP start. No reference-relative assessments are possible.
 - TorchScript loading is DEFERRED_IN_SCOPE — isolated worker not yet demonstrated on any target.
 - SEC-002 Windows Job Object containment and SEC-003 controlled timeout/termination/continuation are PASS on the validated target. The committed-memory result is bounded to the approved Windows mechanism; test-only SEC-003 load instrumentation still does not establish natural hostile-checkpoint hangs.
+- SEC-008 is PASS for the explicitly provisioned Windows evidence-store path. Required privileged groups are deny-only and unnecessary privileges removed; this is not a whole-host filesystem/GUI sandbox or protection against other trusted elevated administrators. Audit/reference/key ACLs were not provisioned. Readable test assets receive test-only READ/EXECUTE grants; production grants user access only on supervisor-created IPC directories.
 - C4 signing will ship as SIGNING_UNAVAILABLE shell until PRE-08 target-host key-path provisioning is resolved. PRE-02, PRE-04, and PRE-09 are resolved.
 - COMP-CAP declares scope without executing assessments. C3C is excluded from declared support while HOST-CAP-003 is open; supported model operations are bounded to the resolved PyTorch path.
 - TASK-020 uses the existing deferred-store and audit APIs, which commit separately. On failure, errors propagate and earlier committed rows remain; no batch-level atomicity is claimed.
@@ -174,10 +177,10 @@ Validated behavior:
 ## LATEST VALIDATED COMMIT
 
 ```
-Commit: This TASK-026 Windows containment commit (parent: 9338f1a)
+Commit: This TASK-026 SEC-008 commit (parent: 1da72cd15e5d24e99d384c4ea9dac05e4c0917e5)
 Branch: feature/vertical-slice
 Date: 2026-10-02
-Tests: SEC-002 PASS; SEC-003 remains PASS; relevant 51 passed; security 90 passed/4 skipped; non-offline regression 492 passed/11 skipped, 0 failed. Universal production guards clean. Prior Gate-2/OFF evidence and recovery distinctions unchanged.
+Tests: SEC-008 PASS; SEC-002/SEC-003 remain PASS; token 14 passed; ACL/SEC-008 2 passed; relevant 71 passed; security 92 passed/4 skipped; non-offline regression 508 passed/11 skipped, 0 failed. Universal production guards clean. Prior Gate-2/OFF evidence and recovery distinctions unchanged.
 ```
 
 ---
@@ -186,16 +189,16 @@ Tests: SEC-002 PASS; SEC-003 remains PASS; relevant 51 passed; security 90 passe
 
 ```
 Date: 2026-10-02
-Latest validation: TASK-026 real FIX-002 Windows Job Object containment through COMP-SUP.
-Executed checks: Windows Job unit/capability tests; targeted SEC-002; existing SEC-003; relevant TASK-022/C3D regression; security suite; approved CPython 3.13.12 / pytest 9.1.1 non-offline regression; universal guards.
-Result: Job tests 6 passed; SEC-002 1 passed; SEC-003 1 passed; relevant 51 passed; security 90 passed/4 skipped; non-offline regression 492 passed/11 skipped, 0 failed. tests/offline was explicitly excluded; no OFF-002/network-isolation execution occurred.
-Environment: legacy grep-dependent security scans were made platform-neutral without weakening their zero-match assertions. No package installation or network-isolation operation occurred.
-Evidence: docs/validation/task026_c3d_dispatch_acceptance.md; raw JUnit/SQLite/observations preserved locally in ignored build/task027-sec002/.
+Latest validation: TASK-026 real SEC-008 Windows DACL denial using the production restricted-worker launcher.
+Executed checks: token tests; deployment ACL verification; real supervisor write and restricted-worker denial; SEC-002; SEC-003; relevant supervisor/Job/C3D regression; full security; approved CPython 3.13.12 / pytest 9.1.1 non-offline regression; universal guards.
+Result: Token 14 passed; ACL/SEC-008 2 passed; SEC-002 1 passed; SEC-003 1 passed; relevant 71 passed; security 92 passed/4 skipped; non-offline 508 passed/11 skipped, 0 failed. tests/offline explicitly excluded; no OFF-002/network-isolation execution.
+Environment: Existing test hooks now capture the production launch seam; assertions retained. Python 3.13 Administrator-created test roots receive test-only READ/EXECUTE DACLs so submitted test assets remain readable, not writable. No packages installed. Startup default-token security and assigned-Job cleanup race corrected during focused validation; final runs pass.
+Evidence: docs/validation/task026_sec008_windows_acl.md; original ACL snapshot, observations and JUnit reports preserved locally in ignored build/task026-sec008/; historical C3D evidence retained separately.
 
 Integration gates:
   GATE-1 (Foundation):       prerequisite components TESTED; not re-adjudicated in this reconciliation
   GATE-2 (Vertical Slice):   PASS
-  GATE-3 (Capability):       NOT PASSED — SEC-008 OS ACL denial evidence remains pending
+  GATE-3 (Capability):       NOT PASSED — E-2 blocks final C3A/C3B ONNX identity acceptance and all-C3-complete trigger
   GATE-4 (Validation):       NOT PASSED — full TASK-026/§18 evidence remains open
   GATE-5 (Demo):             NOT PASSED
 ```
@@ -634,7 +637,7 @@ The Stage 6 rule permits exit when every requirement is either satisfied with ev
 
 ## NEXT TASK
 
-**Next required action (not new implementation authorization):** Provide a separate execution/review packet for SEC-008 target-host evidence-store ACL denial acceptance, then re-evaluate GATE-3. Separately authorize §10 §18 observed-result/GATE-4 evidence reconciliation. SEC-002 and SEC-003 are accepted and need not be reopened. This packet authorizes no subsequent implementation task; TASK-024 remains not started. PRE-08, E-2 and HOST-CAP-003 remain unchanged.
+**Next required action (not new implementation authorization):** Project-owner/architecture decision and separate execution packet for E-2/final C3A/C3B ONNX identity acceptance, followed by GATE-3 review; separately authorize §10 §18/GATE-4 observed-result reconciliation. SEC-008, SEC-002 and SEC-003 are accepted and need not be reopened. This packet authorizes no subsequent implementation task; TASK-024 remains not started. PRE-08 and HOST-CAP-003 procedural reconciliation remain unchanged.
 
 Critical path reminder:
 ```
@@ -658,10 +661,19 @@ PRE-04 resolved
 
 ## PENDING DECISIONS
 
+ACC-2026-10-02-02 is approved by the current project-owner packet and recorded
+before implementation in the architecture/build documents. Windows restricted
+primary-token launch and explicit evidence-store ACL provisioning are in scope.
+SEC-008 is now PASS based on real target-host OS denial and passing regressions.
+The original unrestricted child write ALLOWED is preserved as precondition
+evidence. Gate-3 remains NOT PASSED because E-2 prevents the all-C3-complete
+trigger; Gate-4, E-2, PRE-08 and OFF-002 statuses remain unchanged.
+
 *(Only genuine project decisions — not implementation questions)*
 
 | Decision | Description | Owner | Priority |
 |---|---|---|---|
+| ACC-2026-10-02-02 / SEC-008 | **RESOLVED 2026-10-02 for validated Windows target:** approved restricted primary-token launch and explicit deployment-only evidence-store DACL provisioning implemented. Real supervisor write ALLOWED and production-restricted worker native writes/WRITE_DAC DENIED (WinError 5); original ACL snapshot and ordinary child ALLOWED retained. No unrestricted fallback or whole-host sandbox claim. | Project owner / architecture owner | Closed for the scoped SEC-008 boundary; E-2/GATE-3 and GATE-4 remain open |
 | ACC-2026-10-02-01 / HOST-CAP-002 | **RESOLVED 2026-10-02 for validated Windows target:** approved Windows Job Objects enforce the existing per-worker committed-memory ceiling from `ResourceLimits.memory_limit_mb`; workers are created suspended, assigned before execution, then resumed, with process-memory notifications and `KILL_ON_JOB_CLOSE` cleanup. This is not RSS/RLIMIT_AS. The 128 MiB host probe and bounded 768 MiB real FIX-002 supervisor acceptance pass. | Project owner / architecture owner | Closed for the frozen Windows mechanism; Unix behavior unchanged |
 | PRE-01 | **RESOLVED 2026-09-27:** primary development/SIH demonstration target is Windows 10 Pro version 2009, build 22631, 64-bit; AMD64; Python 3.13.12; 16 GB RAM. `close_fds=True` verified; no C compiler or Python `resource` module detected. | Project owner / organizer | Closed as host-identification decision; capability validation remains separate |
 | PRE-02 / XREG-002 | **RESOLVED 2026-09-27:** HMAC-SHA256 selected | Project owner | Closed |
@@ -690,6 +702,10 @@ PRE-04 resolved
 ## HANDOFF NOTES
 
 *(To be filled by the agent ending a session — for the agent starting the next session)*
+
+**Current SEC-008 session:** Starting HEAD `1da72cd15e5d24e99d384c4ea9dac05e4c0917e5` was clean and matched origin. ACC-2026-10-02-02 was recorded before implementation. Production Windows workers now use a restricted primary token, suspended creation and Job-before-resume without fallback. Explicit deployment provisioning exported the original ACL and applied SYSTEM-owned inheritable evidence-store grants for SYSTEM/Administrators only. Real restricted-worker native write/WRITE_DAC attempts on the database and live sidecars return WinError 5; SQLite returns CANTOPEN 14; trusted supervisor pipeline writes succeed. Hashes remain unchanged across the denied probe. Token 14 passed, ACL/SEC-008 2 passed, SEC-002 1 passed, SEC-003 1 passed, relevant 71 passed, security 92 passed/4 skipped, non-offline 508 passed/11 skipped. SEC-008 is PASS; Gate-3 remains NOT PASSED because E-2 blocks the all-C3-complete trigger; Gate-4 remains NOT PASSED. See `docs/validation/task026_sec008_windows_acl.md`. Original child-write ALLOWED, prior Job acceptance and historical OFF-002 acceptance PASS/recovery-marker FAIL/independent-restoration PASS remain distinct. PRE-08 PARTIAL, HOST-CAP-003 procedural reconciliation pending, TASK-024 not started. No subsequent task authorized; no offline/network operation or protected research change.
+
+**Previous Windows Job session (historical):** The paragraph below records the preceding checkpoint; its pending SEC-008 wording is superseded only by the current SEC-008 evidence above.
 
 **Current session:** ACC-2026-10-02-01 formally approves Windows Job Object per-process committed-memory containment. COMP-SUP now creates workers suspended, assigns them to the configured Job, resumes only afterward, monitors the process-memory-limit event, and cleans Job/process resources fail closed. Real seed-42 FIX-002 under a bounded 768 MiB ceiling produces supervisor `ASSESSMENT_ERROR/MEMORY_LIMIT_EXCEEDED`, persisted schema/store/audit evidence, C5 `UNAVAILABLE/NO_DECISION`, complete cleanup, and a following FIX-015 `LOAD_SUCCESS`; SEC-002 is PASS. SEC-003 remains PASS. Job tests 6/6, targeted SEC-002 1/1, targeted SEC-003 1/1, relevant 51/51, security 90 passed/4 skipped, and non-offline 492 passed/11 skipped all pass. Gate-2 and historical OFF-002 distinctions remain preserved. GATE-3 remains NOT PASSED because SEC-008 OS ACL denial evidence is pending; final C3A/C3B ONNX identity acceptance remains blocked by E-2. GATE-4/full TASK-026 remain incomplete. OFF-002 was not rerun. Protected research, workers, fixtures, schemas, constants and network controls are untouched. PRE-08 remains PARTIAL; E-2 OPEN; HOST-CAP-003 formal reconciliation pending. No subsequent task is authorized by this packet.
 

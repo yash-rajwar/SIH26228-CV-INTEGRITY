@@ -151,7 +151,8 @@ def test_sec_002_oom_dispatch_requires_task_022(tmp_path, monkeypatch) -> None:
         encoding="utf-8",
     )
 
-    real_popen = subprocess.Popen
+    from assurance_system.supervisor.orchestrator import _launch_worker_process
+    real_popen = _launch_worker_process
     processes = []
 
     def capture_process(command, **kwargs):
@@ -160,7 +161,7 @@ def test_sec_002_oom_dispatch_requires_task_022(tmp_path, monkeypatch) -> None:
         return process
 
     monkeypatch.setattr(
-        "assurance_system.supervisor.orchestrator.subprocess.Popen",
+        "assurance_system.supervisor.orchestrator._launch_worker_process",
         capture_process,
     )
     jobs = []
@@ -346,7 +347,8 @@ def controlled_load(path, *, weights_only, map_location):
 torch.load = controlled_load
 c3d_safe_load.main()
 """
-    real_popen = subprocess.Popen
+    from assurance_system.supervisor.orchestrator import _launch_worker_process
+    real_popen = _launch_worker_process
     processes = []
     readiness = []
     readiness_messages = []
@@ -380,7 +382,7 @@ c3d_safe_load.main()
         return process
 
     monkeypatch.setattr(
-        "assurance_system.supervisor.orchestrator.subprocess.Popen", launch
+        "assurance_system.supervisor.orchestrator._launch_worker_process", launch
     )
     worker_temp = tmp_path / "worker-temp"
     worker_temp.mkdir()

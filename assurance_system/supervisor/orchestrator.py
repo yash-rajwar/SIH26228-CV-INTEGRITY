@@ -47,6 +47,14 @@ from assurance_system.supervisor.windows_job import (
     close_reaped_process_handle,
 )
 from assurance_system.workers.base import is_within_directory
+from assurance_system.supervisor.windows_token import RestrictedWindowsProcess
+
+
+def _launch_worker_process(command, **kwargs):
+    """Windows never falls back to inherited privileged Popen tokens."""
+    if sys.platform == "win32":
+        return RestrictedWindowsProcess(command, **kwargs)
+    return subprocess.Popen(command, **kwargs)
 
 
 _MANIFEST_FORMATS = frozenset(
@@ -99,7 +107,7 @@ class _WorkerSpec:
 
 @dataclasses.dataclass
 class _PendingWorker:
-    process: subprocess.Popen
+    process: subprocess.Popen | RestrictedWindowsProcess
     task_spec: dict[str, Any]
     resource_limits: ResourceLimits
     temp_directory: pathlib.Path
@@ -501,7 +509,7 @@ class SupervisorOrchestrator:
         resource_limits: ResourceLimits,
     ) -> _PendingWorker | dict[str, Any]:
         temp_directory: pathlib.Path | None = None
-        process: subprocess.Popen | None = None
+        process: subprocess.Popen | RestrictedWindowsProcess | None = None
         containment: WindowsWorkerJob | None = None
         try:
             if self._contains_prohibited_input(task_spec):
@@ -560,7 +568,7 @@ class SupervisorOrchestrator:
             creation_flags = (
                 containment.creation_flags if containment is not None else 0
             )
-            process = subprocess.Popen(
+            process = _launch_worker_process(
                 command,
                 stdin=subprocess.DEVNULL,
                 stdout=subprocess.DEVNULL,
@@ -595,7 +603,7 @@ class SupervisorOrchestrator:
 
     @staticmethod
     def _cleanup_failed_start(
-        process: subprocess.Popen | None,
+        process: subprocess.Popen | RestrictedWindowsProcess | None,
         containment: WindowsWorkerJob | None,
         resource_limits: ResourceLimits,
     ) -> None:
@@ -604,7 +612,12 @@ class SupervisorOrchestrator:
         if process is None:
             return
         try:
-            if process.poll() is None:
+            # Closing an assigned KILL_ON_JOB_CLOSE Job already initiates
+            # termination. A second TerminateProcess can race that teardown and
+            # return access denied before the process handle becomes signalled.
+            if process.poll() is None and (
+                containment is None or not containment.assigned
+            ):
                 process.kill()
             process.communicate(timeout=resource_limits.timeout_seconds)
         except Exception:

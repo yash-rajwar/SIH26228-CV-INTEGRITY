@@ -959,6 +959,25 @@ ownership, timeout behavior, or C3D restricted-loading semantics. The approved
 128 MiB host probe observed a 127.05 MiB peak and MemoryError at the boundary;
 SEC-002 still requires a complete supervisor/FIX-002 acceptance run.
 
+### 11.4.2 Windows worker identity (ACC-2026-10-02-02)
+
+Windows workers use a restricted derivative of the trusted elevated supervisor's
+primary token, not an ordinary inherited privileged token. Supported Win32
+CreateRestrictedToken/ CreateProcessAsUserW establish deny-only Administrators,
+Authenticated Users and Local-account-administrator groups and remove unnecessary
+privileges before suspended creation. Worker-specific defaults and a private
+Win32 window station/desktop support startup without the privileged group or the
+shared interactive desktop. Filesystem permissions remain DACL-enforced; this
+task does not claim whole-host filesystem confinement. The configured Job must be
+assigned before resume; failure never falls back to an unrestricted child.
+Explicit deployment provisioning makes the evidence directory and existing
+database SYSTEM-owned with SYSTEM/Administrators-only write DACLs. Sidecars
+inherit those grants and must be SYSTEM- or Administrators-owned, never owned
+by the shared worker user SID.
+No account/password is created. Unix/Linux, schemas, persistence and non-claims
+are unchanged. This target clarification supersedes Popen-only wording for
+Windows launch; it does not claim a complete Windows desktop/GUI sandbox.
+
 ## 11.5 PyTorch safe-loading constraint
 
 - `weights_only=True` is MANDATORY with no fallback path

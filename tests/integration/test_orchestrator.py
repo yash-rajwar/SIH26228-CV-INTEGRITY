@@ -180,7 +180,7 @@ def test_dispatch_uses_controlled_subprocess_environment_and_cleans_up(
     monkeypatch.setenv("ASSURANCE_KEY_PATH", "C:/private/key.bin")
     monkeypatch.setenv("ASSURANCE_DB_PATH", "C:/private/evidence.db")
     monkeypatch.setattr(
-        "assurance_system.supervisor.orchestrator.subprocess.Popen", FakeProcess
+        "assurance_system.supervisor.orchestrator._launch_worker_process", FakeProcess
     )
     monkeypatch.setattr(
         orchestrator,

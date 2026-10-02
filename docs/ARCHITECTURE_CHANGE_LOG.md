@@ -4,6 +4,46 @@ This log records approved changes under Architecture Specification §23. It does
 not replace the architecture or technical specification; approved entries are
 also incorporated into those authoritative documents before implementation.
 
+## ACC-2026-10-02-02 — Windows worker token isolation for SEC-008
+
+**Status:** APPROVED by the project owner's current SEC-008 execution packet.
+**Scope:** Windows COMP-SUP worker launch and explicit evidence-store deployment
+ACL provisioning only. Recorded before production implementation.
+
+Architecture §§5 B2/B3 and 11.3 permit target-specific OS isolation. This entry
+clarifies their Windows implementation and the older Popen-only build wording:
+the elevated trusted supervisor creates a restricted derivative of its primary
+token using supported Win32 APIs, without secondary accounts or credentials.
+Administrators, Authenticated Users and Local-account-administrator SIDs become
+deny-only; DISABLE_MAX_PRIVILEGE removes privileges other than change-notify.
+A worker-specific default owner/DACL on the derived token replaces the elevated
+account's Administrators-dependent startup defaults, without changing the
+supervisor token. A private Win32 window station/desktop avoids exposing the
+interactive/RDP desktop; handles are retained until cleanup. This follows
+Microsoft's restricted-application desktop guidance. Filesystem permissions
+remain DACL-enforced. This decision does not claim whole-host filesystem/GUI
+confinement: the narrowly authorized deployment operation covers the evidence
+directory only, not all user-owned paths, audit, references or signing keys.
+
+CreateProcessAsUserW creates the child suspended under that token, inheriting
+only the three designated standard-I/O handles via an explicit handle list.
+The configured Windows Job is assigned before resume. There is no unrestricted
+Windows fallback. Token/process/thread/pipe/Job handles close on all paths.
+The evidence-store DACL remains the authoritative write boundary, provisioned
+explicitly outside application startup, with SYSTEM-owned directory/database
+and only SYSTEM/elevated Administrators write grants. New sidecars may retain
+the supervisor's Administrators default owner, never the shared user SID.
+Original ACLs are exported for exact
+rollback. Audit, references and keys are not provisioned by this task.
+
+Unix/Linux behavior, schemas, persistence APIs, non-claims, vocabulary, C5,
+timeout and committed-memory semantics remain unchanged. E-2 remains OPEN;
+PRE-08 remains PARTIAL. No OFF/network procedure is changed or executed.
+
+Win32 authority: [CreateRestrictedToken](https://learn.microsoft.com/en-us/windows/win32/api/securitybaseapi/nf-securitybaseapi-createrestrictedtoken),
+[CreateProcessAsUserW](https://learn.microsoft.com/en-us/windows/win32/api/processthreadsapi/nf-processthreadsapi-createprocessasuserw),
+[restricted tokens](https://learn.microsoft.com/en-us/windows/win32/secauthz/restricted-tokens).
+
 ## ACC-2026-10-02-01 — Windows worker committed-memory containment
 
 **Status:** APPROVED by project owner.

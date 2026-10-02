@@ -48,6 +48,9 @@ def close_reaped_process_handle(process: Any) -> None:
     if handle is not None:
         if process.poll() is None:
             raise WindowsJobError("cannot close the handle of a live worker")
+        close_isolation = getattr(process, "close_isolation_handles", None)
+        if close_isolation is not None:
+            close_isolation()
         handle.Close()
 
 
@@ -295,10 +298,16 @@ class WindowsWorkerJob:
         )
         self._monitor_thread.start()
 
-        thread_id = self._initial_thread_id(process_id)
-        thread = self._kernel32.OpenThread(_THREAD_SUSPEND_RESUME, False, thread_id)
-        if not thread:
-            self._raise_last_error("OpenThread")
+        # Supported primary-token creation returns the actual initial thread.
+        # Retain the Popen/Unix-independent capability-test path as well.
+        owned_thread = getattr(process, "_thread_handle", None)
+        if owned_thread is not None:
+            thread = wintypes.HANDLE(int(owned_thread))
+        else:
+            thread_id = self._initial_thread_id(process_id)
+            thread = self._kernel32.OpenThread(_THREAD_SUSPEND_RESUME, False, thread_id)
+            if not thread:
+                self._raise_last_error("OpenThread")
         try:
             previous_suspend_count = self._kernel32.ResumeThread(thread)
             if previous_suspend_count == 0xFFFFFFFF:
@@ -309,7 +318,10 @@ class WindowsWorkerJob:
                 )
             self._resumed = True
         finally:
-            self._kernel32.CloseHandle(thread)
+            if owned_thread is not None:
+                owned_thread.Close()
+            else:
+                self._kernel32.CloseHandle(thread)
 
     def _query_limits(self) -> _JOBOBJECT_EXTENDED_LIMIT_INFORMATION:
         if self._job_handle is None:

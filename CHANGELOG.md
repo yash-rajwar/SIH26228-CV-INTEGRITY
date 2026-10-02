@@ -1,5 +1,30 @@
 # Changelog
 
+## TASK-026 — Windows Evidence-Store ACL Isolation (2026-10-02)
+
+- Recorded ACC-2026-10-02-02 before implementation: supported Win32 restricted
+  primary-token launch, required privileged groups deny-only, maximum privilege
+  removal, suspended creation and configured Job assignment before resume.
+  Windows has no unrestricted fallback; Unix launch is unchanged.
+- Added explicit, reversible deployment-only ACL provisioning for the evidence
+  directory/database, preserving SYSTEM recovery, correct SQLite inheritance
+  and the original ACL snapshot. No startup provisioning or key/audit ACL changes.
+- SEC-008 PASS: trusted supervisor write ALLOWED; production-restricted worker
+  marker/database/live-sidecar write and WRITE_DAC attempts DENIED by Windows
+  (WinError 5), with unchanged database/sidecar hashes. The original ordinary
+  child ALLOWED result is retained, not rewritten.
+- Corrected derived-token startup defaults for this Administrator host and the
+  assigned-Job termination/reap race. Tests retain IPC, timeout, memory, schema,
+  audit, unavailable-state, continuation and no-fallback assertions.
+- Validation: token 14 passed; ACL/SEC-008 2 passed; SEC-002 and SEC-003 1 passed
+  each; relevant 71 passed; security 92 passed/4 skipped; non-offline regression
+  508 passed/11 skipped, zero failures. Universal guards and diff check clean.
+- Gate-2 PASS preserved. Gate-3 NOT PASSED: E-2 blocks final C3A/C3B ONNX identity
+  acceptance and the all-C3-complete trigger. Gate-4 NOT PASSED; PRE-08 PARTIAL;
+  HOST-CAP-003 procedural reconciliation pending; TASK-024 not started.
+  No whole-host sandbox claim. No OFF/network operation, package install,
+  worker/schema/constant/fixture change or protected research edit.
+
 ## TASK-026 — Windows C3D Memory Containment (2026-10-02)
 
 - Formally recorded ACC-2026-10-02-01: Windows workers use per-process

@@ -222,3 +222,13 @@ confirms every declared FIX-013 injection layer; C5 priority-one, T05d/PF-002
 non-claims, and score-field absence pass. The unresolved SEC-008 requirement
 prevents GATE-3 acceptance. E-2, PRE-08, HOST-CAP-003 procedural reconciliation,
 and Section 18/GATE-4 remain carried independently.
+
+## Subsequent SEC-008 reconciliation (2026-10-02)
+
+The preceding SEC-008 PENDING decision remains historical evidence for the
+Windows Job checkpoint. It is superseded only for the approved target by
+[the real restricted-token / deployed ACL acceptance record](task026_sec008_windows_acl.md).
+SEC-008 is now PASS and SEC-002/SEC-003 regressions remain PASS. GATE-3 still is
+NOT PASSED: MVP §14 requires all C3 workers complete, but E-2 blocks final
+C3A/C3B ONNX identity acceptance. GATE-4, PRE-08, HOST-CAP-003 procedural state,
+Gate-2 and historical OFF-002 distinctions are unchanged. No offline test ran.

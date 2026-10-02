@@ -105,7 +105,8 @@ def test_windows_setup_failure_never_executes_child(tmp_path, monkeypatch, failu
     marker = tmp_path / "child-executed.txt"
     processes = []
     jobs = []
-    real_popen = subprocess.Popen
+    from assurance_system.supervisor.orchestrator import _launch_worker_process
+    real_popen = _launch_worker_process
     original_signatures = WindowsWorkerJob._configure_signatures
     original_close = WindowsWorkerJob.close
 
@@ -124,7 +125,8 @@ def test_windows_setup_failure_never_executes_child(tmp_path, monkeypatch, failu
     def capture_popen(command, **kwargs):
         assert kwargs["creationflags"] == WindowsWorkerJob.creation_flags
         script = (
-            "from pathlib import Path; "
+            "import sys; from pathlib import Path; "
+            "sys.stderr.write('CHILD_EXECUTED\\n'); sys.stderr.flush(); "
             f"Path({str(marker)!r}).write_text('executed', encoding='utf-8')"
         )
         process = real_popen([command[0], "-c", script], **kwargs)
@@ -133,7 +135,7 @@ def test_windows_setup_failure_never_executes_child(tmp_path, monkeypatch, failu
 
     monkeypatch.setattr(WindowsWorkerJob, "_configure_signatures", configure_signatures)
     monkeypatch.setattr(
-        "assurance_system.supervisor.orchestrator.subprocess.Popen", capture_popen
+        "assurance_system.supervisor.orchestrator._launch_worker_process", capture_popen
     )
     store = EvidenceStore(str(tmp_path / "failure.sqlite3"))
     subject = SupervisorOrchestrator(
@@ -158,6 +160,7 @@ def test_windows_setup_failure_never_executes_child(tmp_path, monkeypatch, failu
             # failure here, rather than that platform-specific exit value.
             assert process.stderr.closed
             assert process._handle.closed
+            assert b"CHILD_EXECUTED" not in process._stderr_bytes
         assert not list(tmp_path.glob("assurance-worker-*"))
         assert len(processes) == (0 if failure in {"creation", "configuration"} else 1)
     finally:

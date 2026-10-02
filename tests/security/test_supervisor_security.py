@@ -28,7 +28,14 @@ def test_supervisor_popen_contract_is_controlled() -> None:
         and node.func.attr == "Popen"
     ]
     assert len(popen_calls) == 1
-    keywords = {keyword.arg: keyword.value for keyword in popen_calls[0].keywords}
+    # ACC-2026-10-02-02 preserves this contract through one platform dispatcher;
+    # Windows must use restricted-primary-token creation, never plain Popen.
+    launch_calls = [node for node in ast.walk(tree)
+                    if isinstance(node, ast.Call)
+                    and isinstance(node.func, ast.Name)
+                    and node.func.id == "_launch_worker_process"]
+    assert len(launch_calls) == 1
+    keywords = {keyword.arg: keyword.value for keyword in launch_calls[0].keywords}
     assert "shell" not in keywords
     assert {
         "stdin",
@@ -40,6 +47,12 @@ def test_supervisor_popen_contract_is_controlled() -> None:
     }.issubset(keywords)
     assert isinstance(keywords["close_fds"], ast.Constant)
     assert keywords["close_fds"].value is True
+    dispatcher = next(node for node in tree.body if isinstance(node, ast.FunctionDef)
+                      and node.name == "_launch_worker_process")
+    assert isinstance(dispatcher.body[1], ast.If)
+    assert ast.unparse(dispatcher.body[1].test) == "sys.platform == 'win32'"
+    assert ast.unparse(dispatcher.body[1].body[0].value).startswith("RestrictedWindowsProcess(")
+    assert not any(isinstance(node, ast.Try) for node in ast.walk(dispatcher))
 
 
 def test_supervisor_imports_no_network_model_or_asset_parser() -> None:

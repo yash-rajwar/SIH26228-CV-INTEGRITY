@@ -2,9 +2,9 @@
 
 ## Current Milestone
 
-Gate-2 is PASS. TASK-026 remains IN PROGRESS; Gate-3 and Gate-4 are not passed. SEC-002 Windows Job Object containment and SEC-003 controlled supervisor timeout acceptance both pass. Gate-3 remains blocked by pending SEC-008 OS ACL denial evidence.
+Gate-2 is PASS. TASK-026 remains IN PROGRESS; Gate-3 and Gate-4 are not passed. SEC-002, SEC-003 and SEC-008 real target-host acceptance pass. Gate-3 remains blocked by its MVP §14 all-C3-complete trigger: E-2 prevents final C3A/C3B ONNX identity acceptance.
 
-The dispatcher now creates Windows workers suspended, assigns them to a per-worker Job Object using the existing memory-limit contract, then resumes them. Real FIX-002 enforcement, schema/store/audit/C5 integration, cleanup, and a subsequent benign asset complete without converting failure into positive assurance. This is committed-memory enforcement, not an RSS/RLIMIT_AS claim.
+The dispatcher creates Windows workers suspended under a restricted primary token, assigns the existing configured Job, then resumes them without an unrestricted fallback. Explicit deployment-only evidence ACLs deny real worker writes while supervisor persistence and normal IPC succeed. Memory/timeout semantics remain unchanged. This is committed-memory enforcement and a scoped evidence-path DACL boundary, not an RSS/RLIMIT_AS or whole-host sandbox claim.
 
 ## Completed Components
 
@@ -25,27 +25,28 @@ The dispatcher now creates Windows workers suspended, assigns them to a per-work
 | Area | Result |
 |---|---|
 | Windows Job Object unit/capability | 6 passed |
+| Restricted primary-token tests | 14 passed |
+| Deployment ACL / real SEC-008 | 2 passed |
 | SEC-002 exact containment | 1 passed |
 | SEC-003 targeted dispatch | 1 passed |
-| TASK-022/C3D regression | 51 passed, 0 failed |
-| Security suite | 90 passed, 4 skipped, 0 failed |
-| Non-offline regression | 492 passed, 11 skipped, 0 failed |
+| Supervisor/Job/C3D relevant regression | 71 passed, 0 failed |
+| Security suite | 92 passed, 4 skipped, 0 failed |
+| Non-offline regression | 508 passed, 11 skipped, 0 failed |
 | Prior full Gate-2 checkpoint | 483 passed, 20 skipped, 0 failed (historical) |
 
-The non-offline run explicitly excludes tests/offline and executes no OFF-002/network isolation. SEC-002 is no longer skipped; the remaining skips are unchanged historical/conditional placeholders, including PRE-08-gated HMAC and non-applicable Ed25519. Skips are not passed. [Focused observations, limitations and hashes](docs/validation/task026_c3d_dispatch_acceptance.md) are committed; raw local JUnit/SQLite evidence remains in ignored `build/task027-sec002/`.
+The non-offline run explicitly excludes tests/offline and executes no OFF-002/network isolation. The remaining skips are unchanged historical/conditional placeholders, including PRE-08-gated HMAC and non-applicable Ed25519; none count as passes. [SEC-008 observations, ACLs, hashes and complete Gate-3 review](docs/validation/task026_sec008_windows_acl.md) accompany ignored local evidence in `build/task026-sec008/`. [Earlier C3D observations](docs/validation/task026_c3d_dispatch_acceptance.md) and `build/task027-sec002/` remain historical evidence.
 
 ## Pending Components
 
 - TASK-019 Part B operational signing (blocked on PRE-08).
 - TASK-024 dashboard: dependency-eligible after Gate-2, not authorized by this packet.
-- TASK-026: SEC-008 ACL acceptance and §18/Gate-4 observed-result reconciliation remain incomplete.
+- TASK-026: E-2/all-C3-complete Gate-3 trigger and §18/Gate-4 observed-result reconciliation remain incomplete; SEC-008 is PASS.
 
 Each pending task requires its own dependency review and execution packet.
 
 ## Current Blockers
 
-- SEC-008: no accepted target-host evidence yet demonstrates that an OS-level evidence-store ACL denies a non-supervisor process; this blocks Gate-3.
-- E-2 / SP-002-ONNX: no frozen ONNX artifact-unit definition ID.
+- E-2 / SP-002-ONNX: no frozen ONNX artifact-unit definition ID; blocks final C3A/C3B ONNX identity acceptance and Gate-3's all-C3-complete trigger even though functional SEC-001..012 tests pass.
 - HOST-CAP-003: genuine ONNX tests pass, but formal procedural reconciliation remains pending.
 - PRE-08: operational signing key path and supervisor-only ACL provisioning remain unresolved.
 - §18/Gate-4: remaining observed-result records and full validation acceptance require separate reconciliation.
