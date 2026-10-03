@@ -2,7 +2,13 @@
 
 ## Current Milestone
 
-Gate-2, Gate-3 and Gate-4 are PASS. TASK-026 remains TESTED and TASK-024 is now TESTED (2026-10-02). E-2 / SP-002-ONNX remains RESOLVED; C3A/B/C/D remain TESTED and SEC-001..012 functional acceptance remains PASS. Gate-5 is NOT PASSED. ACC-2026-10-02-03 resolves the originally recorded dashboard/audit read-only conflict without changing trusted corruption diagnostics.
+SIH26228 MVP / Demo Gate complete (2026-10-03). Gate-2, Gate-3, Gate-4 and
+Gate-5 are PASS; TASK-024/026/027 remain TESTED. E-2 / SP-002-ONNX remains
+RESOLVED; C3A/B/C/D and SEC-001..012 functional acceptance remain PASS.
+ACC-2026-10-02-03 retains read-only audit inspection and trusted corruption
+diagnostics. [Gate-5 evidence](docs/validation/gate5_demo_acceptance.md) records
+all seven criteria; [demo guide](docs/DEMO_GUIDE.md) provides the presentation
+command. Completion is for approved MVP/demo scope, not deferred capabilities.
 
 The dispatcher creates Windows workers suspended under a restricted primary token, assigns the existing configured Job, then resumes them without an unrestricted fallback. Explicit deployment-only evidence ACLs deny real worker writes while supervisor persistence and normal IPC succeed. Memory/timeout semantics remain unchanged. This is committed-memory enforcement and a scoped evidence-path DACL boundary, not an RSS/RLIMIT_AS or whole-host sandbox claim.
 
@@ -37,9 +43,10 @@ The dispatcher creates Windows workers suspended under a restricted primary toke
 | VS / experiment / REPRO / INT / synthetic-export batteries | 7 / 17 / 15 / 6 / 17 passed |
 | Audit unit / SEC-010 / CLI | 12 / 1 / 9 passed |
 | Dashboard / store / exporter | 27 / 7 / 27 passed |
-| Relevant integration/negative regression | 107 passed, 4 skipped, 0 failed |
+| Gate-5 focused / real automated demo | 8 passed / PASS, exit 0 |
+| Relevant integration/negative regression | 115 passed, 4 skipped, 0 failed |
 | Security suite | 92 passed, 4 skipped, 0 failed |
-| Non-offline regression | 588 passed, 11 skipped, 0 failed |
+| Non-offline regression | 596 passed, 11 skipped, 0 failed |
 | Prior full Gate-2 checkpoint | 483 passed, 20 skipped, 0 failed (historical) |
 
 The current non-offline run explicitly excludes tests/offline and executes no OFF-002/network isolation. All TASK-024 acceptance tests pass, with real-store writes forbidden during display/refresh. The remaining skips are unchanged historical/conditional placeholders, including PRE-08-gated HMAC and non-applicable Ed25519; none count as passes. The prior 552 passed/11 skipped Gate-4 checkpoint and its 22 added validation cases remain historical evidence. [Gate-4 criterion review](docs/validation/task026_gate4_evaluation.md), [§18 observations](docs/validation/task026_gate4_experiment_observations.md), [ONNX identity / Gate-3](docs/validation/e2_onnx_identity_acceptance.md), [SEC-008](docs/validation/task026_sec008_windows_acl.md) and [C3D history](docs/validation/task026_c3d_dispatch_acceptance.md) are unchanged.
@@ -47,7 +54,16 @@ The current non-offline run explicitly excludes tests/offline and executes no OF
 ## Pending Components
 
 - TASK-019 Part B operational signing (blocked on PRE-08).
-- Gate-5 demo preparation/acceptance: NOT PASSED; needs a separate packet. No demo script or Gate-5 run was performed. Browser-rendered visual QA is not claimed.
+- Historical HOST-CAP-003 procedural re-entry remains pending; actual ONNX
+  runtime capability passes. Explicit deferred/post-MVP methods remain deferred.
+
+Gate-5 is complete: the real scripts/demo.py run creates two synthetic assets,
+retains explicit unavailable/coverage states, verifies read-only HTTP/API and
+exports a valid six-document ZIP. Controlled test stores prove CHAIN_CORRUPT
+visibility; no live audit chain is damaged. C2B is reconciled to TESTED from its
+actual acceptance evidence. R17/R27 notices and REPRO release rows are current.
+No production semantics or protected research were changed. Browser-rendered
+visual QA is still not claimed. OFF-002 was not rerun.
 
 Each pending task requires its own dependency review and execution packet.
 

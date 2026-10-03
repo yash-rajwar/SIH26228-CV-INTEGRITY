@@ -6,6 +6,12 @@
 **Stage:** Stage 12 — MVP Implementation Plan
 **Document class:** Task-by-task implementation plan for the five-day MVP build. NOT a new architecture decision. NOT a technical specification. NOT a validation record.
 **Status:** COMPLETE — subject to P1 condition resolution before implementation begins
+**Current release review (2026-10-03):** Approved MVP/demo scope complete;
+GATE-2/3/4/5 PASS. Task completion markers below are reconciled to actual
+accepted evidence, not original planning placeholders. TASK-019 Part A TESTED;
+Part B DEFERRED / PRE-08 PARTIAL / SIGNING_UNAVAILABLE. See §17 and
+`validation/gate5_demo_acceptance.md`; deferred research and historical
+HOST-CAP-003 procedural re-entry are not declared complete.
 **Input artifacts:**
 - `09_ARCHITECTURE_SPECIFICATION_SIH26228.md` (system boundary authority)
 - `10_TECHNICAL_SPECIFICATION_SIH26228.md` (implementation contract authority)
@@ -66,13 +72,13 @@ Produce a **validated, integrated, offline-demonstrable assurance system** that:
 
 | Capability | Blocking condition | Status |
 |---|---|---|
-| COCO parsing via pycocotools | PRE-01 (C extension builds on target host) | BLOCKED |
-| PyTorch model scope | PRE-01 + PRE-05 (torch CPU wheel; format list confirms PyTorch) | BLOCKED |
-| YOLO task-variant scope (seg/pose/OBB) | PRE-05 (mandatory format list) | BLOCKED |
-| C4 signing module | PRE-02 + PRE-04 + PRE-08 + PRE-09 all resolved | BLOCKED |
+| COCO parsing via pycocotools | PRE-01 (C extension builds on target host) | TESTED — approved target runtime and Gate-4 evidence |
+| PyTorch model scope | PRE-01 + PRE-05 (torch CPU wheel; format list confirms PyTorch) | TESTED — verified Torch CPU / frozen PyTorch scope |
+| YOLO task-variant scope (seg/pose/OBB) | PRE-05 (mandatory format list) | RESOLVED — detection/segmentation in scope; pose/OBB excluded |
+| C4 signing module | PRE-02 + PRE-04 + PRE-08 + PRE-09 all resolved | DEFERRED — PRE-08 PARTIAL; unsigned shell TESTED, SIGNING_UNAVAILABLE |
 | PyTorch / ONNX artifact-unit definitions | PRE-03 + SP-002-ONNX | RESOLVED: two frozen format-specific records in artifact_unit_defs/ |
-| Offline claim | PRE-01 confirmed + wheelhouse verified + zero-egress test passed | BLOCKED |
-| COCO/YOLO structural parsing beyond detection format | PRE-05 | BLOCKED |
+| Offline claim | PRE-01 confirmed + wheelhouse verified + zero-egress test passed | TESTED — accepted TASK-027 frozen-target evidence; no rerun |
+| COCO/YOLO structural parsing beyond detection format | PRE-05 | TESTED in authorized scope — COCO and YOLO segmentation; pose/OBB excluded |
 
 ## 2.3 Pipeline Visualization feature
 
@@ -211,7 +217,7 @@ Items permanently excluded. No change-control path exists for these specific exc
 **Tests:** N/A (decisions, not code)
 **Acceptance criteria:** Written record for each PRE-0x decision. PRE-01 through PRE-05 are the hard gates; without them, no implementation may begin. PRE-06 through PRE-09 can be resolved by Day 1 end; their components can begin with a placeholder shell.
 **Risk/blockers:** If PRE-01 is unresolved, no offline claim is permissible and wheel staging cannot be confirmed. If PRE-04 is unresolved, the evidence schema DDL, schema validator, and C5 rule engine cannot be finalized.
-**Completion state:** `[!] BLOCKED — must complete before Day 1 of implementation`
+**Completion state:** `[x] TESTED` — decision register and approved target verified; PRE-08 remains PARTIAL, not signing-complete.
 
 ---
 
@@ -236,7 +242,7 @@ Items permanently excluded. No change-control path exists for these specific exc
 **Tests:** `test_repository_structure.py` — verifies all expected paths exist (can run from Day 1)
 **Acceptance criteria:** `python -m pytest tests/` exits without import errors; all directories present; top-level `cli.py` importable; no extraneous directories outside the approved layout
 **Risk/blockers:** None (can proceed immediately once PRE-04 minimum is resolved)
-**Completion state:** `[ ] NOT STARTED`
+**Completion state:** `[x] TESTED` — current accepted task evidence in PROJECT_STATE.md; verified in the Gate-5 release inventory and passing non-offline regression (2026-10-03).
 
 ---
 
@@ -261,7 +267,7 @@ Items permanently excluded. No change-control path exists for these specific exc
 - `tests/unit/test_exceptions.py` — verify exception hierarchy imports correctly
 **Acceptance criteria:** All constants importable; no duplicate values; CLEAN/SAFE/HEALTHY not present as positive state constants; exception hierarchy forms correct inheritance tree
 **Risk/blockers:** PRE-04 must be resolved before finalizing vocabulary to ensure SP-003 alignment
-**Completion state:** `[ ] NOT STARTED`
+**Completion state:** `[x] TESTED` — current accepted task evidence in PROJECT_STATE.md; verified in the Gate-5 release inventory and passing non-offline regression (2026-10-03).
 
 ---
 
@@ -282,7 +288,7 @@ Items permanently excluded. No change-control path exists for these specific exc
 - `tests/unit/test_config_loader.py` — load valid config; detect missing required key; detect invalid type; verify resource_limits accessible per worker type
 **Acceptance criteria:** Config loads cleanly on valid YAML; ConfigError raised on missing required field; resource limits accessible by worker module name; supported_formats readable
 **Risk/blockers:** PRE-05 blocks `supported_formats.yaml` from being final; use placeholder until resolved
-**Completion state:** `[ ] NOT STARTED`
+**Completion state:** `[x] TESTED` — current accepted task evidence in PROJECT_STATE.md; verified in the Gate-5 release inventory and passing non-offline regression (2026-10-03).
 
 ---
 
@@ -319,7 +325,7 @@ Items permanently excluded. No change-control path exists for these specific exc
   - UT-STORE-006: WAL mode confirmed (PRAGMA journal_mode returns 'wal')
 **Acceptance criteria:** All 6 unit tests pass; UNIQUE constraint on replay_nonce confirmed; WAL mode confirmed; risk_score field rejection confirmed; no partial writes accepted; attribution comment present in source
 **Risk/blockers:** PRE-04 required before final DDL; use schema version placeholder ('v1-pending') until SP-003 resolved
-**Completion state:** `[ ] NOT STARTED`
+**Completion state:** `[x] TESTED` — current accepted task evidence in PROJECT_STATE.md; verified in the Gate-5 release inventory and passing non-offline regression (2026-10-03).
 
 ---
 
@@ -352,7 +358,7 @@ Items permanently excluded. No change-control path exists for these specific exc
   - SEC-010: modified event detected (CHAIN_CORRUPT emitted; no reset)
 **Acceptance criteria:** All 5 unit tests pass; SEC-010 passes; AuditWriteError never swallowed; no reset method; sequence gap detection confirmed; CHAIN_CORRUPT does not reset chain
 **Risk/blockers:** None (stdlib hashlib; no P1 dependency for core logic)
-**Completion state:** `[ ] NOT STARTED`
+**Completion state:** `[x] TESTED` — current accepted task evidence in PROJECT_STATE.md; verified in the Gate-5 release inventory and passing non-offline regression (2026-10-03).
 
 ---
 
@@ -390,7 +396,7 @@ Items permanently excluded. No change-control path exists for these specific exc
   - UT-BASE-008: worker subprocess: times out → supervisor returns ASSESSMENT_ERROR (not hang)
 **Acceptance criteria:** All 8 tests pass; no worker can exit without writing result file; no timeout can hang supervisor; path containment rejects traversal and symlink escape; coverage_gap_clean_label defaults to True; stripped env confirmed (key paths absent in worker env)
 **Risk/blockers:** PRE-01 for exact subprocess isolation mechanism (use subprocess.Popen as default; adjust after PRE-01 if host requires alternate isolation)
-**Completion state:** `[ ] NOT STARTED`
+**Completion state:** `[x] TESTED` — current accepted task evidence in PROJECT_STATE.md; verified in the Gate-5 release inventory and passing non-offline regression (2026-10-03).
 
 ---
 
@@ -429,7 +435,7 @@ Items permanently excluded. No change-control path exists for these specific exc
   - SEC-012: coverage_gap_clean_label=False rejected — no evidence record written
 **Acceptance criteria:** All 8 unit tests pass; SEC-011, SEC-012 pass; risk_score field never enters evidence store; coverage_gap_clean_label=False never enters evidence store; no jsonschema import in codebase (grep check)
 **Risk/blockers:** PRE-04 blocks final vocabulary freeze; build with pending-vocabulary placeholder; update when SP-003 produced
-**Completion state:** `[ ] NOT STARTED`
+**Completion state:** `[x] TESTED` — current accepted task evidence in PROJECT_STATE.md; verified in the Gate-5 release inventory and passing non-offline regression (2026-10-03).
 
 ---
 
@@ -462,7 +468,7 @@ Items permanently excluded. No change-control path exists for these specific exc
   - FIX-001 hostile pickle: loads without error when opened as bytes; raises UnpicklingError under torch.load with weights_only=True
 **Acceptance criteria:** All 14+ fixture types generated successfully; all carry SYNTHETIC label; all have seed-pinned reproducibility confirmed; hostile pickle confirmed to trigger UnpicklingError under weights_only=True; COCO geometry fixture violation count matches manifest
 **Risk/blockers:** FIX-001 requires torch installed to verify (blocked until PRE-01 + PRE-05 if PyTorch in scope); FIX-009 YOLO variants blocked on PRE-05 for scope; build FIX-001 verification test as conditional skip until torch available
-**Completion state:** `[ ] NOT STARTED`
+**Completion state:** `[x] TESTED` — current accepted task evidence in PROJECT_STATE.md; verified in the Gate-5 release inventory and passing non-offline regression (2026-10-03).
 
 ---
 
@@ -496,7 +502,7 @@ Items permanently excluded. No change-control path exists for these specific exc
   - UT-C2A-009 [conditional on PRE-05]: YOLO detection geometry violation → violation detected
 **Acceptance criteria:** UT-C2A-001 through UT-C2A-007 pass; UT-C2A-004 (all-box coverage) is mandatory before any M01 claim; coverage_gap_clean_label confirmed on all output; C2A_LIMITATIONS and C2A_NON_CLAIMS present on all records; STRUCTURAL_VALID claim limited to tested violations types only
 **Risk/blockers:** pycocotools C extension build blocked on PRE-01; YOLO variant scope blocked on PRE-05; build with pure-Python COCO parser fallback stub for early testing if pycocotools not yet available
-**Completion state:** `[ ] NOT STARTED`
+**Completion state:** `[x] TESTED` — current accepted task evidence in PROJECT_STATE.md; verified in the Gate-5 release inventory and passing non-offline regression (2026-10-03).
 
 ---
 
@@ -528,7 +534,7 @@ Items permanently excluded. No change-control path exists for these specific exc
   - REPRO-002: same image → same SHA-256 on two runs
 **Acceptance criteria:** All 6 tests + REPRO-002 pass; no external library (import audit — stdlib hashlib only); duplicate presence non-claim present; PDQ noted as DEFERRED_IN_SCOPE
 **Risk/blockers:** None (stdlib only; no P1 dependency)
-**Completion state:** `[ ] NOT STARTED`
+**Completion state:** `[x] TESTED` — UT-C2B-001..006, REPRO-002 and two security cases pass; stdlib import/non-claim audit confirmed; Gate-4 and current non-offline regression pass.
 
 ---
 
@@ -559,7 +565,7 @@ Items permanently excluded. No change-control path exists for these specific exc
   - UT-C2C-006: no risk_score field in output
 **Acceptance criteria:** All 6 tests pass; no risk_score field; HHI and entropy values mathematically correct; sybil_unreliable defaults True; non_claims include "No aggregate risk score is produced"
 **Risk/blockers:** None (stdlib math only; no P1 dependency for core logic)
-**Completion state:** `[ ] NOT STARTED`
+**Completion state:** `[x] TESTED` — current accepted task evidence in PROJECT_STATE.md; verified in the Gate-5 release inventory and passing non-offline regression (2026-10-03).
 
 ---
 
@@ -586,7 +592,7 @@ Items permanently excluded. No change-control path exists for these specific exc
   - UT-C2D-004: PDQ noted as DEFERRED_IN_SCOPE in raw_signal
 **Acceptance criteria:** All 4 tests pass; coverage_gap_clean_label=True non-suppressible; T05d non-claim present; PDQ DEFERRED_IN_SCOPE noted
 **Risk/blockers:** None (stdlib hashlib; no P1 dependency)
-**Completion state:** `[ ] NOT STARTED`
+**Completion state:** `[x] TESTED` — current accepted task evidence in PROJECT_STATE.md; verified in the Gate-5 release inventory and passing non-offline regression (2026-10-03).
 
 ---
 
@@ -672,7 +678,7 @@ Items permanently excluded. No change-control path exists for these specific exc
   - UT-C3C-005: PF-002 non-claim: STRUCTURAL_VALID ≠ safe
 **Acceptance criteria:** All 5 tests pass; SEC-004, SEC-005 pass; no ORT dependency; PF-002 non-claim present; structural-validity claim bounded to format validation only
 **Risk/blockers:** onnx package staged blocked on PRE-01
-**Completion state:** `[ ] NOT STARTED`
+**Completion state:** `[x] TESTED` — current accepted task evidence in PROJECT_STATE.md; verified in the Gate-5 release inventory and passing non-offline regression (2026-10-03).
 
 ---
 
@@ -712,7 +718,7 @@ Items permanently excluded. No change-control path exists for these specific exc
   - SEC-007: grep weights_only=False in entire codebase → 0 matches
 **Acceptance criteria:** All tests pass; SEC-001 through SEC-003 pass; SEC-007 passes (0 matches for weights_only=False across entire codebase); fallback_attempted=False on all records
 **Risk/blockers:** torch CPU wheel blocked on PRE-01; PyTorch scope blocked on PRE-05; build as conditional module with skip-if-torch-unavailable test marks until PRE-01 resolved
-**Completion state:** `[ ] NOT STARTED`
+**Completion state:** `[x] TESTED` — current accepted task evidence in PROJECT_STATE.md; verified in the Gate-5 release inventory and passing non-offline regression (2026-10-03).
 
 ---
 
@@ -738,7 +744,7 @@ Items permanently excluded. No change-control path exists for these specific exc
   - UT-REF-003: health state transition logged as audit event
 **Acceptance criteria:** All 3 tests pass; HEALTH_VERIFIED never returned without gate completion; FORMAT_ASSET ≠ HEALTH_VERIFIED enforced
 **Risk/blockers:** PRE-06 blocks full gate procedure; build MVP shell (returns UNAVAILABLE always) and expand when SP-001 produced
-**Completion state:** `[ ] NOT STARTED`
+**Completion state:** `[x] TESTED` — current accepted task evidence in PROJECT_STATE.md; verified in the Gate-5 release inventory and passing non-offline regression (2026-10-03).
 
 ---
 
@@ -775,7 +781,7 @@ Items permanently excluded. No change-control path exists for these specific exc
   - SEC-009: duplicate replay_nonce rejected; REPLAY_ATTEMPT_DETECTED emitted
 **Acceptance criteria:** PF-002 non-claim present; replay nonce rejection confirmed; sequence gap detection confirmed; SIGNING_UNAVAILABLE handled gracefully (not a pipeline error); key never passed to any worker
 **Risk/blockers:** Signing implementation fully BLOCKED on PRE-02 + PRE-04 + PRE-08 + PRE-09; build provenance record structure and replay/sequence logic first; complete signing when P1 resolved
-**Completion state:** `[ ] NOT STARTED`
+**Completion state:** `[x] Part A TESTED; Part B DEFERRED` — PRE-08 PARTIAL; SIGNING_UNAVAILABLE remains the approved MVP shell. No runtime signing or keys.
 
 ---
 
@@ -808,7 +814,7 @@ Items permanently excluded. No change-control path exists for these specific exc
   - UT-CAP-003: CLI `list-deferred` shows all records (integration test; requires TASK-023)
 **Acceptance criteria:** All deferred methods produce explicit records; T05d NON_CLAIM present; `list-deferred` CLI works
 **Risk/blockers:** PRE-04 for final method vocabulary; build with pending vocabulary and update
-**Completion state:** `[ ] NOT STARTED`
+**Completion state:** `[x] TESTED` — current accepted task evidence in PROJECT_STATE.md; verified in the Gate-5 release inventory and passing non-offline regression (2026-10-03).
 
 ---
 
@@ -843,7 +849,7 @@ Items permanently excluded. No change-control path exists for these specific exc
   - FIX-013 at each of 4 pipeline layers: UNAVAILABLE propagates without conversion to positive state
 **Acceptance criteria:** Priority rule 1 enforced (UNAVAILABLE never compressed); risk_score field absent on all outputs; anomaly non-claim present on ESCALATE and DETECT; T05d non-claim present on C2; global backdoor non-claim present on C3; REPRO-004 passes; FIX-013 propagation at all 4 layers confirmed
 **Risk/blockers:** PRE-04 blocks final vocabulary; build with placeholder and update; all downstream workers must complete before full C5 integration test
-**Completion state:** `[ ] NOT STARTED`
+**Completion state:** `[x] TESTED` — current accepted task evidence in PROJECT_STATE.md; verified in the Gate-5 release inventory and passing non-offline regression (2026-10-03).
 
 ---
 
@@ -880,7 +886,7 @@ Items permanently excluded. No change-control path exists for these specific exc
   - SEC-008: non-supervisor process cannot write to evidence store path (ACL test)
 **Acceptance criteria:** INT-001 through INT-005 pass; SEC-008 passes; signing key not in worker subprocess env; all temp directories cleaned after run; PIPELINE_RUN_COMPLETE or PIPELINE_RUN_ERROR audit event on every run
 **Risk/blockers:** Requires all workers (TASK-010 through TASK-021); this is the integration task — some workers may be stubs initially. Build with stub workers for early integration testing.
-**Completion state:** `[ ] NOT STARTED`
+**Completion state:** `[x] TESTED` — current accepted task evidence in PROJECT_STATE.md; verified in the Gate-5 release inventory and passing non-offline regression (2026-10-03).
 
 ---
 
@@ -910,7 +916,7 @@ Items permanently excluded. No change-control path exists for these specific exc
   - INT-CLI-004: `show-audit-trail` with CHAIN_CORRUPT → CHAIN_CORRUPT visible in output
 **Acceptance criteria:** All 4 CLI integration tests pass; UNAVAILABLE never hidden in any output path; all 7 entry points functional; no evidence store write path from CLI
 **Risk/blockers:** Depends on TASK-022 (full pipeline); build CLI stubs early to validate command parsing
-**Completion state:** `[ ] NOT STARTED`
+**Completion state:** `[x] TESTED` — current accepted task evidence in PROJECT_STATE.md; verified in the Gate-5 release inventory and passing non-offline regression (2026-10-03).
 
 ---
 
@@ -947,8 +953,8 @@ provenance and chain-state queries are permitted for this task.
 cases, 27 passed. Approved read-only inspection and trusted SEC-010 pass;
 non-offline regression 588 passed/11 unchanged skips. Visual acceptance is
 static/CSS composition review only; Windows browser input access denied.
-Observed pipeline derives stored observations, not live telemetry. Gate-5 remains
-NOT PASSED; its demonstration criteria were not executed by TASK-024.
+Observed pipeline derives stored observations, not live telemetry. Its later
+Gate-5 demonstration acceptance is recorded below; not executed by TASK-024.
 
 ---
 
@@ -979,7 +985,7 @@ NOT PASSED; its demonstration criteria were not executed by TASK-024.
   - INT-EXP-004: export does not modify evidence store (read-only confirmed)
 **Acceptance criteria:** All 4 tests pass; UNAVAILABLE and DEFERRED_IN_SCOPE fields present in export; evidence store not modified by export
 **Risk/blockers:** Depends on TASK-022 for evidence to exist; otherwise no blockers
-**Completion state:** `[ ] NOT STARTED`
+**Completion state:** `[x] TESTED` — current accepted task evidence in PROJECT_STATE.md; verified in the Gate-5 release inventory and passing non-offline regression (2026-10-03).
 
 ---
 
@@ -1034,7 +1040,7 @@ the approved frozen vocabulary and bounded observation record govern findings.
 **Tests:** OFF-001 through OFF-004
 **Acceptance criteria:** All 4 offline tests pass on actual target host (not on development machine); target host tuple documented; offline claim scoped to confirmed tuple only
 **Risk/blockers:** Hard-blocked on PRE-01; cannot be completed until target host is known and available; schedule as Day 4-5 task after PRE-01 resolved
-**Completion state:** `[!] BLOCKED — PRE-01 required`
+**Completion state:** `[x] TESTED` — accepted frozen-target OFF-001..004 evidence retained; no rerun. Original recovery-marker FAIL and independent restored-state PASS remain separate; HOST-CAP-003 historical procedural re-entry pending.
 
 ---
 
@@ -1369,20 +1375,26 @@ Gate-4 acceptance or authorization for another task.
 [TASK-026 Gate-4 review](validation/task026_gate4_evaluation.md). Accepted
 target-host OFF evidence was reused; OFF-002 acceptance PASS, original recovery
 marker FAIL and independent restored-state PASS remain separate. PRE-08 PARTIAL
-and HOST-CAP-003's historical procedural re-entry remain carried. GATE-5 is
-NOT PASSED and TASK-024 is NOT STARTED; neither is executed by this review.
+and HOST-CAP-003's historical procedural re-entry remain carried. That Gate-4
+review did not execute TASK-024 or GATE-5; their subsequent acceptance is
+recorded in the current completion markers and Gate-5 evaluation below.
 
 ## GATE-5: Demo Gate
 
 **Trigger:** After GATE-4 passes + demo script complete
 **Criteria:**
-- [ ] `scripts/demo.sh` (or equivalent) runs end-to-end offline without manual intervention
-- [ ] Dashboard starts and displays evidence correctly (UNAVAILABLE visible)
-- [ ] Export bundle ZIP produced and valid
-- [ ] CHAIN_CORRUPT displayed correctly in `show-audit-trail`
-- [ ] All DEFERRED_IN_SCOPE records visible in `list-deferred`
-- [ ] Target host tuple documented in project records
-- [ ] No claim broader than demonstrated fixture evidence
+- [x] `scripts/demo.py` (approved equivalent) runs end-to-end offline without manual intervention
+- [x] Dashboard starts and displays evidence correctly (UNAVAILABLE visible)
+- [x] Export bundle ZIP produced and valid
+- [x] CHAIN_CORRUPT displayed correctly in `show-audit-trail`
+- [x] All DEFERRED_IN_SCOPE records visible in `list-deferred`
+- [x] Target host tuple documented in project records
+- [x] No claim broader than demonstrated fixture evidence
+
+**GATE-5: PASS — 2026-10-03**, all-of evidence and bounded conclusions in
+[Gate-5 evaluation](validation/gate5_demo_acceptance.md).
+SIH26228 MVP / Demo Gate complete, not all deferred/post-MVP capabilities.
+No OFF-002 rerun, signing provisioning or browser GUI acceptance was required.
 
 ---
 
@@ -1445,7 +1457,7 @@ The following must be complete before any final demo, PPT, or public-facing clai
 | Category | Required item | Status |
 |---|---|---|
 | Core functionality | GATE-4 (validation gate) passed | PASS — TASK-026 Gate-4 evaluation, 2026-10-02 |
-| Core functionality | All MUST BUILD tasks complete | Pending |
+| Core functionality | All MUST BUILD tasks complete | COMPLETE for approved MVP/demo scope — MB-01..29 inventory in Gate-5 record; TASK-019 unsigned shell TESTED, Part B DEFERRED |
 | Security | SEC-001 through SEC-012 all pass | PASS — functional acceptance retained; current security regression passes |
 | Security | weights_only=False grep: 0 matches | PASS — current universal guards |
 | Security | Evidence store ACL test (SEC-008) | PASS — accepted frozen Windows deployment/worker boundary |
@@ -1455,17 +1467,17 @@ The following must be complete before any final demo, PPT, or public-facing clai
 | Evidence | is_synthetic flag verified in export bundle | PASS — existing six-document export path |
 | Offline | Target host tuple documented | PASS — resolved PRE-01; accepted frozen Windows AMD64 / CPython 3.13.12 scope |
 | Offline | OFF-001 through OFF-004 pass on target host | PASS — accepted TASK-027 evidence reused; no rerun |
-| Claims | No claim broader than observed fixture evidence | Ongoing |
-| Claims | No R01 benchmark metrics presented as project results | Ongoing |
-| Claims | All project capability claims bounded to fixture scope | Ongoing |
-| Repository | License attribution comments for R17 + R27 reuse | Pending |
-| Repository | `NOTICES.md` or equivalent for MIT/BSD attribution | Pending |
+| Claims | No claim broader than observed fixture evidence | PASS — current public/demo documentation and output review; review remains required for future claims |
+| Claims | No R01 benchmark metrics presented as project results | PASS — public/demo review, no research-history rewrite |
+| Claims | All project capability claims bounded to fixture scope | PASS — Gate-5 boundaries, explicit deferrals and permanent T05d non-claim |
+| Repository | License attribution comments for R17 + R27 reuse | IMPLEMENTED — existing EvidenceStore and C2A headers verified, no worker edits |
+| Repository | `NOTICES.md` or equivalent for MIT/BSD attribution | IMPLEMENTED — R17/R27 entries reconciled; historical singular NOTICE refers to NOTICES.md |
 | Repository | REUSE-015 exclusion verified: grep for Fabric/HyperLedger in codebase → 0 matches | PASS — zero production Python matches in Gate-4 review |
-| Repository | Architecture change control log: any change-control decisions recorded | Ongoing |
-| Reproducibility | REPRO-001 through REPRO-006 pass | Pending |
-| Demo | GATE-5 (demo gate) passed | Pending |
-| Demo | `scripts/demo.sh` runs end-to-end offline | Pending |
-| Demo | Dashboard offline (no CDN; UNAVAILABLE visible) | Pending |
+| Repository | Architecture change control log: any change-control decisions recorded | PASS — existing approved decisions recorded; no new decision needed by demo |
+| Reproducibility | REPRO-001 through REPRO-006 pass | PASS — accepted Gate-4 evaluation, validation/task026_gate4_evaluation.md |
+| Demo | GATE-5 (demo gate) passed | PASS — seven-of-seven, validation/gate5_demo_acceptance.md |
+| Demo | `scripts/demo.py` approved equivalent runs end-to-end offline | PASS — real CLI execution exit 0; no network except loopback; accepted OFF proof reused |
+| Demo | Dashboard offline (no CDN; UNAVAILABLE visible) | PASS — actual HTTP/API and existing rendering tests; static/CSS visual boundary retained |
 
 ---
 

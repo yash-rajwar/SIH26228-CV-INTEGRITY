@@ -12,7 +12,7 @@ Update this file at the end of every coding session before committing.
 ## PROJECT
 
 **Name:** Trustworthy Computer Vision Integrity Assurance — SIH 2026 PS 26228  
-**Current stage:** TASK-024 and TASK-026 `TESTED`; GATE-2 / GATE-3 / GATE-4 `PASS`; GATE-5 `NOT PASSED`; PRE-08 `PARTIAL`
+**Current stage:** SIH26228 MVP / Demo Gate complete; GATE-2 / GATE-3 / GATE-4 / GATE-5 `PASS`; TASK-024/026/027 `TESTED`; PRE-08 `PARTIAL`, operational signing `SIGNING_UNAVAILABLE`
 **Repository created:** [DATE TO BE FILLED ON REPO INIT]  
 **Five-day window start:** [DATE — begins after P1 conditions resolved]
 
@@ -45,7 +45,7 @@ Status codes: `NOT STARTED` | `IN PROGRESS` | `IMPLEMENTED` | `TESTED` | `VALIDA
 | Schema validator + JSON schemas | TASK-008 | `TESTED` | Custom fail-closed validator and six `v1.0` schema documents committed at `a78e5c4`; SEC-011 and SEC-012 confirmed |
 | Hostile fixture suite (P0) | TASK-009 | `TESTED` | Part A non-torch families implemented at `5af987f`; Part B FIX-001/002/003/015 and FIX-009-S tested with Torch 2.10.0+cpu; YOLO pose/OBB remain outside PRE-05 scope. FIX-004/005/006 and benign FIX-016 now execute successfully in the C3A/C3C ONNX 1.23.0 compatibility suites. |
 | COMP-W-C2A (all-box structural) | TASK-010 | `TESTED` | All-box COCO geometry layer and PRE-05-authorized YOLO detection/segmentation parser implemented at `65fef55`; the target-host pycocotools path now passes VS-001, and FIX-008 all-annotation validation passes at `cb6f0bc` with all 9 expected violations preserved |
-| COMP-W-C2B (exact hash) | TASK-011 | `IMPLEMENTED` | Stdlib-only streaming SHA-256 duplicate grouping, per-file error handling, fail-closed all-failed state, and mandatory deferred PDQ disclosure implemented in the current TASK-011 commit; 10 targeted tests and full regression pass |
+| COMP-W-C2B (exact hash) | TASK-011 | `TESTED` | Reconciled from committed UT-C2B-001..006, REPRO-002, boundary and SEC-C2B-001..002 evidence (10 passed); current non-offline regression passes. Stdlib streaming, duplicate non-claim, containment/errors and PDQ deferral verified against TASK-011 acceptance; no worker changes |
 | COMP-W-C2C (concentration) | TASK-012 | `TESTED` | Exact §3.5 HHI/entropy statistics, source shares/counts, UNTRUSTED-default SYBIL_UNRELIABLE behavior, fail-closed missing/prohibited input handling, and FIX-012 integration implemented in the current TASK-012 commit; 8 targeted tests and full regression pass |
 | COMP-W-C2D (image hash) | TASK-013 | `TESTED` | Stdlib-only streaming SHA-256, byte-identical image grouping, path containment, per-file error handling, mandatory PDQ deferral, and permanent T05d non-claims implemented in the current TASK-013 commit; 6 targeted tests and full regression pass |
 | COMP-W-C3A (artifact-unit resolver) | TASK-014 | `TESTED` | Frozen `onnx-main-referenced-external-data-v1`; 30 targeted tests, complete recursive reference discovery and real ONNX identity/supervisor acceptance pass. Containment and incomplete-unit failure behavior preserved. E-2 resolved. |
@@ -68,7 +68,53 @@ Status codes: `NOT STARTED` | `IN PROGRESS` | `IMPLEMENTED` | `TESTED` | `VALIDA
 
 ## CURRENT TASK
 
-### TASK-024 completion (2026-10-02)
+### Final GATE-5 / MVP demo completion (2026-10-03)
+
+Starting HEAD `17d200f2a6c449102d70247838881f2796c16f09` verified clean on
+feature/vertical-slice; fast-forward-only synchronization already current.
+Implemented only scripts/demo.py, eight focused integration cases, demo guide
+and final acceptance/release documentation. No production assessment, worker,
+schema, constant, signing, protected research or architecture changes.
+
+Real CLI demo and repeated regression executions pass with unique synthetic
+asset IDs, approved benign COCO generator at seed 26228 and VS-007 missing-model
+submission. A produces four evidence records and statistics-only C5. B produces
+three ambiguous/error records, C5 UNAVAILABLE / UNAVAILABLE_NO_DECISION and
+C4_BINDING_UNAVAILABLE. No model file or fake provenance/signature created.
+The valid six-document ZIP retains synthetic labels and all 15 actual registry
+coverage records. Empty provenance arrays are permitted by the incomplete
+artifact contract; SIGNING_UNAVAILABLE is shown only where stored, plus the
+explicit unsigned-signing UI notice. Deployed audit history is never corrupted.
+Both real dashboard HTTP endpoints return 200; both assets visible; read-only
+audit/refresh preserves records; child process is stopped/reaped in finally.
+
+Ordered results: focused 8; real demo PASS/exit 0; dashboard 27; CLI 9; exporter
+27; audit unit 12; SEC-010 1; security 92 passed/4 unchanged skips;
+integration/negative 115 passed/4 unchanged skips; non-offline 596 passed/11
+unchanged skips, 0 failed. Universal production guards clean, loopback-only
+demo/dashboard, no installation or OFF/network execution. Browser visual QA
+remains static/CSS review, not browser inspection. Failed initial demo assertion
+was diagnosed as incorrectly requiring C4 after incomplete C3B; only that new
+assertion was corrected, not production semantics or existing tests.
+
+GATE-5 PASS: seven-of-seven criterion record at
+docs/validation/gate5_demo_acceptance.md. Release inventory covers MB-01..29
+in the approved unsigned MVP scope. C2B TESTED follows real committed/current
+test and import/non-claim evidence. R17/R27 source attribution is already present;
+NOTICES.md and stale maintained plan markers/release rows are reconciled.
+REPRO-001..006 retain the accepted Gate-4 evidence. Runtime working artifacts
+are ignored under build/demo; normal supervisor writes append to the existing
+configured deployment DB without resetting, deleting or relocating history.
+
+SIH26228 MVP / Demo Gate complete. GATE-2/3/4 PASS, TASK-024/026/027 TESTED,
+SEC-001..012 functional PASS, E-2 RESOLVED and ACC-2026-10-02-03 retained.
+PRE-08 remains PARTIAL; TASK-019 Part B DEFERRED/SIGNING_UNAVAILABLE. HOST-CAP-003
+factual ONNX runtime PASS and historical procedural re-entry pending remain
+distinct. Accepted OFF-002 acceptance PASS / original recovery-marker FAIL /
+independent restored-state PASS are preserved without rerun. No post-MVP task
+authorized; deferred methods/research and permanent T05d non-claim stay explicit.
+
+### Prior TASK-024 completion (2026-10-02; historical)
 
 Starting HEAD `4e13c8f7a074928f4487ea9a08f468b71aed0159`, branch
 `feature/vertical-slice` and the sole authorized PROJECT_STATE.md blocker edit
@@ -209,6 +255,7 @@ Validated behavior:
 
 | Task | What was done | Tests | Commit |
 |---|---|---|---|
+| GATE-5 final MVP/demo | Repeatable real-CLI synthetic demo, loopback dashboard/API, six-document ZIP, controlled corruption visibility, complete coverage and release-state/attribution reconciliation. No production/research/OFF/signing change; approved unsigned MVP complete | Focused 8; real demo exit 0; dashboard 27; CLI 9; exporter 27; audit 12; SEC-010 1; security 92/4; integration-negative 115/4; non-offline 596/11, zero failures | This GATE-5 completion commit (parent 17d200f) |
 | TASK-024 | Implemented six-view read-only offline dashboard and approved ACC-2026-10-02-03 audit inspection split; narrow SELECT APIs and non-mutating CLI audit display. Original blocker discovery preserved. No signing, network or worker changes; static visual review only. | Audit 12; SEC-010 1; CLI 9; dashboard 27; store 7; exporter 27; security 92/4; integration-negative 107/4; non-offline 588/11, zero failures; universal guards clean | This TASK-024 completion commit (parent 4e13c8f) |
 | TASK-001 | Recorded PRE-01–PRE-09 dispositions; froze PRE-03/04/05/06/07/09; selected HMAC-SHA256; initially preserved PRE-01 and PRE-08 blockers. PRE-01 was subsequently resolved by verified target-host measurements; PRE-08 remains partial. | JSON parse for touched schemas; security literal guards; documentation/config review | `431b92f` plus current PRE-01 resolution commit |
 | TASK-002 | Replaced premature scaffold content with task-scoped stubs; added the authoritative structure test, placeholder tests, package metadata, and wheelhouse README | Structure: 59 passed; full suite: 123 passed, 19 skipped; imports and security greps passed | `1d5225c` |
@@ -299,10 +346,10 @@ criteria have evidence. PRE-08 and HOST-CAP-003 procedural history are not close
 ## LATEST VALIDATED COMMIT
 
 ```
-Commit: This TASK-024 completion commit (parent: 4e13c8f7a074928f4487ea9a08f468b71aed0159)
+Commit: This GATE-5 completion commit (parent: 17d200f2a6c449102d70247838881f2796c16f09)
 Branch: feature/vertical-slice
-Date: 2026-10-02
-Tests: Audit 12; SEC-010 1; CLI 9; dashboard 27; store 7; exporter 27; security 92 passed/4 skipped; integration/negative 107 passed/4 skipped; non-offline 588 passed/11 skipped, 0 failed. TASK-024 TESTED. Universal guards clean; static-only visual acceptance. Gate-2/Gate-3/Gate-4/OFF evidence and separate recovery facts retained.
+Date: 2026-10-03
+Tests: Focused G5 8; real demo exit 0; dashboard 27; CLI 9; exporter 27; audit 12; SEC-010 1; security 92 passed/4 skipped; integration/negative 115 passed/4 skipped; non-offline 596 passed/11 unchanged skips, 0 failed. GATE-5 PASS; approved MVP/demo scope complete. Universal guards clean; prior gates/OFF and distinct recovery facts retained.
 ```
 
 ---
@@ -310,19 +357,19 @@ Tests: Audit 12; SEC-010 1; CLI 9; dashboard 27; store 7; exporter 27; security 
 ## LAST TEST STATUS
 
 ```
-Date: 2026-10-02
-Latest validation: TASK-024 dashboard and approved non-mutating audit inspection.
-Executed checks: Ordered audit, SEC-010, CLI, dashboard, store, exporter, security, integration/negative and full non-offline suites using approved CPython 3.13.12 / pytest 9.1.1 environment. Universal guards and diff check clean.
-Result: Audit 12; SEC-010 1; CLI 9; dashboard 27; store 7; exporter 27; security 92 passed/4 skipped; integration/negative 107 passed/4 skipped; non-offline 588 passed/11 unchanged skips, 0 failed. tests/offline explicitly excluded.
-Environment: Existing approved environment; no packages installed, network-isolation operation or signing. Browser input blocked by access denied; static/CSS review and embedded JS syntax validation only.
-Evidence: tests/integration/test_dashboard.py; extended audit/store/CLI tests; ACC-2026-10-02-03. Prior Gate-4/E-2/SEC-008/C3D/OFF records remain historical and unchanged.
+Date: 2026-10-03
+Latest validation: Final GATE-5 MVP/demo acceptance and release reconciliation.
+Executed checks: Focused demo; real scripts/demo.py; dashboard; CLI; exporter; audit units; SEC-010; security; integration/negative; full non-offline regression. Approved CPython 3.13.12 / pytest 9.1.1, universal guards and diff check clean.
+Result: Focused G5 8; real demo exit 0; dashboard 27; CLI 9; exporter 27; audit 12; SEC-010 1; security 92 passed/4 skipped; integration/negative 115 passed/4 skipped; non-offline 596 passed/11 unchanged skips, 0 failed. tests/offline explicitly excluded.
+Environment: Existing approved target environment; no install, network controls, OFF-002 or signing. Visual boundary remains prior static/CSS review, not browser inspection.
+Evidence: docs/validation/gate5_demo_acceptance.md; ignored build/demo runtime logs/result/ZIP and validation JUnit. Prior Gate-4/E-2/SEC-008/C3D/OFF records unchanged.
 
 Integration gates:
   GATE-1 (Foundation):       prerequisite components TESTED; not re-adjudicated in this reconciliation
   GATE-2 (Vertical Slice):   PASS
   GATE-3 (Capability):       PASS — all-C3-complete trigger and every MVP §14 criterion supported
   GATE-4 (Validation):       PASS — every MVP §14 criterion has accepted evidence
-  GATE-5 (Demo):             NOT PASSED
+  GATE-5 (Demo):             PASS — seven-of-seven; approved MVP/demo scope complete
 ```
 
 ---
@@ -763,7 +810,12 @@ The Stage 6 rule permits exit when every requirement is either satisfied with ev
 
 ## NEXT TASK
 
-**Next logical candidate (requires its own authorization packet):** GATE-5 demo preparation and acceptance. TASK-024 and TASK-026 are TESTED, Gate-4 PASS; Gate-5 remains NOT PASSED and no demo script was created. Browser-rendered visual QA is not claimed. PRE-08 PARTIAL and HOST-CAP-003 historical procedural re-entry remain carried. Gate-2/Gate-3 and historical OFF/recovery distinctions are unchanged. Do not start Gate-5 automatically.
+**STOP — approved MVP/demo scope complete.** GATE-5 PASS; presentation uses
+scripts/demo.py --serve as documented in docs/DEMO_GUIDE.md. No automatic next
+implementation task. Operational signing (PRE-08 PARTIAL), historical
+HOST-CAP-003 procedural re-entry and explicit deferred/post-MVP items require
+separate owner authorization; none is closed by this checkpoint. Prior gates
+and historical OFF/recovery distinctions remain unchanged.
 
 Critical path reminder:
 ```
@@ -848,7 +900,17 @@ unchanged.
 
 ## HANDOFF NOTES
 
-**Current TASK-024 completion (2026-10-02):** Exact starting HEAD 4e13c8f and sole
+**Current GATE-5 completion (2026-10-03):** Starting HEAD 17d200f verified;
+real repeatable synthetic CLI demo, HTTP/API dashboard, six-document ZIP,
+controlled corruption visibility, complete registry-derived coverage and
+bounded public claims accepted. Focused 8; security 92/4; integration-negative
+115/4; non-offline 596/11, zero failures. Seven-of-seven Gate-5 PASS; approved
+MVP/demo complete, not all deferred capabilities. C2B and release documentation
+reconciled from actual evidence. No production/research/signing/OFF/network
+changes. PRE-08 PARTIAL, historical HOST-CAP-003 re-entry and separate recovery
+facts remain; no new task authorized.
+
+**Historical TASK-024 completion (2026-10-02):** Exact starting HEAD 4e13c8f and sole
 authorized PROJECT_STATE.md blocker edit verified. ACC-2026-10-02-03 approved,
 documented before code and tested without weakening SEC-010. Dashboard six-view
 responsive/read-only/offline console TESTED; CLI audit is now non-mutating.

@@ -1,5 +1,29 @@
 # Changelog
 
+## GATE-5 — Final MVP / Demo Acceptance (2026-10-03)
+
+- Added stdlib scripts/demo.py, approved Windows equivalent of demo.sh: real CLI,
+  seed-26228 benign COCO and VS-007 missing-model scenarios, unique synthetic
+  IDs, full explicit coverage, read-only audit, six-document ZIP validation,
+  real loopback dashboard HTTP/API and bounded finally cleanup. --serve retains
+  the verified dashboard until Ctrl+C; no automatic browser launch.
+- Added eight focused tests, practical demo guide and seven-criterion all-of
+  acceptance/release inventory. Actual unattended demo exits 0. Empty C4 arrays
+  are retained for incomplete artifact units; no fake provenance or signature.
+- Validation: focused 8; dashboard 27; CLI 9; exporter 27; audit 12; SEC-010 1;
+  security 92 passed/4 unchanged skips; integration-negative 115 passed/4 skips;
+  non-offline 596 passed/11 unchanged skips, zero failures. Universal guards clean.
+- Reconciled C2B TESTED from actual task/regression evidence, existing R17/R27
+  attribution and NOTICES.md, stale maintained task markers/release rows, and
+  REPRO-001..006 from accepted Gate-4 evidence. No assessment code, worker,
+  schema, constant, architecture decision or protected research changed.
+- GATE-5 PASS; SIH26228 MVP / Demo Gate complete in approved unsigned scope.
+  Gate-2/3/4 PASS, E-2 RESOLVED, TASK-024/026/027 TESTED and ACC-2026-10-02-03
+  retained. PRE-08 PARTIAL/SIGNING_UNAVAILABLE, Part B DEFERRED and historical
+  HOST-CAP-003 procedural re-entry pending remain explicit. No OFF-002 rerun,
+  network controls, installs, signing or post-MVP task. Visual QA remains
+  static/CSS review, not browser-rendered inspection.
+
 ## TASK-024 — Read-only Offline Analyst Dashboard (2026-10-02)
 
 - Recorded approved ACC-2026-10-02-03 before implementation. One complete audit

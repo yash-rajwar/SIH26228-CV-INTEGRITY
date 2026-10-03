@@ -16,7 +16,13 @@ Status: IMPLEMENTED — TASK-005 source header carries the required attribution.
 ### R27 — COCO parsing via pycocotools (REUSE-020)
 License: BSD
 Attribution: Required in source files where pycocotools is used or adapted.
-Status: PENDING — TASK-010 (C2A structural worker) will add attribution comment.
+Status: IMPLEMENTED — TASK-010 `assurance_system/workers/c2a_structural.py`
+already carries the pycocotools/R27 BSD-style ADOPT/ADAPT attribution and identifies
+its geometry layer as original project code, not copied R01 code. Verified at
+the Gate-5 release review (2026-10-03); no new code reuse or license claim.
+
+Historical source-header references to singular `NOTICE` refer to this
+`NOTICES.md` attribution document. Both required R17/R27 entries are implemented.
 
 ## Explicitly excluded packages (no attribution required — not used)
 

@@ -42,7 +42,14 @@ The architectural authority is `docs/ARCHITECTURE_SPECIFICATION.md`; the build c
 
 ## Current Status
 
-Gate-2, Gate-3 and Gate-4 are PASS. TASK-026 is TESTED: VS-001..007, all §18 experiment observations, synthetic storage/export propagation, REPRO-001..006, INT-001..005 and accepted target-host OFF evidence satisfy the all-of Gate-4 checklist. [Gate-4 evaluation](docs/validation/task026_gate4_evaluation.md) and [observations](docs/validation/task026_gate4_experiment_observations.md) bound every conclusion to actual evidence. TASK-024 is now TESTED; Gate-5 remains NOT PASSED.
+SIH26228 MVP / Demo Gate complete (2026-10-03). Gate-2, Gate-3, Gate-4 and Gate-5
+are PASS. TASK-024/026/027 are TESTED; approved mandatory MVP deliverables are
+accepted, including the unsigned provenance shell, not operational signing or
+all deferred methods. [Gate-5 evaluation](docs/validation/gate5_demo_acceptance.md)
+records its seven-of-seven decision. [Gate-4 evaluation](docs/validation/task026_gate4_evaluation.md)
+and [observations](docs/validation/task026_gate4_experiment_observations.md)
+retain VS-001..007, §18 observations, synthetic storage/export, REPRO-001..006,
+INT-001..005 and accepted frozen-target OFF evidence without rerun.
 
 E-2 is RESOLVED: `onnx-main-referenced-external-data-v1` freezes the existing referenced-file membership contract. C3A/C3B real ONNX identity and restricted Windows supervisor acceptance pass; all Gate-3 criteria are supported by observed evidence. SEC-002 Job containment, SEC-003 timeout and SEC-008 evidence-store ACL denial remain PASS. See [ONNX identity and final Gate-3 evidence](docs/validation/e2_onnx_identity_acceptance.md), the [historical SEC-008 checkpoint](docs/validation/task026_sec008_windows_acl.md) and [C3D acceptance history](docs/validation/task026_c3d_dispatch_acceptance.md).
 
@@ -50,11 +57,32 @@ TASK-019 Part B signing remains deferred on PRE-08; no signing material or runti
 
 ## Validation Evidence
 
-Latest TASK-024 validation: dashboard 27, audit unit 12, SEC-010 1, CLI 9,
-store 7 and exporter 27 passed. Security: 92 passed/4 unchanged skips;
-integration/negative: 107 passed/4 unchanged skips; full non-offline regression:
-588 passed/11 unchanged skips, zero failures. The 552-test checkpoint below is
-historical Gate-4 evidence, not the latest total. No OFF/network run occurred.
+Latest Gate-5 validation: focused demo 8 passed and a real automated demo exit 0;
+dashboard 27, audit unit 12, SEC-010 1, CLI 9 and exporter 27 passed.
+Security: 92 passed/4 unchanged skips; integration/negative: 115 passed/4 unchanged
+skips; full non-offline regression: 596 passed/11 unchanged skips, zero failures.
+The 552-test checkpoint below is historical Gate-4 evidence; the preceding
+TASK-024 checkpoint was 588/11. No OFF/network-isolation run occurred.
+
+## Reproducible SIH Demo
+
+From the repository root, use the approved adjacent environment:
+
+```powershell
+& 'C:\Users\master\Desktop\SIH26228-CV-INTEGRITY.venv-torch-test\Scripts\python.exe' scripts/demo.py --serve
+```
+
+The script generates the approved seed-26228 benign COCO control and a contained
+missing-model submission, executes the real CLI and validates persisted
+synthetic evidence, UNAVAILABLE findings, complete explicit coverage, read-only
+audit inspection and a valid six-document ZIP. It prints a loopback dashboard
+URL after verification; open it manually and stop with Ctrl+C. Omit `--serve`
+for unattended acceptance that verifies and stops the server automatically.
+Working artifacts are under ignored `build/demo/<run-id>/`; normal supervisor
+writes append to the existing configured store, never clear history. No install,
+external HTTP, network controls, signing or fake C4 binding is added.
+The missing model truthfully retains C4_BINDING_UNAVAILABLE; an empty provenance
+array is valid. See the [3–5 minute demo guide](docs/DEMO_GUIDE.md).
 
 ## Offline Analyst Dashboard
 
@@ -85,7 +113,8 @@ trusted verification still persists corruption/sequence-gap diagnostics.
 Stored values render through DOM text nodes, with hash-based CSP and local
 response protections. Visual acceptance is static/CSS review only: Windows
 browser input access failed, so browser rendering/screenshot inspection is not
-claimed. Gate-5/demo acceptance needs its own packet.
+claimed. Gate-5 HTTP/API acceptance passes without adding GUI automation as a
+requirement; the static/CSS visual-review boundary remains unchanged.
 
 ### Historical Gate-4 validation evidence
 
@@ -129,6 +158,10 @@ Six protected evaluator-facing research dossiers are tracked under `docs/researc
 
 ## Future Roadmap
 
-Next logical candidate: separate Gate-5 demo preparation/acceptance packet. TASK-024 is TESTED, but no demo script or Gate-5 acceptance was executed. Formal host-capability procedural history and operational signing remain separately pending. Neither dashboard nor Gate-4 acceptance authorizes automatic signing or further offline/network execution.
+Approved MVP/demo scope is complete; no post-MVP task starts automatically.
+Operational signing/PRE-08, historical host-capability procedural re-entry and
+explicit DEFERRED_IN_SCOPE research/methods remain separate open/deferred items.
+T05d remains a permanent non-claim. Gate-5 authorizes neither automatic signing
+nor another offline/network-isolation execution.
 
 For current implementation evidence and blockers, see `PROJECT_STATUS.md` and `PROJECT_STATE.md`.
