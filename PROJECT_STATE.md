@@ -3,7 +3,7 @@
 
 **This file describes where the implementation is now.**  
 **It does NOT redefine what the architecture is.**  
-Architecture authority remains `09_ARCHITECTURE_SPECIFICATION_SIH26228.md`.
+Architecture authority remains [docs/ARCHITECTURE_SPECIFICATION.md](docs/ARCHITECTURE_SPECIFICATION.md).
 
 Update this file at the end of every coding session before committing.
 
@@ -21,11 +21,18 @@ Update this file at the end of every coding session before committing.
 ## CURRENT ARCHITECTURE REFERENCE
 
 **Approved architecture:** Option A — Deterministic Integrity Spine + Signed Evidence Governance + Offline-First Supervisor-Worker Architecture  
-**Architecture specification:** `09_ARCHITECTURE_SPECIFICATION_SIH26228.md` (approved 2026-09-25)  
-**Technical specification:** `10_TECHNICAL_SPECIFICATION_SIH26228.md`  
-**MVP implementation plan:** `11_MVP_IMPLEMENTATION_PLAN_SIH26228.md`  
-**Reuse matrix:** `07_REUSE_AND_ARCHITECTURE_DECISION_MATRIX_SIH26228_UPDATED.md`  
+**Architecture specification:** [docs/ARCHITECTURE_SPECIFICATION.md](docs/ARCHITECTURE_SPECIFICATION.md) (approved 2026-09-25)
+**Technical specification:** [docs/TECHNICAL_SPECIFICATION.md](docs/TECHNICAL_SPECIFICATION.md)
+**MVP implementation plan:** [docs/MVP_IMPLEMENTATION_PLAN.md](docs/MVP_IMPLEMENTATION_PLAN.md)
+**Reuse matrix:** Historical/source decision matrix titled `07_REUSE_AND_ARCHITECTURE_DECISION_MATRIX_SIH26228_UPDATED.md`; no file with that exact legacy name is committed here. Maintained specifications/task records preserve reuse decisions, with third-party attribution in [NOTICES.md](NOTICES.md).
 **Architecture change control:** ACTIVE — no silent redesign permitted
+
+**Reading historical state:** Dated preflights, completed-work records and older
+handoff entries below preserve their checkpoint facts, including wording such
+as "current" at the time they were recorded. They do not override the current
+implementation table, current blockers, latest task entry or final Gate-5
+acceptance. Old states/legacy source titles remain historical references, not
+new blockers or authorization to repeat completed work.
 
 ---
 
@@ -67,6 +74,33 @@ Status codes: `NOT STARTED` | `IN PROGRESS` | `IMPLEMENTED` | `TESTED` | `VALIDA
 ---
 
 ## CURRENT TASK
+
+### Final documentation consistency / MVP release freeze (2026-10-03)
+
+Starting main and origin/main HEAD
+`c90069dbd7ac3bd8fa11dab9a13e62de1125d96e` verified with a clean worktree.
+Documentation-only reconciliation updates this file's current repository
+references and the MVP plan's DoD, PRE dispositions, working assumptions and
+final handoff. Original planning/checkpoint history is retained explicitly as
+history; no production, test, script, fixture, artifact-definition, research or
+architecture behavior changes. README, PROJECT_STATUS and CHANGELOG were
+reviewed and need no further factual change.
+
+Prescribed smoke validation on the approved CPython 3.13.12 environment:
+Gate-5 8 passed; dashboard 27 passed; CLI 9 passed, zero failures. Production
+unsafe-load, score/aggregate/probability and Fabric/HyperLedger guards have zero
+matches; no prohibited positive assurance constants. No full regression or OFF
+rerun: accepted 596 passed / 11 unchanged skips / 0 failed remains the prior
+full-regression evidence, not a new run. Hosted CI/GitHub Actions is not claimed.
+
+Package/runtime 0.1.0-mvp remains unchanged. Approved annotated freeze tag
+v0.1.0-mvp may be created only after the documentation push, clean synchronized
+main, passing checks and verified tag absence. It is an MVP/demo freeze marker,
+not production certification or signed provenance. Gates 2–5 PASS, PRE-08
+PARTIAL / SIGNING_UNAVAILABLE / TASK-019 Part B DEFERRED, historical
+HOST-CAP-003 procedural re-entry, all accepted change-control records and
+explicit deferred/permanent non-claims remain unchanged. Next stage is release/
+presentation or separately owner-authorized post-MVP work, not another task.
 
 ### Final GATE-5 / MVP demo completion (2026-10-03)
 

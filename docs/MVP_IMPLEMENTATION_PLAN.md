@@ -5,7 +5,7 @@
 
 **Stage:** Stage 12 — MVP Implementation Plan
 **Document class:** Task-by-task implementation plan for the five-day MVP build. NOT a new architecture decision. NOT a technical specification. NOT a validation record.
-**Status:** COMPLETE — subject to P1 condition resolution before implementation begins
+**Status:** Plan COMPLETE; approved MVP / Demo implementation COMPLETE. Original pre-implementation conditions are reconciled in §18; operational signing remains deferred under PRE-08.
 **Current release review (2026-10-03):** Approved MVP/demo scope complete;
 GATE-2/3/4/5 PASS. Task completion markers below are reconciled to actual
 accepted evidence, not original planning placeholders. TASK-019 Part A TESTED;
@@ -1404,6 +1404,10 @@ Every MUST BUILD task must satisfy these universal criteria PLUS its task-specif
 
 ## Universal DoD criteria (apply to every MUST BUILD task)
 
+The unchecked list below is the original planning checklist, retained as
+history rather than retrospectively marking unexecuted checks as passed.
+The current evidence-backed disposition of each criterion follows it.
+
 - [ ] All task-specific unit tests pass in CI
 - [ ] No import of a prohibited package (jsonschema, OnnxRuntime in non-designated components, any unlicensed package)
 - [ ] No CLEAN/SAFE/HEALTHY as a positive assurance state (grep check)
@@ -1416,6 +1420,28 @@ Every MUST BUILD task must satisfy these universal criteria PLUS its task-specif
 - [ ] Offline: no network call in any code path (verified by static analysis and/or test)
 - [ ] Task completion state updated in this document
 
+## Final MVP DoD Reconciliation
+
+These dispositions apply to the accepted frozen target and approved unsigned
+MVP/demo scope. They do not certify every host, future code path or deferred
+method. The accepted full regression is **596 passed / 11 unchanged skips /
+0 failed**; skipped tests are not passes. This documentation-only freeze runs
+the three prescribed smoke suites, not a new full regression or offline run.
+
+| Criterion | Final status | Evidence / qualification |
+|---|---|---|
+| All task-specific unit tests pass in CI | PASS — accepted target-host automation; NOT A HOSTED-CI CLAIM | Automated task-specific and full regression suites pass on the accepted target environment. Hosted CI/GitHub Actions is not claimed and was not an additional Gate-5 criterion. Signing tests remain gated, not passed. See [Gate-5 acceptance](validation/gate5_demo_acceptance.md) and the accepted [Gate-4 evaluation](validation/task026_gate4_evaluation.md). |
+| No import of a prohibited package | PASS — reviewed MVP import boundaries | Existing component import audits and security tests retain the custom schema validator, no ONNX Runtime/model execution in C3C, and the approved reuse scope. See [supervisor security tests](../tests/security/test_supervisor_security.py), [C3C tests](../tests/unit/test_c3c_onnx_structural.py), and [NOTICES](../NOTICES.md). This is not a newly selected project license. |
+| No CLEAN/SAFE/HEALTHY as a positive assurance state | PASS | Universal constant/output guards and accepted security regression; explicit UNAVAILABLE and DEFERRED_IN_SCOPE boundaries remain. See [Gate-5 acceptance](validation/gate5_demo_acceptance.md). |
+| No risk_score field produced or consumed | PASS | Zero prohibited production matches; schema/security rejection tests preserve the no-aggregate-score contract. See [schema security tests](../tests/security/test_schema_security.py) and [Gate-5 acceptance](validation/gate5_demo_acceptance.md). |
+| No weights_only=False in any code path | PASS | Zero production literal matches and the accepted SEC-007/no-unsafe-fallback tests. Safe loading remains weights_only=True with no fallback; see [Gate-4 evaluation](validation/task026_gate4_evaluation.md). |
+| LIMITATIONS and NON_CLAIMS non-empty on worker outputs | PASS | Worker builder, schema validation and security tests enforce the fields; real synthetic pipeline/export acceptance retains them. See [worker-base tests](../tests/unit/test_worker_base.py), [schema security tests](../tests/security/test_schema_security.py), and [Gate-5 acceptance](validation/gate5_demo_acceptance.md). |
+| coverage_gap_clean_label=True on C2/C3 evidence | PASS | Fail-closed worker/schema contract plus persisted evidence/export acceptance; stored Boolean representation 1 remains valid. See [worker-base tests](../tests/unit/test_worker_base.py) and [Gate-4 evaluation](validation/task026_gate4_evaluation.md). |
+| MIT/BSD pattern attribution, R17/R27 | IMPLEMENTED | Existing REUSE-018 EvidenceStore and REUSE-020 C2A source attribution headers and [NOTICES](../NOTICES.md) retained. No new reuse or license selection is implied. |
+| All temp files and worker directories cleaned after every code path | PASS — tested dispatch paths | Accepted supervisor tests cover success, invalid-result/failure, timeout and resource-limit cleanup. See [orchestrator tests](../tests/integration/test_orchestrator.py), SEC-002/003 in [Gate-4 evaluation](validation/task026_gate4_evaluation.md), and the [Windows boundary record](validation/task026_sec008_windows_acl.md). This is tested-path evidence, not a proof of every possible future path; retained report/evidence files are intentional, not disposable worker IPC. |
+| Offline: no network call in any code path | PASS — accepted external-egress boundary | Accepted OFF-001..004 on the frozen target include OFF-002 zero non-loopback/external egress in its acceptance window. Intentional loopback dashboard HTTP is permitted; zero localhost calls and all-host portability are not claimed. Existing captures/recovery facts are preserved, not rerun. See [Gate-4 evaluation](validation/task026_gate4_evaluation.md) and [Gate-5 acceptance](validation/gate5_demo_acceptance.md). |
+| Task completion state updated here | IMPLEMENTED | §7 completion markers and §17 release inventory match the accepted MVP. TASK-019 Part A is TESTED; Part B remains DEFERRED / SIGNING_UNAVAILABLE, not complete. Deferred research is not counted as implemented. See the MB-01..29 inventory in [Gate-5 acceptance](validation/gate5_demo_acceptance.md). |
+
 ## Task-specific criteria
 
 Each task's acceptance criteria in Section 7 are in addition to the above, not a replacement. Tasks TASK-009 (fixtures) and TASK-026 (vertical slice) have elevated criteria — see their sections.
@@ -1423,6 +1449,10 @@ Each task's acceptance criteria in Section 7 are in addition to the above, not a
 ---
 
 # 16. CUT / STOPPING POLICY
+
+The schedule triggers below are historical build contingencies, not current
+blockers or authorization to introduce a fallback. The accepted implementation
+and any future work remain bound by the approved architecture/change control.
 
 If any of the following conditions occur, stop optional/SHOULD BUILD work immediately and return to the core integration path.
 
@@ -1483,7 +1513,11 @@ The following must be complete before any final demo, PPT, or public-facing clai
 
 # 18. MAJOR BLOCKERS AND ASSUMPTIONS
 
-## P1 blockers (must resolve before Day 1 of implementation)
+The original blocker/impact tables are retained as planning history. They are
+not the current PRE status. The final dispositions below supersede those
+planning-time unresolved statements without rewriting the decision records.
+
+## Original P1 blockers (historical: before Day 1 of implementation)
 
 | Blocker | Impact if unresolved | Owner |
 |---|---|---|
@@ -1491,7 +1525,7 @@ The following must be complete before any final demo, PPT, or public-facing clai
 | PRE-04: SP-003 vocabulary contract not produced | Cannot finalize evidence schema DDL, schema validator, C5 rule engine | Project team (pre-implementation design session) |
 | PRE-05: mandatory format list not confirmed | Cannot scope YOLO task variants; cannot confirm PyTorch workers in scope | Project owner / organizer |
 
-## Secondary blockers (Day 1–2)
+## Original secondary blockers (historical: Day 1–2)
 
 | Blocker | Impact if delayed | Owner |
 |---|---|---|
@@ -1500,7 +1534,31 @@ The following must be complete before any final demo, PPT, or public-facing clai
 | PRE-06: SP-001 reference-health gate | Reference manager ships as all-UNAVAILABLE shell; no HEALTH_VERIFIED at MVP | Project team |
 | PRE-08 + PRE-09: SP-004 + SP-006 | C4 signing module blocked alongside PRE-02 | Project team |
 
-## Working assumptions (must be validated or revised)
+## Final P1 / blocker disposition
+
+The [TASK-001 decision register](p1_decisions.md) and maintained decision/
+acceptance records establish the following current state. PRE-08 is the only
+P1 item still operationally blocking its deferred component; it does **not**
+block the accepted unsigned MVP/demo.
+
+| PRE | Original planning concern | Final disposition / current consequence |
+|---|---|---|
+| PRE-01 | Target host not confirmed | RESOLVED — measured Windows 10 Pro build 22631 / AMD64 / CPython 3.13.12 / 16 GB target identified. Native runtime, isolation and offline acceptance were separately executed for that frozen target; no other-host support is inferred. See [target record](p1_decisions.md#pre-01--target-host-record) and [Gate-4 evaluation](validation/task026_gate4_evaluation.md). |
+| PRE-02 | Signing mechanism undecided | RESOLVED — HMAC-SHA256 selected. Selection is not operational signing; PRE-08 remains open for Part B. See [decision register](p1_decisions.md). |
+| PRE-03 | Artifact-unit definitions absent | RESOLVED — [pytorch-single-file-v1](../artifact_unit_defs/pytorch_artifact_unit_spec.md); later approved [ONNX definition](../artifact_unit_defs/onnx_artifact_unit_spec.md) and [E-2 identity acceptance](validation/e2_onnx_identity_acceptance.md) also resolve E-2/SP-002-ONNX. No definition is invented here. |
+| PRE-04 | Vocabulary/schema contract absent | RESOLVED — v1.0 / worker-output-v1 / json-canonical-utf8-sort-keys-v1 and assessment vocabulary frozen in [SP-003](sp003_vocabulary_contract.md). |
+| PRE-05 | Mandatory formats not confirmed | RESOLVED — COCO, YOLO detection/segmentation, PyTorch and ONNX scoped by [decision register](p1_decisions.md) and supported-format configuration. YOLO pose/OBB remain out of MVP; TorchScript remains deferred. |
+| PRE-06 | Reference-health gates undefined | RESOLVED — approved [SP-001 R0–R7 procedure](sp001_reference_health_gates.md). References still default UNAVAILABLE; FORMAT_ASSET cannot be HEALTH_VERIFIED and no reference is promoted merely by this decision. |
+| PRE-07 | Organizer inference-record source absent | RESOLVED — EXCLUDED FROM MVP. No ingestion/source is fabricated; PF-002 remains mandatory. See [decision register](p1_decisions.md). |
+| PRE-08 | Crypto profile/key provisioning absent | PARTIALLY RESOLVED / PATH UNRESOLVED — [SP-004](sp004_crypto_profile.md) freezes parameters/encoding, but target-specific key path and supervisor-only ACL provisioning remain pending. TASK-019 Part B is DEFERRED; operational signing remains SIGNING_UNAVAILABLE. |
+| PRE-09 | C3→C4 mapping undefined | RESOLVED — [SP-006 adapter mapping](sp006_c3_c4_adapter_schema.md) frozen. This is not an unresolved signing-algorithm or adapter blocker and does not provision a key. |
+
+Historical HOST-CAP-003 procedural re-entry remains pending even though ONNX
+runtime/component acceptance passes. ACC-2026-10-02-01/02/03 remain recorded;
+Gate-2/3/4/5 PASS and TASK-024/026/027 TESTED are unchanged. These distinctions
+do not authorize signing, another offline run or post-MVP implementation.
+
+## Original working assumptions (historical validation plan)
 
 | Assumption | Risk if wrong | Validation method |
 |---|---|---|
@@ -1510,9 +1568,35 @@ The following must be complete before any final demo, PPT, or public-facing clai
 | 5-day window begins after P1 conditions resolved | If P1 resolution is not complete by Day 0, the 5-day clock must be adjusted | Project owner |
 | No estimate-as-fact: time allocations are ordering guidance, not guaranteed hours | Any task may take longer than expected | Build to GATE-2 first; expand only after vertical slice passes |
 
+## Final working-assumption reconciliation
+
+| Original assumption | Observed disposition / qualification |
+|---|---|
+| pycocotools C extension builds on target | Compatible staged binary-wheel/runtime path accepted for the frozen Windows AMD64 / CPython 3.13.12 target; VS-001 and FIX-008 pass. A local source compilation or C compiler is not claimed. The hypothetical pure-Python stub above is not an implemented fallback. |
+| Torch CPU wheel available | Torch 2.10.0+cpu runtime and bounded C3D fixture/security acceptance pass on the validated target; no other platform or unsafe-load fallback is implied. |
+| Python subprocess isolation sufficient | Approved Windows restricted-token + Job Object design is implemented under ACC-2026-10-02-01/02; actual memory/timeout/ACL boundaries pass. Bare subprocess spawning, Unix RLIMIT or a whole-host sandbox is not the claim. |
+| Five-day window begins after P1 resolution | Historical planning metadata only, not a current acceptance criterion. Actual gates/evidence, not elapsed-hour estimates, determine MVP completion. |
+| Estimates are ordering guidance, not guarantees | Retained. Gate-2 preceded expansion; Gates 3–5 and frozen-target offline acceptance subsequently passed. No promised timing or universal offline portability is inferred. |
+
+Evidence: [Gate-4 evaluation](validation/task026_gate4_evaluation.md),
+[Windows SEC-008 acceptance](validation/task026_sec008_windows_acl.md),
+[architecture change log](ARCHITECTURE_CHANGE_LOG.md), and
+[Gate-5 acceptance](validation/gate5_demo_acceptance.md). Original OFF-002
+recovery-marker FAIL and independent restored-state PASS remain distinct.
+
 ---
 
 # 19. NEXT_STAGE_HANDOFF
+
+## HISTORICAL STAGE-12 HANDOFF
+
+The original design-stage snapshot is preserved below. Its then-open P1 gates,
+implementation-start instructions and CI intent are historical, not current
+status or evidence of hosted-CI execution. Current PRE dispositions are in §18;
+the current release handoff follows this archived snapshot.
+
+<details>
+<summary>Original Stage-12 planning handoff (historical)</summary>
 
 ## CURRENT STAGE
 Stage 12 — MVP Implementation Plan
@@ -1609,9 +1693,55 @@ Codex begins with TASK-002 through TASK-009 (foundation + schema + fixtures).
 Antigravity begins after GATE-2 with TASK-024 (dashboard).
 Both push to the same repository; branches = tasks per Section 13.
 
+</details>
+
+## FINAL MVP HANDOFF / CURRENT STATE
+
+**Current stage:** SIH26228 MVP / Demo scope COMPLETE; implementation completed
+for the approved scope. **Next stage:** RELEASE / PRESENTATION, or separately
+OWNER-AUTHORIZED POST-MVP WORK. No next implementation task is automatically
+authorized by this handoff.
+
+| Current fact | Accepted disposition / boundary |
+|---|---|
+| Integration/validation/demo gates | Gate-2, Gate-3, Gate-4 and Gate-5 PASS; [Gate-5 acceptance](validation/gate5_demo_acceptance.md) retains all seven criteria and the approved MVP inventory. |
+| Dashboard, vertical slice, offline validation | TASK-024, TASK-026 and TASK-027 TESTED; C2B TESTED and SEC-001..012 accepted. Dashboard visual acceptance remains static/CSS plus actual HTTP/API tests, not interactive browser QA. |
+| Artifact identity / isolation / analyst reads | E-2/SP-002-ONNX RESOLVED. ACC-2026-10-02-01/02/03 retained; no new architecture decision or altered evidence. |
+| Regression and demo | Accepted non-offline 596 passed / 11 unchanged skips / 0 failed; security 92/4, integration-negative 115/4, dashboard 27, focused Gate-5 8. Actual scripts/demo.py PASS / exit 0. Skips remain explicit, not passes; no GitHub-hosted CI result is claimed. |
+| P1 state | PRE-01..07 and PRE-09 resolved (PRE-07 excluded from MVP); PRE-08 PARTIALLY RESOLVED / PATH UNRESOLVED as detailed in §18. The original claim that all P1 conditions remain open is historical only. |
+| Operational signing | PRE-08 blocks TASK-019 Part B only, which remains DEFERRED / SIGNING_UNAVAILABLE. The accepted unsigned record builder does not prove signed provenance, model execution, public verification or non-repudiation. |
+| Host capability history | ONNX runtime acceptance passes; historical HOST-CAP-003 procedural re-entry remains pending/post-MVP. Existing offline captures and the original recovery marker are not rewritten or rerun. |
+| Deferred capabilities / claims | Explicit DEFERRED_IN_SCOPE methods/research remain deferred; T05d is a permanent non-claim. No malware, semantic correctness, completeness or universal security assurance is inferred from deterministic findings. |
+| Release freeze | Package/runtime 0.1.0-mvp and approved annotated tag v0.1.0-mvp identify the MVP/demo freeze only. Tagging requires successful documentation push, passing smoke checks, a clean synchronized main and absence of the tag. No production certification, signing completion or deferred-research completion follows from the tag. |
+
+### Genuine governance questions retained
+
+- OQ-017: analyst authentication/authority remains post-MVP; an unavailable
+  analyst identity is not an authenticated identity.
+- OQ-018: evidence-retention policy remains owner work; retention enforcement
+  is not claimed merely because records are retained.
+- AF-003: system timestamps retain the trusted-clock limitation; no trusted
+  external clock has been provisioned by this release.
+- GAP-010/XREG-010: image-hash evidence ownership remains an explicitly
+  documented governance question; the implemented C2D attribution does not
+  resolve it or validate T05d label-hierarchy semantics.
+
+Maintained handoff inputs are [architecture](ARCHITECTURE_SPECIFICATION.md),
+[technical specification](TECHNICAL_SPECIFICATION.md), this plan,
+[live project state](../PROJECT_STATE.md), the [decision register](p1_decisions.md),
+the acceptance records cited above, and [third-party notices](../NOTICES.md).
+The legacy reuse-matrix source title remains a historical decision reference,
+not a claim that a file with that title is committed here. Future functionality,
+signing provisioning and research require a separate owner-authorized task and
+the existing architecture change-control process.
+
 ---
 
 # QUALITY CONTROL — STAGE 12 SELF-CHECK
+
+Historical design-completeness checklist: these marks describe the original
+plan's coverage, not current blockers, execution evidence or hosted-CI success.
+The current completion/DoD/handoff is in §§15, 17–19.
 
 - [x] Every architecture component (COMP-SUP through COMP-FIX, 16 total) is accounted for in MUST BUILD
 - [x] Every MUST BUILD has task ID, purpose, source spec, dependencies, expected output, reuse decision (or N/A), tests, acceptance criteria, risk/blockers, and completion state
@@ -1645,6 +1775,8 @@ Both push to the same repository; branches = tasks per Section 13.
 ---
 
 **End of document — 11_MVP_IMPLEMENTATION_PLAN_SIH26228.md**
-**Stage:** 12 — MVP Implementation Plan
-**Status:** COMPLETE (pending P1 condition resolution before implementation may begin)
-**Next stage:** Implementation (Codex + Antigravity on shared repository)
+**Original authoring stage:** 12 — MVP Implementation Plan
+**Original planning status (historical):** COMPLETE (pending P1 condition resolution before implementation may begin)
+**Original next stage (historical):** Implementation (Codex + Antigravity on shared repository)
+**Current status:** Approved SIH26228 MVP / Demo scope COMPLETE; Gate-2/3/4/5 PASS. PRE-08 operational signing and deferred/post-MVP work remain open.
+**Current next stage:** RELEASE / PRESENTATION or OWNER-AUTHORIZED POST-MVP WORK; no implementation task automatically authorized.
