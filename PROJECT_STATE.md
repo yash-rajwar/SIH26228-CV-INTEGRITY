@@ -13,8 +13,8 @@ Update this file at the end of every coding session before committing.
 
 **Name:** Trustworthy Computer Vision Integrity Assurance — SIH 2026 PS 26228  
 **Current stage:** SIH26228 MVP / Demo Gate complete; GATE-2 / GATE-3 / GATE-4 / GATE-5 `PASS`; TASK-024/026/027 `TESTED`; PRE-08 `PARTIAL`, operational signing `SIGNING_UNAVAILABLE`
-**Repository created:** [DATE TO BE FILLED ON REPO INIT]  
-**Five-day window start:** [DATE — begins after P1 conditions resolved]
+**Repository created:** Historical initialization metadata not backfilled
+**Five-day implementation window:** Historical planning field; not used for current MVP acceptance
 
 ---
 

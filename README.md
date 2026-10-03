@@ -1,167 +1,243 @@
-# SIH26228-CV-INTEGRITY
+# CV Integrity Assurance
+### SIH 2026 · Problem Statement 26228
 
-SIH 2026 Problem Statement 26228 — Trustworthy Computer Vision Integrity Assurance for Data, Models, and Inference Outputs in Multi-Contributor Pipelines.
+Offline-first, evidence-first integrity assurance for computer-vision datasets
+and model artifacts in multi-contributor pipelines.
 
-## Project Overview
+**SIH26228 MVP / Demo scope complete.** Evidence remains bounded to tested
+fixtures and the accepted target environment—not universal assurance.
 
-This repository implements an offline-first, evidence-first integrity-assurance pipeline for computer-vision datasets and model artifacts. Deterministic workers examine untrusted inputs in subprocess boundaries and produce schema-controlled evidence without converting unavailable coverage or anomalous signals into positive safety claims.
+| Checkpoint | Status |
+|---|---|
+| MVP / Demo Gate | COMPLETE |
+| Gate-2 / Gate-3 / Gate-4 / Gate-5 | PASS / PASS / PASS / PASS |
+| Final non-offline regression | 596 passed / 11 unchanged skips / 0 failed |
+| Security | 92 passed / 4 unchanged skips |
+| Target | Windows build 22631 / AMD64 / CPython 3.13.12 |
+| Operation | Offline-first |
+| Dashboard | Read-only / localhost |
+| Signing | SIGNING_UNAVAILABLE in approved MVP |
 
-## Problem Statement
+[Run the demo](#one-command-demo) · [Validation evidence](#validation-status) ·
+[Claim boundaries](#important-claim-boundaries) · [Documentation](#documentation-index)
 
-Multi-contributor computer-vision pipelines can receive corrupted labels, duplicated or concentrated data, substituted models, unsafe serialized artifacts, and incomplete provenance. The project provides bounded, reproducible evidence for those conditions while preserving the distinction between an observed anomaly and proof of malicious intent.
+## Why This Project Exists
 
-## Proposed Solution
+Multi-contributor computer-vision pipelines can receive malformed or corrupted
+annotations, exact duplicate data, concentrated contributor data,
+substituted or modified model artifacts, unsafe serialized PyTorch artifacts,
+and incomplete provenance.
 
-The approved design is Option A: Deterministic Integrity Spine + Signed Evidence Governance + Offline-First Supervisor-Worker Architecture. It combines:
+CV Integrity Assurance produces reproducible, structured evidence about these
+conditions. It separates observed anomalies, unavailable assessments, missing
+coverage and analyst interpretation. It does not claim malware detection or
+global model safety.
 
-- deterministic dataset and artifact checks;
-- isolated worker execution for untrusted parsing and loading;
-- fail-closed schema validation and audit handling;
-- explicit limitations and non-claims on every assessment;
-- hash-based identity and provenance evidence without aggregate risk scoring.
+## What the System Does
+
+| Layer | Component | Bounded operation |
+|---|---|---|
+| Data integrity | C2A | All-box COCO and approved YOLO detection/segmentation structural and geometry checks |
+| Data integrity | C2B | Streaming SHA-256 exact duplicate grouping |
+| Data integrity | C2C | Source concentration, HHI and Shannon entropy observations; contributor identity is not authenticated |
+| Data integrity | C2D | Image-file SHA-256 byte identity; no image decoding or PDQ implementation |
+| Model integrity | C3A | Contained artifact-unit resolution for approved ONNX/PyTorch formats |
+| Model integrity | C3B | Deterministic artifact-unit SHA-256 hashing; identity is not behavior |
+| Model integrity | C3C | ONNX structure and external-reference containment validation, without model execution |
+| Model integrity | C3D | Restricted PyTorch loading with `weights_only=True`; no unsafe fallback |
+
+Governance joins those observations through fail-closed schema validation,
+a hash-chained audit trail, reference-health management, an unsigned provenance
+shell, explicit deferred-coverage records and C5 structured interpretation.
+Analysts inspect evidence through the CLI, a read-only dashboard and ZIP export.
 
 ## Architecture
 
-The repository follows a supervisor-worker architecture. Workers receive named-file IPC tasks, enforce path containment, and return structured evidence. The supervisor owns persistence, orchestration, signing-key access, audit-chain writes, and timeout/OOM handling. Workers cannot write to the evidence or audit stores.
-
-The architectural authority is `docs/ARCHITECTURE_SPECIFICATION.md`; the build contract is `docs/TECHNICAL_SPECIFICATION.md`; live implementation state is maintained in `PROJECT_STATE.md`.
-
-## Implemented Components
-
-- Repository, exception/constants, configuration, evidence-store, and audit-chain foundations.
-- Worker IPC/output base and schema validation.
-- Seed-pinned hostile and benign fixture families.
-- C2A structural geometry validation, C2B exact duplicate hashing, C2C source-concentration statistics, and C2D image-level SHA-256 identity.
-- Tested C3A artifact-unit resolution, C3B ordered whole-member hashing under the frozen ONNX definition, and C3C structural-only ONNX validation; historical procedural reconciliation remains separately documented.
-- C3D PyTorch safe-loading gate using one restricted `torch.load` path with `weights_only=True` and `map_location="cpu"`, with no unsafe fallback.
-- COMP-REF reference registration, approved R0–R7 gate enforcement, FORMAT_ASSET boundaries, and audited staleness transitions.
-- COMP-C4 unsigned provenance records with canonicalization, replay rejection, sequence recovery, and explicit `SIGNING_UNAVAILABLE` status.
-- COMP-CAP bounded capability declarations and persisted missing-coverage records with required limitations and non-claims.
-- COMP-C5 interpretation, supervisor orchestration, analyst CLI, and read-only evidence export.
-- TASK-024 read-only offline analyst dashboard with non-mutating audit inspection.
-
-## Current Status
-
-SIH26228 MVP / Demo Gate complete (2026-10-03). Gate-2, Gate-3, Gate-4 and Gate-5
-are PASS. TASK-024/026/027 are TESTED; approved mandatory MVP deliverables are
-accepted, including the unsigned provenance shell, not operational signing or
-all deferred methods. [Gate-5 evaluation](docs/validation/gate5_demo_acceptance.md)
-records its seven-of-seven decision. [Gate-4 evaluation](docs/validation/task026_gate4_evaluation.md)
-and [observations](docs/validation/task026_gate4_experiment_observations.md)
-retain VS-001..007, §18 observations, synthetic storage/export, REPRO-001..006,
-INT-001..005 and accepted frozen-target OFF evidence without rerun.
-
-E-2 is RESOLVED: `onnx-main-referenced-external-data-v1` freezes the existing referenced-file membership contract. C3A/C3B real ONNX identity and restricted Windows supervisor acceptance pass; all Gate-3 criteria are supported by observed evidence. SEC-002 Job containment, SEC-003 timeout and SEC-008 evidence-store ACL denial remain PASS. See [ONNX identity and final Gate-3 evidence](docs/validation/e2_onnx_identity_acceptance.md), the [historical SEC-008 checkpoint](docs/validation/task026_sec008_windows_acl.md) and [C3D acceptance history](docs/validation/task026_c3d_dispatch_acceptance.md).
-
-TASK-019 Part B signing remains deferred on PRE-08; no signing material or runtime signing is implemented. Capability declarations remain bounded and explicitly deny malware detection, model safety guarantees and complete integrity assurance.
-
-## Validation Evidence
-
-Latest Gate-5 validation: focused demo 8 passed and a real automated demo exit 0;
-dashboard 27, audit unit 12, SEC-010 1, CLI 9 and exporter 27 passed.
-Security: 92 passed/4 unchanged skips; integration/negative: 115 passed/4 unchanged
-skips; full non-offline regression: 596 passed/11 unchanged skips, zero failures.
-The 552-test checkpoint below is historical Gate-4 evidence; the preceding
-TASK-024 checkpoint was 588/11. No OFF/network-isolation run occurred.
-
-## Reproducible SIH Demo
-
-From the repository root, use the approved adjacent environment:
-
-```powershell
-& 'C:\Users\master\Desktop\SIH26228-CV-INTEGRITY.venv-torch-test\Scripts\python.exe' scripts/demo.py --serve
+```mermaid
+flowchart LR
+    manifest["Submission manifest"] --> supervisor["Supervisor"]
+    supervisor -->|"Dispatch"| dataWorkers["C2 data workers"]
+    supervisor -->|"Dispatch"| modelWorkers["C3 model workers"]
+    assets["Untrusted dataset or model files"] -->|"Worker reads"| dataWorkers
+    assets -->|"Worker reads"| modelWorkers
+    dataWorkers --> schema["Schema validation"]
+    modelWorkers --> schema
+    schema -->|"Accepted evidence"| store[("Evidence store")]
+    schema --> interpretation["C5 interpretation"]
+    schema -->|"Resolved model digest only"| provenance["C4 provenance shell"]
+    provenance -->|"Binding or unavailable"| interpretation
+    interpretation -->|"Supervisor persists finding"| store
+    provenance -->|"Supervisor persists record"| store
+    supervisor --> audit["Hash-chained audit events"]
+    audit -->|"Supervisor appends"| store
+    store -->|"Read-only queries"| analyst["CLI views, dashboard and ZIP export"]
 ```
 
-The script generates the approved seed-26228 benign COCO control and a contained
-missing-model submission, executes the real CLI and validates persisted
-synthetic evidence, UNAVAILABLE findings, complete explicit coverage, read-only
-audit inspection and a valid six-document ZIP. It prints a loopback dashboard
-URL after verification; open it manually and stop with Ctrl+C. Omit `--serve`
-for unattended acceptance that verifies and stops the server automatically.
-Working artifacts are under ignored `build/demo/<run-id>/`; normal supervisor
-writes append to the existing configured store, never clear history. No install,
-external HTTP, network controls, signing or fake C4 binding is added.
-The missing model truthfully retains C4_BINDING_UNAVAILABLE; an empty provenance
-array is valid. See the [3–5 minute demo guide](docs/DEMO_GUIDE.md).
+This is logical evidence flow, not live execution telemetry. The supervisor
+validates manifests and dispatches workers; it never opens, parses or loads
+submitted assets. Workers are untrusted subprocesses, and the supervisor alone
+owns evidence persistence and audit writes.
 
-## Offline Analyst Dashboard
+On the accepted Windows target, workers use restricted primary tokens and
+configured Job Objects for per-process committed-memory containment; the
+supervisor enforces timeout and termination. This is not a whole-host sandbox.
+The dashboard is read-only. No external network service is required for the demo.
 
-Run with the approved Python environment:
+## One-Command Demo
+
+From the repository root, use the approved **CPython 3.13.12 offline environment**
+with its already staged dependencies and provisioned local deployment:
 
 ```powershell
-python cli.py dashboard --port 8080
+python scripts/demo.py --serve
 ```
 
-Open `127.0.0.1:8080` in a local browser. The default is IPv4 loopback-only;
-non-loopback binding is rejected. Python stdlib HTTP serving delivers one
-self-contained navy/slate console: Overview, Findings, Evidence Explorer,
-Audit Timeline, Coverage & Deferred and Provenance. Inline CSS, SVG and vanilla
-JavaScript require no npm, external fonts, images, frameworks, remote APIs or
-CDN. There is no browser storage or polling; manual Refresh reads current data.
+The script generates deterministic synthetic assets at seed **26228**, exercises
+the real CLI, verifies persisted evidence, produces a valid six-document ZIP,
+and starts the loopback dashboard. It prints the dashboard URL; open it manually.
+**Ctrl+C** stops presentation mode and reaps the dashboard child.
 
-The interface has no mutation controls. Non-GET/HEAD verbs return 405.
-UNAVAILABLE, DEFERRED_IN_SCOPE, REFERENCE_UNAVAILABLE, SIGNING_UNAVAILABLE and
-CHAIN_CORRUPT remain explicit text. No safety/confidence scoring is displayed.
-Observed Pipeline State derives only persisted observations; missing ingestion
-telemetry and missing record correlations remain UNAVAILABLE. Limitations,
-non-claims, full identifiers and raw signals remain accessible.
+Two scenarios show the distinction that matters:
 
-[ACC-2026-10-02-03](docs/ARCHITECTURE_CHANGE_LOG.md#acc-2026-10-02-03--read-only-audit-chain-inspection-for-comp-iface)
-separates complete read-only chain inspection from trusted diagnostic
-verification. Dashboard and `show-audit-trail` never append audit events;
-trusted verification still persists corruption/sequence-gap diagnostics.
-Stored values render through DOM text nodes, with hash-based CSP and local
-response protections. Visual acceptance is static/CSS review only: Windows
-browser input access failed, so browser rendering/screenshot inspection is not
-claimed. Gate-5 HTTP/API acceptance passes without adding GUI automation as a
-requirement; the static/CSS visual-review boundary remains unchanged.
+- **Benign COCO:** completed geometry evidence and statistics-only interpretation.
+- **Missing model:** a contained but deliberately absent PyTorch file produces
+  explicit UNAVAILABLE / UNAVAILABLE_NO_DECISION, not a positive assurance state.
 
-### Historical Gate-4 validation evidence
+For unattended acceptance, including dashboard verification and shutdown:
 
-- Windows Job Object unit/capability tests: 6 passed; targeted SEC-002 and retained SEC-003: 1 passed each.
-- Restricted-token tests: 14 passed; explicit ACL verification and real SEC-008 acceptance: 2 passed.
-- Real ONNX identity acceptance: 10 passed; restricted supervisor acceptance: 2 passed. C3A/C3B/C3C targeted suites: 30/18/18 passed.
-- Gate-4 batteries: VS 7, experiments 17, REPRO 15, INT/secret-environment 6, synthetic/export 17 passed. All 22 new validation cases pass; no production change was needed.
-- Relevant integration/negative regression: 79 passed, 4 unchanged skips, 0 failures.
-- Security suite: 92 passed, 4 historical skips, 0 failures.
-- Non-offline regression: 552 passed, 11 unchanged skips, 0 failures. Offline tests were explicitly excluded; OFF-002 was not rerun and no network/PktMon control was touched.
-- Prior full Gate-2 checkpoint: 483 passed, 20 skipped, 0 failures (historical evidence, not this run).
-- Target-host TASK-027 offline acceptance is recorded as TESTED for the frozen Windows AMD64 / CPython 3.13.12 tuple. OFF-002's original recovery-marker FAIL and independent restored-state PASS remain distinct.
-- Current test execution and public status: 2026-10-02. Historical 2026-09-29 timeout evidence is retained. Skips are not counted as passed.
+```powershell
+python scripts/demo.py
+```
 
-## Security Boundaries
+Working files, logs and the ZIP live under ignored `build/demo/<run-id>/`.
+Normal supervisor writes append synthetic records to the configured store;
+no database, audit history or earlier evidence is cleared. Missing-model
+provenance remains C4_BINDING_UNAVAILABLE; an empty provenance array is valid.
+The script neither installs packages nor changes networking or signing.
+See the [demo guide and 3–5 minute walkthrough](docs/DEMO_GUIDE.md).
 
-- All submitted artifacts are untrusted and must be processed by workers, not the supervisor.
-- `weights_only=True` is mandatory; no fallback to unrestricted PyTorch loading is permitted.
-- `UNAVAILABLE`, `ASSESSMENT_ERROR`, and `DEFERRED_IN_SCOPE` never mean clean or safe.
-- Anomaly and load-block signals do not prove malicious intent.
-- Aggregate risk scores and compromise probabilities are prohibited.
-- Signing keys and evidence/audit-store write paths remain supervisor-only.
-- A successful load or hash match does not establish behavioral safety, semantic equivalence, global backdoor absence, or causal execution proof.
+## Dashboard
 
-## Known Limitations
+| View | What to inspect |
+|---|---|
+| Overview | Recorded counts, assessment states and observed pipeline—not confidence or fabricated live telemetry |
+| Findings | C5 interpretation, disposition prompts, limitations and non-claims |
+| Evidence Explorer | Stored worker signals, identifiers, hashes and available correlations |
+| Audit Timeline | Ordered history and explicit CHAIN_CORRUPT status, without reset or diagnostic writes |
+| Coverage & Deferred | Method-specific reasons for deferred and unavailable coverage |
+| Provenance | Stored bindings and SIGNING_UNAVAILABLE where recorded; no invented signature |
 
-- Windows SEC-002 is bounded to the approved Job Object per-process committed-memory mechanism and validated target; it is not an RSS/RLIMIT_AS or cross-platform claim. SEC-003 controlled timeout dispatch does not establish natural hostile-checkpoint hangs.
-- SEC-008 is bounded to the explicitly provisioned evidence-store path on the validated Windows target. Deny-only privileged groups and reduced privileges are not a whole-host filesystem/GUI sandbox; unrelated user-owned paths and trusted elevated administrators are outside this acceptance claim. Audit/reference/key ACLs were not provisioned by this task.
-- ONNX membership is frozen for byte identity only: main `.onnx` plus unique canonical referenced whole external files; no behavioral safety, semantic equivalence or trusted-provenance claim.
-- Genuine C3A/C3B/C3C ONNX runtime acceptance passes; HOST-CAP-003 formal TASK-027-C procedural re-entry remains pending separately. This packet authorizes no offline/network rerun.
-- Windows does not provide the Unix `resource.setrlimit` controls used on supported Unix hosts.
-- Operational signing awaits target-host key-path and ACL provisioning.
-- Capability CLI display is accepted by TASK-023 integration coverage; the historical UT-CAP-003 placeholder remains untouched.
-- Capability record and audit writes retain their existing separate commit boundaries; a failure propagates and may leave earlier committed records.
-- Target-host offline evidence is bounded to its frozen environment and staged binary set, not a portable deployment claim.
-- T05d clean-label poisoning detection is a permanent non-claim under the current baseline.
+Localhost only, read-only, with no npm, CDN, external fonts or frontend frameworks.
+UNAVAILABLE, DEFERRED_IN_SCOPE, CHAIN_CORRUPT and SIGNING_UNAVAILABLE remain
+explicit text. There is no risk/confidence score. Missing telemetry or
+correlation is disclosed, not fabricated.
 
-## Research Documentation
+Static/CSS visual review and real HTTP/API acceptance passed. Browser-rendered
+visual inspection and screenshots are **not** claimed.
 
-Six protected evaluator-facing research dossiers are tracked under `docs/research/`, covering mission/threat context, data integrity, model security, provenance/cryptography, assurance/drift/evidence, and engineering validation.
+## Security Design
 
-## Future Roadmap
+- Untrusted dataset/model parsing and loading occur only in worker subprocesses.
+- `weights_only=True` is mandatory; there is no unsafe PyTorch fallback.
+- Workers re-check path containment, including ONNX external references.
+- Windows restricted tokens, Job Object memory limits and supervisor timeouts
+  provide the accepted worker boundary—not a whole-host sandbox.
+- Supervisor-only evidence persistence and deployment ACL write denial are tested.
+- Schema validation and audit writes fail closed; chain tampering is detected
+  without destructive reset.
+- Analyst views are read-only; inspection does not append audit diagnostics.
+- Aggregate risk scores are prohibited. Unavailable/deferred states never become
+  clean or positive assurance.
 
-Approved MVP/demo scope is complete; no post-MVP task starts automatically.
-Operational signing/PRE-08, historical host-capability procedural re-entry and
-explicit DEFERRED_IN_SCOPE research/methods remain separate open/deferred items.
-T05d remains a permanent non-claim. Gate-5 authorizes neither automatic signing
-nor another offline/network-isolation execution.
+## Validation Status
 
-For current implementation evidence and blockers, see `PROJECT_STATUS.md` and `PROJECT_STATE.md`.
+Accepted final MVP checkpoint results; skips are retained and are not passes.
+
+| Validation | Result |
+|---|---|
+| Gate-5 focused | 8 passed |
+| Dashboard | 27 passed |
+| CLI | 9 passed |
+| Exporter | 27 passed |
+| SEC-010 audit corruption | 1 passed |
+| Security | 92 passed, 4 unchanged skips |
+| Integration + negative | 115 passed, 4 unchanged skips |
+| Non-offline regression | 596 passed, 11 unchanged skips, 0 failed |
+| Real automated demo | PASS, exit 0 |
+
+See the [Gate-5 acceptance record](docs/validation/gate5_demo_acceptance.md),
+[Gate-4 evaluation](docs/validation/task026_gate4_evaluation.md) and
+[current project status](PROJECT_STATUS.md) for criteria, raw evidence
+references, historical results and exact limitations.
+
+## Offline Target
+
+The frozen accepted tuple is **Windows build 22631 / AMD64 / CPython 3.13.12 /
+16 GB RAM**. Target-host offline validation is bounded to that environment and
+the staged dependency set, not a portable deployment guarantee.
+
+OFF-002 recorded **zero non-loopback egress during its accepted measurement
+window**. Its historical recovery marker **FAIL** and independent restored-state
+**PASS** remain separate facts. See the
+[OFF-002 reconciliation](docs/task027s_off002_reconciliation.md) and
+[complete accepted-evidence review](docs/validation/task026_gate4_evaluation.md).
+Running the demo is not a new OFF-002 packet-capture test.
+
+## Repository Structure
+
+```text
+assurance_system/
+  config/           YAML configuration and fail-closed loader
+  workers/          Isolated C2/C3 assessment workers
+  supervisor/       Orchestration, validation and evidence governance
+  interfaces/       Analyst CLI and read-only dashboard
+  export/           Six-document evidence ZIP packaging
+  fixtures/         Seed-pinned synthetic fixture generators
+  schema/           Frozen JSON evidence contracts
+artifact_unit_defs/ Approved artifact membership definitions
+scripts/            Demo and offline validation tooling
+tests/              Unit, integration, negative, security and offline tests
+docs/               Specifications, acceptance evidence and research
+wheelhouse/         Local staged dependencies; ignored by Git
+```
+
+## Documentation Index
+
+- [Architecture specification](docs/ARCHITECTURE_SPECIFICATION.md)
+- [Technical specification](docs/TECHNICAL_SPECIFICATION.md)
+- [MVP implementation plan](docs/MVP_IMPLEMENTATION_PLAN.md)
+- [Public project status](PROJECT_STATUS.md) · [Live implementation state](PROJECT_STATE.md)
+- [Demo guide](docs/DEMO_GUIDE.md)
+- [Gate-5 acceptance](docs/validation/gate5_demo_acceptance.md)
+- [Third-party attribution](NOTICES.md)
+- [Evaluator-facing C1–C6 research dossiers](docs/research/)
+
+## Important Claim Boundaries
+
+This project does **not** claim:
+
+- malware detection, complete integrity assurance or model safety;
+- global backdoor absence or behavioral equivalence;
+- causal execution proof: digest match does not establish causal execution (PF-002);
+- T05d clean-label poisoning detection—a permanent non-claim;
+- verified reference health when unavailable;
+- operational signing when SIGNING_UNAVAILABLE.
+
+An anomaly is not proof of malicious intent. UNAVAILABLE and DEFERRED_IN_SCOPE
+are not positive assurance states. Exact byte identity, successful restricted
+loading and finite fixture tests do not establish broader behavioral properties.
+
+## Post-MVP / Deferred
+
+- PRE-08 operational signing provisioning; the approved MVP remains unsigned.
+- Historical HOST-CAP-003 procedural re-entry; factual ONNX runtime capability is PASS.
+- Explicitly deferred research/methods, retained in coverage records.
+
+These do not invalidate the accepted SIH MVP / Demo Gate. They are not declared
+complete, and T05d is not a promised future detection capability.
+
+## Attribution
+
+R17 storage-pattern and R27 pycocotools attributions are recorded in
+[NOTICES.md](NOTICES.md). No project license is declared here; no root LICENSE
+has been added without an owner licensing decision.
