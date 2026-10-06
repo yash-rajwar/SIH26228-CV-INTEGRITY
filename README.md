@@ -1,5 +1,5 @@
 # CV Integrity Assurance
-### SIH 2026 · Problem Statement 26228
+### SIH 2026 · Problem Statement 26228 - Team Genesis Protocol - YASHPAL SINGH RAJWAR 
 
 Offline-first, evidence-first integrity assurance for computer-vision datasets
 and model artifacts in multi-contributor pipelines.
